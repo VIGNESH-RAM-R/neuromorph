@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--nm-ink, #1A2333)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Umbrella">
+  <title>Umbrella</title>
+  <path d="M4 12a8 8 0 0 1 16 0Z"/>
+  <path d="M12 12v7a2 2 0 0 1-2 2"/>
+  <path d="M12 4v1"/>
+</svg>

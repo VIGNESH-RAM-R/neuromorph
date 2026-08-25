@@ -1,0 +1,382 @@
+/* NEUROMORPH Doctor Dashboard theme.
+   Clean clinical cards, high readability, subtle color, no animation.
+   Light theme is default; [data-theme="dark"] on <html> switches variables. */
+
+:root {
+  --nmdd-bg: #f4f6f9;
+  --nmdd-surface: #ffffff;
+  --nmdd-surface-muted: #f0f2f6;
+  --nmdd-border: #dde2ea;
+  --nmdd-ink: #16202e;
+  --nmdd-ink-muted: #5a6576;
+  --nmdd-accent: #2f5aa8;
+  --nmdd-accent-ink: #ffffff;
+
+  --nmdd-excellent: #1f8a5f;
+  --nmdd-normal: #2f5aa8;
+  --nmdd-mild: #b8791a;
+  --nmdd-reduced: #b23b3b;
+  --nmdd-neutral: #8a94a6;
+
+  --nmdd-danger-bg: #fdecec;
+  --nmdd-danger-border: #e6b3b3;
+  --nmdd-warn-bg: #fdf4e3;
+  --nmdd-warn-border: #e8cf9c;
+  --nmdd-info-bg: #eaf1fb;
+  --nmdd-info-border: #bcd2ef;
+
+  --nmdd-radius: 10px;
+  --nmdd-shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.08);
+  --nmdd-font: 'Inter', 'Segoe UI', sans-serif;
+}
+
+[data-theme='dark'] {
+  --nmdd-bg: #0f1420;
+  --nmdd-surface: #161d2c;
+  --nmdd-surface-muted: #1d2536;
+  --nmdd-border: #2a3245;
+  --nmdd-ink: #e8ecf4;
+  --nmdd-ink-muted: #9aa5b8;
+  --nmdd-accent: #6f9ceb;
+  --nmdd-accent-ink: #0f1420;
+
+  --nmdd-excellent: #3fbf8a;
+  --nmdd-normal: #6f9ceb;
+  --nmdd-mild: #e0aa4d;
+  --nmdd-reduced: #e2716f;
+  --nmdd-neutral: #7a869c;
+
+  --nmdd-danger-bg: #2c1a1a;
+  --nmdd-danger-border: #5a2e2e;
+  --nmdd-warn-bg: #2c2716;
+  --nmdd-warn-border: #5a4d2e;
+  --nmdd-info-bg: #182233;
+  --nmdd-info-border: #2e3f5a;
+}
+
+/* 2026-08-23: scoped under .nmdd-root instead of html/body/# root --
+   this stylesheet now loads inside app_page (see FullDoctorDashboard.jsx)
+   alongside app_page's own theme.css, rather than owning the whole
+   document the way it did as a standalone app. app_page's theme.css
+   already provides the box-sizing/height resets for the real <body>; this
+   just recreates the same look (background/ink/font) scoped to the
+   dashboard's own subtree so it can't leak into the patient/caregiver
+   chrome around it. */
+.nmdd-root {
+  min-height: 100%;
+  background: var(--nmdd-bg);
+  color: var(--nmdd-ink);
+  font-family: var(--nmdd-font);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.nmdd-root button, .nmdd-root input, .nmdd-root select, .nmdd-root textarea {
+  font-family: inherit; font-size: inherit; color: inherit;
+}
+
+/* ---------- Shell / navigation ---------- */
+.nmdd-shell { display: flex; flex-direction: column; min-height: 100vh; }
+
+.nmdd-topbar {
+  display: flex; align-items: center; gap: 24px;
+  padding: 14px 24px; background: var(--nmdd-surface);
+  border-bottom: 1px solid var(--nmdd-border);
+  position: sticky; top: 0; z-index: 10;
+}
+.nmdd-topbar__brand { display: flex; align-items: center; gap: 10px; }
+.nmdd-topbar__logo {
+  width: 34px; height: 34px; border-radius: 8px; background: var(--nmdd-accent);
+  color: var(--nmdd-accent-ink); display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
+}
+.nmdd-topbar__title { font-weight: 700; font-size: 15px; }
+.nmdd-topbar__subtitle { font-size: 12px; color: var(--nmdd-ink-muted); }
+.nmdd-topbar__nav { display: flex; gap: 4px; margin-left: 16px; }
+.nmdd-topbar__navitem {
+  background: none; border: 1px solid transparent; border-radius: 8px;
+  padding: 8px 14px; cursor: pointer; color: var(--nmdd-ink-muted); font-weight: 600;
+}
+.nmdd-topbar__navitem.is-active { background: var(--nmdd-surface-muted); color: var(--nmdd-ink); border-color: var(--nmdd-border); }
+.nmdd-topbar__actions { margin-left: auto; }
+.nmdd-theme-toggle {
+  background: var(--nmdd-surface-muted); border: 1px solid var(--nmdd-border);
+  border-radius: 8px; padding: 8px 12px; cursor: pointer; font-weight: 600;
+}
+
+.nmdd-shell__main { flex: 1; padding: 24px; max-width: 1180px; margin: 0 auto; width: 100%; }
+.nmdd-shell__footer {
+  padding: 14px 24px; text-align: center; font-size: 12px; color: var(--nmdd-ink-muted);
+  border-top: 1px solid var(--nmdd-border);
+}
+
+/* ---------- Cards ---------- */
+.nmdd-card {
+  background: var(--nmdd-surface); border: 1px solid var(--nmdd-border);
+  border-radius: var(--nmdd-radius); box-shadow: var(--nmdd-shadow);
+  padding: 20px; margin-bottom: 20px;
+}
+.nmdd-card__header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+.nmdd-card__title { font-size: 16px; font-weight: 700; margin: 0; }
+.nmdd-card__subtitle { font-size: 13px; color: var(--nmdd-ink-muted); margin: 2px 0 0; }
+.nmdd-card__footnote { font-size: 13px; color: var(--nmdd-ink-muted); margin-top: 12px; }
+
+.nmdd-report__row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.nmdd-report__row .nmdd-card { margin-bottom: 0; }
+.nmdd-report__topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+
+/* ---------- Badges / tags ---------- */
+.nmdd-badge {
+  display: inline-flex; align-items: center; border-radius: 999px;
+  padding: 4px 12px; font-weight: 700; font-size: 12.5px; border: 1px solid transparent;
+}
+.nmdd-badge--lg { padding: 6px 16px; font-size: 14px; }
+.nmdd-badge--sm { padding: 2px 9px; font-size: 11.5px; }
+.nmdd-badge--excellent { background: color-mix(in srgb, var(--nmdd-excellent) 16%, transparent); color: var(--nmdd-excellent); }
+.nmdd-badge--normal { background: color-mix(in srgb, var(--nmdd-normal) 16%, transparent); color: var(--nmdd-normal); }
+.nmdd-badge--mild { background: color-mix(in srgb, var(--nmdd-mild) 18%, transparent); color: var(--nmdd-mild); }
+.nmdd-badge--reduced { background: color-mix(in srgb, var(--nmdd-reduced) 18%, transparent); color: var(--nmdd-reduced); }
+.nmdd-badge--neutral { background: var(--nmdd-surface-muted); color: var(--nmdd-ink-muted); }
+
+.nmdd-tag {
+  display: inline-block; background: var(--nmdd-surface-muted); border: 1px solid var(--nmdd-border);
+  border-radius: 999px; padding: 3px 10px; font-size: 12px; margin: 2px 4px 2px 0;
+}
+.nmdd-tag--muted { color: var(--nmdd-ink-muted); }
+.nmdd-tag--danger { background: var(--nmdd-danger-bg); border-color: var(--nmdd-danger-border); color: var(--nmdd-reduced); }
+.nmdd-tag--warn { background: var(--nmdd-warn-bg); border-color: var(--nmdd-warn-border); color: var(--nmdd-mild); }
+.nmdd-tag--info { background: var(--nmdd-info-bg); border-color: var(--nmdd-info-border); color: var(--nmdd-normal); }
+.nmdd-taglist, .nmdd-tasklist { list-style: none; margin: 6px 0 0; padding: 0; }
+.nmdd-tasklist { list-style: disc; padding-left: 18px; font-size: 13px; color: var(--nmdd-ink-muted); }
+
+/* ---------- Key/value pairs ---------- */
+.nmdd-kv { display: flex; flex-direction: column; gap: 2px; }
+.nmdd-kv__label { font-size: 12px; color: var(--nmdd-ink-muted); text-transform: uppercase; letter-spacing: 0.03em; }
+.nmdd-kv__value { font-size: 14px; font-weight: 600; }
+
+.nmdd-overview__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 20px; }
+.nmdd-overview__risks { margin-top: 16px; }
+
+/* ---------- Summary card ---------- */
+.nmdd-summary-card__main { display: flex; align-items: center; gap: 20px; }
+.nmdd-summary-card__score { font-size: 48px; font-weight: 800; line-height: 1; }
+.nmdd-summary-card__meta { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.nmdd-summary-card__interpretation { margin-top: 14px; color: var(--nmdd-ink-muted); }
+
+/* ---------- Trend ---------- */
+.nmdd-trend { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: 13px; }
+.nmdd-trend--up { color: var(--nmdd-excellent); }
+.nmdd-trend--down { color: var(--nmdd-reduced); }
+.nmdd-trend--flat { color: var(--nmdd-ink-muted); }
+.nmdd-trend--neutral { color: var(--nmdd-neutral); }
+.nmdd-trend--volatile { color: var(--nmdd-mild); }
+.nmdd-trend__delta { color: var(--nmdd-ink-muted); font-weight: 500; }
+
+/* ---------- Domain / lobe grids ---------- */
+.nmdd-domain-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.nmdd-domaincard { border: 1px solid var(--nmdd-border); border-radius: 8px; padding: 14px; background: var(--nmdd-surface-muted); }
+.nmdd-domaincard__header { display: flex; justify-content: space-between; align-items: center; }
+.nmdd-domaincard__label { font-weight: 700; font-size: 13.5px; }
+.nmdd-domaincard__score { font-size: 26px; font-weight: 800; margin: 6px 0; }
+.nmdd-domaincard__interpretation { font-size: 12.5px; color: var(--nmdd-ink-muted); margin: 0; }
+
+.nmdd-lobe-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.nmdd-lobecard { border: 1px solid var(--nmdd-border); border-radius: 8px; padding: 16px; background: var(--nmdd-surface-muted); }
+.nmdd-lobecard__header { display: flex; justify-content: space-between; align-items: center; }
+.nmdd-lobecard__title { margin: 0; font-size: 15px; }
+.nmdd-lobecard__score { font-size: 28px; font-weight: 800; margin: 6px 0 10px; }
+.nmdd-lobecard__section { margin-bottom: 10px; }
+.nmdd-lobecard__explanation { font-size: 13px; color: var(--nmdd-ink-muted); margin: 8px 0 0; }
+
+/* ---------- Score bars ---------- */
+.nmdd-scorebar { margin-bottom: 12px; }
+.nmdd-scorebar__row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+.nmdd-scorebar__value { font-weight: 700; }
+.nmdd-scorebar__track { height: 8px; border-radius: 999px; background: var(--nmdd-surface-muted); border: 1px solid var(--nmdd-border); overflow: hidden; }
+.nmdd-scorebar__fill { height: 100%; }
+
+/* ---------- Speech grid ---------- */
+.nmdd-speech-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.nmdd-speech-metric { border: 1px solid var(--nmdd-border); border-radius: 8px; padding: 10px 12px; }
+.nmdd-speech-metric__header { display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 13.5px; margin-bottom: 4px; }
+
+/* ---------- Questionnaire grid ---------- */
+.nmdd-questionnaire-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 20px; }
+
+/* ---------- Longitudinal ---------- */
+.nmdd-longitudinal { display: flex; flex-direction: column; gap: 20px; }
+.nmdd-longitudinal__row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+.nmdd-card--preview { border-style: dashed; border-color: var(--nmdd-mild); }
+.nmdd-research-badge {
+  display: inline-flex; align-items: center; margin-left: 8px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+  padding: 3px 9px; border-radius: 999px;
+  background: color-mix(in srgb, var(--nmdd-mild) 18%, transparent); color: var(--nmdd-mild);
+}
+
+.nmdd-trendintel { display: flex; flex-direction: column; gap: 14px; }
+.nmdd-trendintel__headline { display: flex; align-items: center; justify-content: space-between; }
+.nmdd-trendintel__stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.nmdd-trendintel__domains ul { display: flex; flex-direction: column; gap: 8px; }
+.nmdd-subheading { font-size: 13px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--nmdd-ink-muted); margin: 0 0 8px; }
+.nmdd-trend-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.nmdd-trend-list li { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--nmdd-border); padding-bottom: 6px; }
+
+/* ---------- Charts ---------- */
+.nmdd-linechart, .nmdd-barchart { width: 100%; height: auto; }
+.nmdd-linechart__gridline { stroke: var(--nmdd-border); stroke-width: 1; }
+.nmdd-linechart__path { stroke: var(--nmdd-accent); stroke-width: 2.5; }
+.nmdd-linechart__point { fill: var(--nmdd-accent); }
+.nmdd-linechart__xlabel { font-size: 10px; fill: var(--nmdd-ink-muted); }
+.nmdd-barchart__label { font-size: 12px; fill: var(--nmdd-ink); dominant-baseline: middle; }
+.nmdd-barchart__value { font-size: 12px; fill: var(--nmdd-ink-muted); dominant-baseline: middle; }
+.nmdd-barchart__track { fill: var(--nmdd-surface-muted); stroke: var(--nmdd-border); }
+.nmdd-chart-empty { padding: 20px; text-align: center; color: var(--nmdd-ink-muted); font-size: 13px; }
+
+/* ---------- Alerts ---------- */
+.nmdd-alert { border-radius: 8px; padding: 12px 14px; font-size: 13.5px; margin-top: 12px; }
+.nmdd-alert--danger { background: var(--nmdd-danger-bg); border: 1px solid var(--nmdd-danger-border); color: var(--nmdd-reduced); }
+.nmdd-alert--warn { background: var(--nmdd-warn-bg); border: 1px solid var(--nmdd-warn-border); color: var(--nmdd-mild); }
+.nmdd-alert--info { background: var(--nmdd-info-bg); border: 1px solid var(--nmdd-info-border); color: var(--nmdd-normal); }
+.nmdd-alert ul { margin: 6px 0 0; padding-left: 18px; }
+
+/* 2026-08-23: minimal list styles for ConnectionRequestsScreen.jsx (and any
+   other simple doctor-dashboard list that isn't the triage table). */
+.nmdd-list { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.nmdd-list__item { padding: 12px 14px; border-radius: 8px; border: 1px solid var(--nmdd-border); background: var(--nmdd-surface); }
+.nmdd-badge {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px;
+  border-radius: 999px; background: var(--nmdd-accent); color: #fff; font-size: 11px; font-weight: 700;
+  padding: 0 5px; margin-left: 6px;
+}
+
+/* ---------- Notes ---------- */
+.nmdd-notes-list { list-style: none; margin: 0 0 14px; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.nmdd-note { border: 1px solid var(--nmdd-border); border-radius: 8px; padding: 10px 12px; background: var(--nmdd-surface-muted); }
+.nmdd-note__meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--nmdd-ink-muted); margin-bottom: 4px; }
+.nmdd-note-form { display: flex; flex-direction: column; gap: 8px; }
+.nmdd-textarea {
+  width: 100%; border: 1px solid var(--nmdd-border); border-radius: 8px; padding: 10px;
+  background: var(--nmdd-surface); color: var(--nmdd-ink); resize: vertical;
+}
+
+/* ---------- Recommendations ---------- */
+.nmdd-recommendation-list { margin: 0; padding-left: 20px; }
+.nmdd-recommendation-list li { margin-bottom: 6px; }
+
+/* ---------- Buttons / inputs ---------- */
+.nmdd-button {
+  border-radius: 8px; padding: 9px 16px; font-weight: 700; cursor: pointer; border: 1px solid transparent;
+}
+.nmdd-button--primary { background: var(--nmdd-accent); color: var(--nmdd-accent-ink); }
+.nmdd-button--primary:disabled { opacity: 0.6; cursor: default; }
+.nmdd-button--secondary { background: var(--nmdd-surface-muted); border-color: var(--nmdd-border); color: var(--nmdd-ink); align-self: flex-start; }
+.nmdd-link { background: none; border: none; color: var(--nmdd-accent); font-weight: 700; cursor: pointer; padding: 0; }
+
+.nmdd-input, .nmdd-select {
+  border: 1px solid var(--nmdd-border); border-radius: 8px; padding: 8px 12px;
+  background: var(--nmdd-surface); color: var(--nmdd-ink);
+}
+/* 2026-08-22 (i18n pass): the language switcher reuses .nmdd-select's base
+   look (a plain native <select>, not a custom popover -- see
+   LanguageSelector.jsx's own comment on why this stays simpler than
+   app_page's language menu) with a bit less padding so it sits comfortably
+   next to .nmdd-theme-toggle in the top bar and on the login card. */
+.nmdd-language-select { padding: 8px 10px; cursor: pointer; font-weight: 600; }
+.nmdd-checkbox { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; }
+
+.nmdd-filterbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+/* ---------- Table ---------- */
+.nmdd-table { width: 100%; border-collapse: collapse; }
+.nmdd-table th { text-align: left; font-size: 12px; text-transform: uppercase; color: var(--nmdd-ink-muted); border-bottom: 1px solid var(--nmdd-border); padding: 8px 10px; }
+.nmdd-table td { padding: 10px; border-bottom: 1px solid var(--nmdd-border); vertical-align: top; font-size: 13.5px; }
+.nmdd-row--flagged { background: color-mix(in srgb, var(--nmdd-reduced) 6%, transparent); }
+.nmdd-row__sub { font-size: 11.5px; color: var(--nmdd-ink-muted); margin-top: 2px; }
+
+/* ---------- Empty state ---------- */
+.nmdd-empty { text-align: center; padding: 60px 20px; color: var(--nmdd-ink-muted); }
+.nmdd-empty__title { font-weight: 700; color: var(--nmdd-ink); }
+
+.nmdd-muted { color: var(--nmdd-ink-muted); font-size: 13px; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .nmdd-domain-grid, .nmdd-lobe-grid, .nmdd-report__row, .nmdd-overview__grid,
+  .nmdd-longitudinal__row, .nmdd-questionnaire-grid, .nmdd-speech-grid,
+  .nmdd-trendintel__stats {
+    grid-template-columns: 1fr;
+  }
+  .nmdd-topbar { flex-wrap: wrap; }
+}
+
+/* File-protocol warning (shown only when opened via file://, see index.html) */
+.nmdd-file-protocol-warning {
+  background: var(--nmdd-danger-bg); border: 1px solid var(--nmdd-danger-border);
+  color: var(--nmdd-reduced); padding: 16px 20px; border-radius: 8px; margin: 20px;
+  font-family: var(--nmdd-font);
+}
+
+.nmdd-raw-json {
+  background: var(--nmdd-surface-muted); border: 1px solid var(--nmdd-border);
+  border-radius: 8px; padding: 12px; font-size: 12px; overflow-x: auto;
+  max-height: 320px; overflow-y: auto;
+}
+
+/* ---------- Doctor auth (login / signup / access pending) ---------- */
+.nmdd-auth {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: var(--nmdd-bg); padding: 24px;
+}
+.nmdd-auth__card { width: 100%; max-width: 400px; }
+.nmdd-auth__header { text-align: center; margin-bottom: 22px; }
+.nmdd-auth__logo {
+  width: 44px; height: 44px; border-radius: 10px; background: var(--nmdd-accent);
+  color: var(--nmdd-accent-ink); display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 18px; margin: 0 auto 12px;
+}
+.nmdd-auth__title { font-size: 18px; font-weight: 700; margin: 0; }
+.nmdd-auth__subtitle { font-size: 13px; color: var(--nmdd-ink-muted); margin: 6px 0 0; }
+.nmdd-auth__form { display: flex; flex-direction: column; gap: 14px; }
+.nmdd-auth__field { display: flex; flex-direction: column; gap: 5px; }
+.nmdd-auth__field label { font-size: 11.5px; font-weight: 700; color: var(--nmdd-ink-muted); text-transform: uppercase; letter-spacing: 0.03em; }
+.nmdd-auth__field .nmdd-input { width: 100%; }
+.nmdd-auth__error { font-size: 12.5px; color: var(--nmdd-reduced); }
+.nmdd-auth__submit { width: 100%; justify-content: center; text-align: center; margin-top: 4px; }
+.nmdd-auth__divider { display: flex; align-items: center; gap: 10px; color: var(--nmdd-ink-muted); font-size: 12px; margin: 6px 0; }
+.nmdd-auth__divider::before, .nmdd-auth__divider::after { content: ''; flex: 1; height: 1px; background: var(--nmdd-border); }
+.nmdd-auth__google-btn {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
+  border: 1px solid var(--nmdd-border); border-radius: 8px; padding: 9px 16px;
+  background: var(--nmdd-surface); color: var(--nmdd-ink); font-weight: 700; cursor: pointer;
+}
+.nmdd-auth__google-btn:disabled { opacity: 0.6; cursor: default; }
+.nmdd-auth__google-glyph {
+  width: 18px; height: 18px; border-radius: 4px; background: var(--nmdd-surface-muted);
+  border: 1px solid var(--nmdd-border); display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; color: var(--nmdd-accent);
+}
+.nmdd-auth__switch { text-align: center; font-size: 13px; color: var(--nmdd-ink-muted); margin-top: 16px; }
+.nmdd-auth__footnote { text-align: center; font-size: 12px; color: var(--nmdd-ink-muted); margin-top: 18px; }
+.nmdd-auth__theme-row { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 18px; }
+
+.nmdd-access-pending__icon {
+  width: 48px; height: 48px; border-radius: 50%; background: var(--nmdd-warn-bg);
+  border: 1px solid var(--nmdd-warn-border); color: var(--nmdd-mild);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; font-weight: 800; margin: 0 auto 14px;
+}
+.nmdd-access-pending__email {
+  background: var(--nmdd-surface-muted); border: 1px solid var(--nmdd-border);
+  border-radius: 8px; padding: 8px 12px; font-size: 13px; font-weight: 600;
+  text-align: center; margin: 12px 0;
+}
+.nmdd-access-pending__steps { font-size: 13px; color: var(--nmdd-ink-muted); padding-left: 18px; margin: 12px 0; }
+.nmdd-access-pending__steps li { margin-bottom: 6px; }
+
+.nmdd-session-loading {
+  min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 6px; background: var(--nmdd-bg); color: var(--nmdd-ink-muted); font-size: 13px;
+}
+.nmdd-session-loading__brand { font-weight: 800; font-size: 16px; color: var(--nmdd-ink); letter-spacing: 0.02em; }

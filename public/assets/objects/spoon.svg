@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--nm-ink, #1A2333)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Spoon">
+  <title>Spoon</title>
+  <ellipse cx="12" cy="7" rx="3.2" ry="4"/>
+  <path d="M12 11v9"/>
+</svg>

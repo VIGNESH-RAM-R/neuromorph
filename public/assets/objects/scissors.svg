@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--nm-ink, #1A2333)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Scissors">
+  <title>Scissors</title>
+  <circle cx="7" cy="7" r="2.3"/>
+  <circle cx="7" cy="17" r="2.3"/>
+  <path d="M9 8.5 19 17"/>
+  <path d="M9 15.5 19 7"/>
+</svg>

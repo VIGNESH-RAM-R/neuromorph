@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--nm-ink, #1A2333)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Bottle">
+  <title>Bottle</title>
+  <path d="M10 3h4v3.5l1.5 2V19a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2V8.5L10 6.5V3Z"/>
+  <path d="M10 3h4"/>
+</svg>

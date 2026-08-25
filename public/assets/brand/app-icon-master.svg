@@ -1,0 +1,22 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3a6fc4"/>
+      <stop offset="100%" stop-color="#1f3f7a"/>
+    </linearGradient>
+  </defs>
+  <!-- Maskable-safe: all meaningful content sits within the center ~80%
+       circle (radius 205px from center 256,256) so Android's adaptive-icon
+       masking never clips the path/node motif. -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <g stroke="#ffffff" stroke-width="14" stroke-linecap="round" fill="none" opacity="0.92">
+    <path d="M 140 340 L 210 250 L 300 290 L 372 172" />
+  </g>
+  <g fill="#ffffff">
+    <circle cx="140" cy="340" r="20"/>
+    <circle cx="210" cy="250" r="16"/>
+    <circle cx="300" cy="290" r="16"/>
+    <circle cx="372" cy="172" r="24"/>
+  </g>
+  <circle cx="372" cy="172" r="34" fill="none" stroke="#ffffff" stroke-width="4" opacity="0.4"/>
+</svg>

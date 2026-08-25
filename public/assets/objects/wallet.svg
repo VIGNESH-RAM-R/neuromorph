@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--nm-ink, #1A2333)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Wallet">
+  <title>Wallet</title>
+  <path d="M4 7h16v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7Z"/>
+  <path d="M4 7 6 4h9l2 3"/>
+  <path d="M15 13h3a1.5 1.5 0 0 1 0 3h-3a1.5 1.5 0 0 1 0-3Z"/>
+</svg>

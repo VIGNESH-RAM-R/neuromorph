@@ -1,0 +1,260 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // A patient's own private profile (daily/weekly history, onboarding
+    // answers) -- only that exact signed-in person, ever.
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // A doctor's own account record (professional profile, access-approval
+    // flag) -- only that exact signed-in person.
+    match /doctors/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Real, approved doctor check -- used below rather than just checking
+    // /doctors/{uid} existence. 2026-08-18 CORRECTION: a real doctor
+    // signup (app_page's useDoctorAuth.js) now creates a /doctors/{uid}
+    // document automatically, with accessApproved defaulted true (a
+    // disclosed placeholder -- no real admin-review backend exists yet).
+    // If this rule only checked existence, that app_page change would have
+    // silently made patient data readable by ANY signed-in doctor account
+    // going forward, enforced at the security-rule layer, not just the
+    // UI -- so the actual field is checked here, matching
+    // Doctor_Dashboard's FirestorePatientService.checkDoctorAccess (fixed
+    // the same day, same reasoning).
+    function isApprovedDoctor() {
+      return exists(/databases/$(database)/documents/doctors/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/doctors/$(request.auth.uid)).data.accessApproved == true;
+    }
+
+    // ==========================================================================
+    // 2026-08-23 ADDITION -- the doctor<->patient (and caregiver<->patient)
+    // connection system (see CARE_CONNECTION_PROMPT.md and
+    // FirestoreCareRelationshipService.js). Replaces the old "any approved
+    // doctor can read any patient" rule below with a real, per-relationship
+    // check -- a disclosed gap this closes, not a new restriction invented
+    // for its own sake.
+    //
+    // /careRelationships/{patientId}_{memberId} -- the deterministic doc id
+    // (patientId + '_' + memberId, never an auto id) is what lets the
+    // isAcceptedDoctorFor() check below be a cheap get()/exists() on an
+    // exact path instead of needing a `list` query inside a rule (rules
+    // can't run arbitrary queries).
+    function isAcceptedDoctorFor(patientId) {
+      let relPath = /databases/$(database)/documents/careRelationships/$(patientId + '_' + request.auth.uid);
+      return isApprovedDoctor() && exists(relPath) &&
+        get(relPath).data.status == 'accepted' && get(relPath).data.memberRole == 'doctor';
+    }
+
+    // 2026-08-23 ADDITION: the caregiver counterpart to isAcceptedDoctorFor
+    // above -- lets a caregiver with an ACCEPTED relationship to a patient
+    // act on that patient's behalf for a narrow, specific action (sending
+    // a doctor connection request from CareTeamSection.jsx, now rendered
+    // on the caregiver's own Home page too -- see that component's
+    // 2026-08-23 header comment). Deliberately does NOT grant any broader
+    // patient-data access -- this is only referenced by the
+    // careRelationships create rule below.
+    function isAcceptedCaregiverFor(patientId) {
+      let relPath = /databases/$(database)/documents/careRelationships/$(patientId + '_' + request.auth.uid);
+      return exists(relPath) &&
+        get(relPath).data.status == 'accepted' && get(relPath).data.memberRole == 'caregiver';
+    }
+
+    match /careRelationships/{relationshipId} {
+      // Either party named in the relationship can read it -- a patient
+      // needs to see their own sent requests/connections (CareTeamSection.jsx),
+      // a doctor/caregiver needs to see relationships addressed to them
+      // (ConnectionRequestsScreen.jsx / usePatientDirectory.js).
+      allow read: if request.auth != null &&
+        (request.auth.uid == resource.data.patientId || request.auth.uid == resource.data.memberId);
+
+      // Three distinct create paths:
+      //   1. A patient sends a DOCTOR request themselves -- written from
+      //      the patient's own session (auth.uid == patientId), always
+      //      starts 'pending'.
+      //   2. 2026-08-23 ADDITION: a CAREGIVER sends a doctor request ON
+      //      BEHALF OF their linked patient (auth.uid == memberId of an
+      //      existing accepted caregiver relationship for this same
+      //      patientId, checked via isAcceptedCaregiverFor) -- also starts
+      //      'pending', same as path 1, just initiated by a different
+      //      signed-in account.
+      //   3. 2026-08-23 REDESIGN: a caregiver redeems a valid invite code --
+      //      written from the CAREGIVER's own session (auth.uid ==
+      //      memberId), the code itself proves they have something the
+      //      patient shared with them -- but this NO LONGER lands directly
+      //      as 'accepted'. It now starts 'pending', same as a doctor
+      //      request, so the patient gets a real review/accept step
+      //      instead of an instant link -- see
+      //      sendCaregiverRequestAsCaregiver() and useCaregiverAuth.js.
+      allow create: if request.auth != null && (
+        (request.resource.data.memberRole == 'doctor' &&
+          request.resource.data.status == 'pending' &&
+          (request.auth.uid == request.resource.data.patientId ||
+            isAcceptedCaregiverFor(request.resource.data.patientId))) ||
+        (request.auth.uid == request.resource.data.memberId &&
+          request.resource.data.memberRole == 'caregiver' &&
+          request.resource.data.status == 'pending')
+      );
+
+      // Only the doctor named as memberId may accept/decline their own
+      // pending DOCTOR request; only the PATIENT may accept/decline a
+      // pending CAREGIVER request (2026-08-23 addition -- the caregiver
+      // redesign's whole point is that the patient, not the caregiver,
+      // controls this); the patient may revoke either kind once accepted.
+      allow update: if request.auth != null && (
+        (request.auth.uid == resource.data.memberId && resource.data.memberRole == 'doctor' &&
+          resource.data.status == 'pending' &&
+          request.resource.data.status in ['accepted', 'declined']) ||
+        (request.auth.uid == resource.data.patientId && resource.data.memberRole == 'caregiver' &&
+          resource.data.status == 'pending' &&
+          request.resource.data.status in ['accepted', 'declined']) ||
+        (request.auth.uid == resource.data.patientId &&
+          resource.data.status == 'accepted' &&
+          request.resource.data.status == 'revoked')
+      );
+
+      allow delete: if false;
+    }
+    // ==========================================================================
+
+    // The doctor-readable bridge collection (see DoctorDashboardExportEngine.js
+    // and FirestoreUserService.writePatientProfile/writePatientSession):
+    // identity fields + completed-session summaries only, never the
+    // patient's full private /users/{uid} document. The patient themselves
+    // can read/write their own; a doctor with an ACCEPTED careRelationship
+    // to this exact patient can read (never write) their bridge record.
+    //
+    // 2026-08-23 TIGHTENED: this used to grant read to isApprovedDoctor()
+    // alone -- ANY approved doctor, for ANY patient. That was a real,
+    // disclosed gap (see CARE_CONNECTION_PROMPT.md): listPatientRecords()
+    // was "safe" only because this rule happened to allow it. Now a doctor
+    // must have an accepted /careRelationships doc with this specific
+    // patient -- see isAcceptedDoctorFor() above.
+    match /patients/{uid} {
+      allow read: if request.auth != null && (request.auth.uid == uid || isAcceptedDoctorFor(uid));
+      allow write: if request.auth != null && request.auth.uid == uid;
+
+      // 2026-08-24 WIDENED: an accepted caregiver may also read (never
+      // write) their linked patient's completed-session records -- this is
+      // the read the weekly deep check-in's unlock trigger depends on (see
+      // CaregiverWeeklyUnlockEngine.js / FirestoreCaregiverService.
+      // getLatestAssessmentDateForPatient). Scoped to isAcceptedCaregiverFor
+      // this exact patient, same accepted-relationship gate the doctor read
+      // above uses.
+      match /sessions/{sessionId} {
+        allow read: if request.auth != null &&
+          (request.auth.uid == uid || isAcceptedDoctorFor(uid) || isAcceptedCaregiverFor(uid));
+        allow write: if request.auth != null && request.auth.uid == uid;
+      }
+
+      // 2026-08-19: the daily Daily Set / Momentum Score bridge (see
+      // DoctorDashboardExportEngine.buildDailyMomentumRecord and
+      // FirestoreUserService.writePatientDailyMomentum) -- same read/write
+      // shape as /sessions above, kept as its own subcollection so it stays
+      // a clearly separate signal (daily engagement) from /sessions (weekly
+      // clinical score), same distinction MomentumScoreEngine's own header
+      // comment makes on the patient side.
+      match /dailyMomentum/{date} {
+        allow read: if request.auth != null && (request.auth.uid == uid || isAcceptedDoctorFor(uid));
+        allow write: if request.auth != null && request.auth.uid == uid;
+      }
+
+      // ======================================================================
+      // 2026-08-20 ADDITION -- NOT YET DEPLOYED. Read this before assuming
+      // Doctor Dashboard clinical notes work live.
+      //
+      // Doctor-writable clinical notes (see Doctor_Dashboard's
+      // FirestorePatientService.addDoctorNote/listDoctorNotes and
+      // usePatientReport.js). Everywhere else in this file, a doctor account
+      // can only READ a patient's bridge data, never write it -- this is the
+      // one deliberate exception, scoped as narrowly as possible:
+      //   - Only a doctor with an accepted relationship to this patient
+      //     (isAcceptedDoctorFor(), tightened 2026-08-23 -- previously
+      //     isApprovedDoctor() alone) may create a note, and only with
+      //     their own uid as authorUid (can't author a note as someone
+      //     else).
+      //   - No doctor -- including the note's own author -- may update or
+      //     delete a note once written (`allow update, delete: if false`).
+      //     The app never offers an edit/delete UI for notes, so the rule
+      //     matches actual behavior instead of granting unused write scope.
+      //   - The patient themselves gets NO access here (no read, no write) --
+      //     clinical notes are a doctor-to-doctor continuity-of-care record,
+      //     not part of the patient's own bridge data.
+      //
+      // TODO(VR): this rule is written and reviewed but NOT deployed to the
+      // live Firebase project -- this sandbox has no Firebase CLI
+      // credentials and deploying is explicitly out of scope for an
+      // automated session. Doctor notes will fail with a `permission-denied`
+      // error (surfaced honestly in the UI, not swallowed) until you run
+      // `firebase deploy --only firestore:rules` yourself. See PROGRESS.md's
+      // 2026-08-20 entry for the full context.
+      // ======================================================================
+      match /doctorNotes/{noteId} {
+        allow read: if request.auth != null && isAcceptedDoctorFor(uid);
+        allow create: if request.auth != null && isAcceptedDoctorFor(uid)
+          && request.resource.data.authorUid == request.auth.uid;
+        allow update, delete: if false;
+      }
+    }
+
+    // A caregiver's own account record (linked patient, onboarding answers,
+    // daily check-in history) -- only that exact signed-in person can
+    // WRITE it, ever.
+    //
+    // 2026-08-23 READ WIDENED (disclosed, deliberate): a doctor with an
+    // ACCEPTED careRelationship to this caregiver's linked patient may now
+    // also READ (never write) this document -- see
+    // CaregiverResponsesPanel.jsx / FirestoreCaregiverService.
+    // getCaregiverForPatient. `resource.data.linkedPatientUid` is checked
+    // defensively (a brand-new, not-yet-linked caregiver has it as null,
+    // and isAcceptedDoctorFor(null) safely resolves false rather than
+    // erroring) so an unlinked caregiver's document is never exposed to
+    // any doctor.
+    match /caregivers/{uid} {
+      allow read: if request.auth != null && (
+        request.auth.uid == uid ||
+        (resource.data.linkedPatientUid != null && isAcceptedDoctorFor(resource.data.linkedPatientUid))
+      );
+      allow write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // 2026-08-19: the patient <-> caregiver invite-code pairing mechanism
+    // (see InviteCodeEngine.js / FirestoreCaregiverService.js). Each
+    // document's id IS the code itself -- `get` (fetch by exact id) is
+    // allowed for any signed-in user, since a caregiver needs to resolve a
+    // code they don't yet have any other relationship to the patient
+    // through. Deliberately NO `list` permission granted here (Firestore
+    // rules default-deny anything not explicitly allowed), so the
+    // /inviteCodes collection can never be enumerated or scanned -- a code
+    // is only usable if you already have the exact string the patient
+    // shared with you. Only the patient who created a code may update or
+    // delete (revoke) it.
+    match /inviteCodes/{code} {
+      allow get: if request.auth != null;
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.patientUid;
+      allow update, delete: if request.auth != null && request.auth.uid == resource.data.patientUid;
+    }
+
+    // 2026-08-25 ADDITION -- the platform-wide doctor access key gate (see
+    // useDoctorAuth.js's ACCESS-APPROVAL SCOPE NOTE / FirestoreDoctorService.
+    // resolveAccessKey). A doctor may only `get` a key by its exact id to
+    // validate one they were given -- same "no `list`, unguessable by
+    // enumeration" convention as /inviteCodes above. Deliberately NO
+    // `create`/`update`/`delete` allowed from any client at all: a key is
+    // never self-issued by a doctor account, it must be seeded directly in
+    // the Firebase console by an admin (e.g. { active: true, label: "City
+    // Hospital" }) -- same disclosed "no real admin backend yet" scope note
+    // this project already uses elsewhere (see doctorNotes above).
+    match /doctorAccessKeys/{key} {
+      allow get: if request.auth != null;
+      allow create, update, delete: if false;
+    }
+
+    // Deny everything else by default (Firestore's Production-mode
+    // default already does this once no rule matches -- listed here only
+    // so the intent is explicit, not implicit).
+  }
+}

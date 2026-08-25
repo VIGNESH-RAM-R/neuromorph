@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--nm-ink, #1A2333)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Book">
+  <title>Book</title>
+  <path d="M4 5.5c2-1 5-1 7 .5 2-1.5 5-1.5 7-.5v13c-2-1-5-1-7 .5-2-1.5-5-1.5-7-.5V5.5Z"/>
+  <path d="M11 6v13"/>
+</svg>

@@ -1,0 +1,5962 @@
+/* =========================================================================
+   NEUROMORPH — design system
+   Professional, clinical, calm. Dark navy + white/light-gray + blue accent.
+   ========================================================================= */
+
+:root {
+  --navy-900: #0F2440;
+  --navy-800: #16324F;
+  --navy-700: #1E3A5F;
+  --blue-600: #2563EB;
+  --blue-100: #DCE7FB;
+  --green-600: #16A34A;
+  --red-600: #DC2626;
+  --yellow-500: #EAB308;
+  --purple-700: #155AA8;
+  --purple-500: #2878C9;
+  --violet-100: #E5F1FC;
+  --lavender-50: #F4F9FE;
+  --teal-600: #0D9488;
+  --teal-700: #0F766E;
+  --teal-100: #CCFBF1;
+  --teal-tint-50: #F0FBFA;
+  --indigo-600: #1D70C9;
+  --indigo-700: #155AA8;
+  --indigo-100: #DCEBFA;
+  --indigo-tint-50: #F4F9FE;
+  --green-700: #15803D;
+  --green-tint-50: #F2FBF5;
+  --grass-500: #4CAF50;
+  --grass-600: #3F9A43;
+  --grass-700: #327C36;
+  --wood-500: #B98356;
+  --wood-700: #8B5E34;
+  --hole-950: #241812;
+  --gray-50: #F7F9FC;
+  --gray-100: #EEF1F6;
+  --gray-200: #E5E9F0;
+  --gray-400: #97A3B6;
+  --gray-600: #5B6779;
+  --text-primary: #16202E;
+  --text-secondary: #4B5A6C;
+  --surface: #FFFFFF;
+  --bg: #F4F6FA;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --shadow-sm: 0 1px 3px rgba(15, 36, 64, 0.08);
+  --shadow-md: 0 8px 24px rgba(15, 36, 64, 0.10);
+  --font-sans: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-heading: 'Manrope', 'Segoe UI', system-ui, sans-serif;
+  --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.45);
+}
+
+/* 2026-08-23: scoped under .oddball-root instead of html/body/#root/bare
+   element selectors -- this stylesheet now loads inside app_page (see
+   OddballGamesLauncher.jsx) alongside app_page's own theme.css, instead of
+   owning the whole document the way it did as a standalone app. app_page's
+   theme.css already provides the box-sizing reset for the real <body>;
+   this recreates the same look (background/ink/font/heading resets)
+   scoped to the games subtree so it can't leak into the patient/caregiver/
+   doctor chrome around it. */
+.oddball-root {
+  min-height: 100%;
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text-primary);
+  font-size: 17px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+.oddball-root button {
+  font-family: inherit;
+}
+
+.oddball-root button:focus-visible,
+.oddball-root [tabindex]:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.oddball-root h1,
+.oddball-root h2,
+.oddball-root h3 {
+  margin: 0;
+  color: var(--navy-900);
+  font-family: var(--font-heading);
+}
+
+.oddball-root p {
+  margin: 0;
+}
+
+/* =========================================================================
+   Shared building blocks
+   ========================================================================= */
+
+.oddball-btn {
+  font-size: 1.05rem;
+  font-weight: 600;
+  padding: 16px 32px;
+  border-radius: var(--radius-md);
+  border: 2px solid transparent;
+  cursor: pointer;
+  min-height: 56px;
+  min-width: 220px;
+  transition: transform 0.08s ease, box-shadow 0.15s ease;
+}
+
+.oddball-btn:active {
+  transform: translateY(1px);
+}
+
+.oddball-btn--primary {
+  background: var(--blue-600);
+  color: #fff;
+  box-shadow: var(--shadow-sm);
+}
+
+.oddball-btn--primary:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.oddball-btn--secondary {
+  background: transparent;
+  color: var(--navy-800);
+  border-color: var(--gray-200);
+}
+
+.oddball-btn--secondary:hover {
+  border-color: var(--navy-700);
+}
+
+.oddball-btn--danger {
+  background: var(--red-600);
+  color: #fff;
+  box-shadow: var(--shadow-sm);
+}
+
+.oddball-btn--danger:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.oddball-link-btn {
+  margin-top: 20px;
+  background: none;
+  border: none;
+  color: var(--blue-600);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 8px;
+}
+
+.oddball-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.oddball-eyebrow {
+  display: block;
+  letter-spacing: 0.14em;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--blue-600);
+  text-transform: uppercase;
+}
+
+.oddball-heading {
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.oddball-subheading {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--navy-800);
+  margin-bottom: 12px;
+}
+
+.oddball-subheading-muted {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+}
+
+.oddball-section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--navy-800);
+  margin: 32px 0 14px;
+}
+
+.oddball-lead {
+  font-size: 1.15rem;
+  color: var(--text-secondary);
+  max-width: 620px;
+  margin: 16px auto 0;
+}
+
+.oddball-hint {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  margin-top: 18px;
+  text-align: center;
+}
+
+/* =========================================================================
+   Module shell
+
+   Every module (Oddball, Sequence Memory, Point & Click, Image Pairs,
+   Whack the Mole, and any future one) shares this same dark NEUROMORPH PCB
+   background — see .assessment-bg below — instead of each module tinting
+   its own light background color. The white .oddball-screen card and its
+   per-module accent border (.seq-screen / .pc-screen / .ip-screen /
+   .wm-screen) are unchanged.
+   ========================================================================= */
+
+.oddball-module {
+  min-height: 100vh;
+  /* z-index: 0 (not just position: relative) is required here — without an
+     explicit z-index this element never forms its own stacking context, so
+     the z-index: -1 on .assessment-bg below would escape past it and paint
+     behind the whole page instead of just behind this module's own
+     content, hiding the image entirely. */
+  position: relative;
+  z-index: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 32px 16px 64px;
+}
+
+/* Fixed, full-viewport PCB/circuit background shared by every assessment
+   module — reuses the exact same photo as the Cognitive Dashboard
+   (circuit-network-bg.webp) so moving from the dashboard into an
+   assessment feels like the same product. Negative z-index keeps it behind
+   the module's own content (see the z-index note above) without needing
+   any change to existing screen/card components. Static image, no
+   animation, no tint — shown as-is like the dashboard's background. */
+.assessment-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: url('./assets/circuit-network-bg.webp');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 60% 30%;
+  background-attachment: fixed;
+  background-color: #050912;
+}
+
+/* Opt-in override for the Visual Oddball module only (see the `variant`
+   prop on AssessmentBackground.jsx). Every other property (fixed position,
+   z-index, no overlay) is inherited unchanged from .assessment-bg above;
+   every other module's PCB background is completely untouched. */
+.assessment-bg--oddball {
+  background-color: #0a0a2a;
+}
+
+/* Opt-in override for the Image Pairs module only (see the `variant` prop
+   on AssessmentBackground.jsx). Every other property (fixed position,
+   z-index, cover sizing, no overlay) is inherited unchanged from
+   .assessment-bg above; every other module's PCB background is completely
+   untouched. */
+.assessment-bg--imagepairs {
+  background-image: url('./assets/imagepairs-bg.webp');
+  background-position: center 42%;
+  background-color: #050414;
+}
+
+/* Oddball's background is a <video> element (not a div), so it needs its
+   own sizing rules instead of the background-image ones above — same
+   fixed/full-viewport/no-overlay behavior, achieved via object-fit: cover
+   instead of background-size: cover. */
+.assessment-bg--video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* No tint/overlay on top of this one, by design — the circuit-board photo
+   is shown as-is (same as the reference image), not darkened or
+   color-washed. The opaque white .oddball-screen card already gives the
+   actual task content all the contrast it needs. */
+
+.oddball-screen {
+  width: 100%;
+  max-width: 760px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 40px 36px 44px;
+  text-align: center;
+  margin-top: 24px;
+}
+
+.oddball-screen--focus {
+  background: var(--surface);
+}
+
+/* =========================================================================
+   Intro
+   ========================================================================= */
+
+.oddball-brain-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.oddball-title {
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  font-weight: 800;
+  margin: 6px 0 14px;
+}
+
+.oddball-info-grid {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 28px 0;
+}
+
+.oddball-info-card {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 16px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 160px;
+}
+
+.oddball-info-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.oddball-info-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--navy-900);
+}
+
+.oddball-domains {
+  margin: 8px 0 8px;
+}
+
+.oddball-domains-label {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+}
+
+.oddball-domain-tags {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.oddball-tag {
+  background: var(--blue-100);
+  color: var(--navy-800);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 8px 16px;
+  border-radius: 999px;
+}
+
+/* =========================================================================
+   Instructions
+   ========================================================================= */
+
+.oddball-instruction-list {
+  text-align: left;
+  max-width: 480px;
+  margin: 20px auto;
+  padding-left: 24px;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  line-height: 1.9;
+}
+
+.oddball-example {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  margin: 24px auto;
+  max-width: 520px;
+}
+
+.oddball-example-row {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  font-size: 2rem;
+  color: var(--blue-600);
+  margin-bottom: 14px;
+}
+
+.oddball-example-target {
+  color: var(--red-600);
+  font-weight: 700;
+}
+
+.oddball-example-legend {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  flex-wrap: wrap;
+  font-size: 0.98rem;
+  color: var(--text-secondary);
+}
+
+.oddball-legend-mark {
+  color: var(--blue-600);
+  font-weight: 700;
+  margin-right: 4px;
+}
+
+.oddball-legend-mark--target {
+  color: var(--red-600);
+}
+
+.oddball-example-note {
+  color: var(--text-secondary);
+  font-size: 1.02rem;
+  max-width: 520px;
+  margin: 0 auto 8px;
+}
+
+.oddball-prep-list {
+  text-align: left;
+  max-width: 480px;
+  margin: 28px auto 0;
+}
+
+.oddball-prep-list ul {
+  padding-left: 22px;
+  color: var(--text-secondary);
+  line-height: 1.9;
+}
+
+/* =========================================================================
+   Practice / Game (stimulus screens)
+   ========================================================================= */
+
+.oddball-screen--game {
+  max-width: 720px;
+  padding: 28px 28px 36px;
+}
+
+.oddball-game-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.oddball-game-title {
+  display: block;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--navy-900);
+  margin-top: 2px;
+}
+
+.oddball-trial-count {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.oddball-timer {
+  font-variant-numeric: tabular-nums;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--navy-800);
+  background: var(--gray-50);
+  border-radius: var(--radius-sm);
+  padding: 6px 14px;
+}
+
+.oddball-stimulus-area {
+  height: min(46vh, 380px);
+  min-height: 260px;
+  background: var(--gray-50);
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 22px 0;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.oddball-fixation {
+  font-size: 4rem;
+  color: var(--navy-700);
+  font-weight: 300;
+}
+
+.oddball-shape {
+  display: block;
+}
+
+.oddball-progress-track {
+  height: 8px;
+  background: var(--gray-200);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 22px;
+}
+
+.oddball-progress-fill {
+  height: 100%;
+  background: var(--blue-600);
+  transition: width 0.25s ease;
+}
+
+.oddball-progress-label {
+  display: block;
+  margin-top: 10px;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+/* =========================================================================
+   Practice complete / Completing / Countdown
+   ========================================================================= */
+
+.oddball-check-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--green-600);
+  color: #fff;
+  font-size: 2rem;
+  margin: 0 auto 18px;
+}
+
+.oddball-screen--countdown {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 320px;
+}
+
+.oddball-countdown-value {
+  font-size: 5.5rem;
+  font-weight: 800;
+  color: var(--navy-900);
+  animation: oddball-pop 0.35s ease;
+}
+
+@keyframes oddball-pop {
+  from {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* =========================================================================
+   Results
+   ========================================================================= */
+
+.oddball-screen--results {
+  max-width: 1360px;
+  width: calc(100% - 30px);
+  box-sizing: border-box;
+  padding: 26px 38px 18px;
+  text-align: left;
+}
+
+.oddball-results-header {
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.oddball-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.oddball-metric-card {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.oddball-metric-card--primary {
+  background: var(--blue-100);
+  border-color: var(--blue-100);
+}
+
+.oddball-metric-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.oddball-metric-value {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--navy-900);
+}
+
+.oddball-metric-unit {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.oddball-metric-sublabel {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.oddball-halves {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.oddball-half-card {
+  flex: 1;
+  min-width: 200px;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.oddball-half-stat {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--navy-900);
+}
+
+.oddball-half-stat-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.oddball-result-note {
+  color: var(--text-secondary);
+  margin-top: 16px;
+}
+
+.oddball-trend-toggle {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.oddball-toggle-btn {
+  border: 1px solid var(--gray-200);
+  background: var(--surface);
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.oddball-toggle-btn--active {
+  background: var(--navy-900);
+  border-color: var(--navy-900);
+  color: #fff;
+}
+
+.oddball-chart {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+
+.oddball-chart-axis-label {
+  font-size: 11px;
+  fill: var(--gray-600);
+}
+
+.oddball-chart-axis-title {
+  font-size: 12px;
+  fill: var(--gray-600);
+  font-weight: 600;
+}
+
+.oddball-chart-empty {
+  background: var(--gray-50);
+  border: 1px dashed var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.oddball-baseline-card {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+
+.oddball-baseline-values {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.oddball-baseline-values > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.oddball-interpretation p {
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.oddball-disclaimer {
+  margin-top: 24px;
+  background: var(--gray-100);
+  border-left: 4px solid var(--navy-700);
+  border-radius: var(--radius-sm);
+  padding: 16px 18px;
+}
+
+.oddball-disclaimer p {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.oddball-device-note {
+  display: block;
+  color: var(--gray-600);
+  font-size: 0.85rem;
+  margin-top: 14px;
+}
+
+.oddball-actions--results {
+  justify-content: flex-start;
+}
+
+/* =========================================================================
+   History
+   ========================================================================= */
+
+.oddball-empty-state {
+  background: var(--gray-50);
+  border: 1px dashed var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 32px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.oddball-empty-state p {
+  margin-bottom: 6px;
+}
+
+.oddball-history-table-wrap {
+  overflow-x: auto;
+}
+
+.oddball-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+
+.oddball-history-table th,
+.oddball-history-table td {
+  text-align: left;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.oddball-history-table th {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-secondary);
+}
+
+.oddball-status-pill {
+  background: var(--blue-100);
+  color: var(--navy-800);
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+/* =========================================================================
+   Visual Oddball — dark NEUROMORPH theme
+   Matches the user-provided reference image for the Intro screen, then
+   extends the same design language (established elsewhere by Sequence
+   Memory / Point & Click) across the rest of the module for consistency.
+   Every rule below is scoped under one of the .oddball-screen--* modifier
+   classes (already present on every screen's root div — no JSX class
+   changes were needed) because the base oddball-* classes they override
+   (.oddball-info-card, .oddball-tag, .oddball-stimulus-area, etc.) are also
+   reused by Image Pairs / Whack the Mole's still-light screens, which must
+   stay untouched. .oddball-screen--history already got this treatment in
+   an earlier pass (see "Assessment history — dark theme" below) and needs
+   no further changes here.
+   ========================================================================= */
+
+.oddball-screen--intro,
+.oddball-screen--instructions,
+.oddball-screen--game,
+.oddball-screen--practice-complete,
+.oddball-screen--completing,
+.oddball-screen--countdown,
+.oddball-screen--results {
+  font-family: 'Manrope', var(--font-sans);
+  background: linear-gradient(165deg, rgba(8, 13, 26, 0.93) 0%, rgba(12, 10, 32, 0.93) 100%);
+  border: 1px solid rgba(103, 232, 249, 0.3);
+  border-radius: 28px;
+  box-shadow:
+    0 0 0 1px rgba(167, 139, 250, 0.1),
+    0 0 46px rgba(34, 211, 238, 0.18),
+    0 0 80px rgba(124, 58, 237, 0.14),
+    var(--shadow-md);
+  backdrop-filter: blur(16px);
+  color: #E7EEFC;
+}
+
+.oddball-screen--intro .oddball-eyebrow,
+.oddball-screen--instructions .oddball-eyebrow,
+.oddball-screen--game .oddball-eyebrow,
+.oddball-screen--practice-complete .oddball-eyebrow,
+.oddball-screen--completing .oddball-eyebrow,
+.oddball-screen--results .oddball-eyebrow {
+  color: #22D3EE;
+}
+
+.oddball-screen--intro .oddball-title {
+  font-family: 'Manrope', var(--font-sans);
+  color: #F7F9FF;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 24px rgba(34, 211, 238, 0.35), 0 0 46px rgba(124, 58, 237, 0.25);
+  font-size: clamp(2.1rem, 4.4vw, 3.2rem);
+}
+
+.oddball-screen--instructions .oddball-heading,
+.oddball-screen--practice-complete .oddball-heading,
+.oddball-screen--completing .oddball-heading,
+.oddball-screen--results .oddball-heading {
+  color: #F7F9FF;
+}
+
+.oddball-screen--instructions .oddball-heading {
+  font-family: 'Manrope', var(--font-sans);
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 24px rgba(34, 211, 238, 0.35), 0 0 46px rgba(124, 58, 237, 0.25);
+}
+
+.oddball-screen--results .oddball-subheading-muted {
+  color: #67E8F9;
+  font-weight: 700;
+}
+
+.oddball-screen--intro .oddball-lead,
+.oddball-screen--instructions .oddball-lead,
+.oddball-screen--practice-complete .oddball-lead {
+  color: #AEB9D6;
+}
+
+.oddball-screen--intro .oddball-hint,
+.oddball-screen--practice-complete .oddball-hint,
+.oddball-screen--completing .oddball-hint,
+.oddball-screen--countdown .oddball-hint {
+  color: #9AA6C9;
+}
+
+.oddball-screen--instructions .oddball-instruction-list,
+.oddball-screen--instructions .oddball-prep-list ul {
+  color: #C7D0EA;
+}
+
+.oddball-screen--instructions .oddball-subheading {
+  color: #F3F6FF;
+}
+
+/* --- Intro: brain badge, info cards, domain tags (matches the reference) --- */
+
+.oddball-screen--intro {
+  max-width: 1120px;
+  padding: 40px 48px 46px;
+  background-image: url('./assets/oddball-card-frame.webp');
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #050912;
+  border: none;
+  box-shadow: 0 0 22px rgba(34, 211, 238, 0.2), 0 0 42px rgba(124, 58, 237, 0.14);
+}
+
+.oddball-intro-badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.oddball-intro-badge-flourish {
+  color: #38BDF8;
+  flex: none;
+  display: none;
+}
+
+.oddball-intro-badge-flourish--right {
+  color: #A78BFA;
+}
+
+@media (min-width: 720px) {
+  .oddball-intro-badge-flourish {
+    display: block;
+  }
+}
+
+.oddball-intro-badge {
+  width: 96px;
+  height: 96px;
+  margin: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    linear-gradient(rgba(10, 14, 28, 0.95), rgba(10, 14, 28, 0.95)) padding-box,
+    linear-gradient(135deg, #A78BFA 0%, #38BDF8 50%, #22D3EE 100%) border-box;
+  border: 2px solid transparent;
+  box-shadow: 0 0 26px rgba(56, 189, 248, 0.4), 0 0 46px rgba(167, 139, 250, 0.22);
+}
+
+.oddball-screen--intro .oddball-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 22px;
+  width: 100%;
+  max-width: 640px;
+  margin: 28px auto;
+}
+
+@media (max-width: 520px) {
+  .oddball-screen--intro .oddball-info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.oddball-screen--intro .oddball-info-card {
+  background: linear-gradient(165deg, rgba(8, 18, 36, 0.85) 0%, rgba(10, 14, 30, 0.85) 100%);
+  border: 1.5px solid rgba(103, 232, 249, 0.45);
+  border-radius: 16px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 20px 28px;
+  box-shadow: 0 0 22px rgba(34, 211, 238, 0.16), inset 0 0 20px rgba(34, 211, 238, 0.04);
+  position: relative;
+  overflow: visible;
+}
+
+.oddball-screen--intro .oddball-info-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #67E8F9;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.oddball-screen--intro .oddball-info-label .oddball-icon-img {
+  width: 34px;
+  height: 34px;
+}
+
+.oddball-screen--intro .oddball-info-value {
+  color: #F7F9FF;
+  font-size: 1.55rem;
+  font-weight: 800;
+  margin-top: 2px;
+}
+
+.oddball-screen--intro .oddball-domains {
+  max-width: 900px;
+  margin: 8px auto;
+}
+
+.oddball-screen--intro .oddball-domains-label {
+  color: #7DD3FC;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.oddball-screen--intro .oddball-domain-tags {
+  justify-content: center;
+  gap: 14px;
+}
+
+.oddball-screen--intro .oddball-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.1;
+  background: rgba(15, 26, 51, 0.55);
+  border: 1px solid rgba(167, 139, 250, 0.32);
+  color: #DCE3FA;
+}
+
+.oddball-screen--intro .oddball-tag .oddball-icon-img {
+  width: 18px;
+  height: 18px;
+}
+
+.oddball-screen--intro .oddball-domain-tags .oddball-tag:nth-child(odd) {
+  border-color: rgba(167, 139, 250, 0.5);
+  box-shadow: 0 0 14px rgba(167, 139, 250, 0.14);
+}
+
+.oddball-screen--intro .oddball-domain-tags .oddball-tag:nth-child(even) {
+  border-color: rgba(34, 211, 238, 0.5);
+  box-shadow: 0 0 14px rgba(34, 211, 238, 0.14);
+}
+
+.oddball-screen--intro .seq-cs-actions {
+  max-width: 640px;
+  margin: 4px auto 0;
+  justify-content: flex-start;
+}
+
+.oddball-screen--intro .seq-cs-btn {
+  flex: 0 0 auto;
+  padding: 22px 34px;
+  gap: 30px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-radius: 14px;
+}
+
+.oddball-screen--intro .seq-cs-btn--primary {
+  background: linear-gradient(100deg, #8B5CF6 0%, #7C3AED 40%, #1E3A8A 100%);
+  box-shadow: 0 0 24px rgba(124, 58, 237, 0.4), 0 0 40px rgba(37, 99, 235, 0.28);
+}
+
+.oddball-screen--intro .seq-cs-btn--secondary {
+  min-width: 220px;
+  background: rgba(8, 13, 28, 0.55);
+  border: 1px solid rgba(56, 189, 248, 0.5);
+  color: #DCE3FA;
+}
+
+.oddball-screen--intro .seq-cs-btn-arrow {
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  background: none;
+  color: #fff;
+  font-size: 1.5rem;
+  line-height: 1;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.85), 0 0 22px rgba(147, 197, 253, 0.6);
+}
+
+/* --- Instructions: example panel --- */
+
+.oddball-screen--instructions .oddball-example {
+  background: rgba(8, 13, 28, 0.4);
+  border: 1px solid rgba(103, 232, 249, 0.24);
+}
+
+.oddball-screen--instructions .oddball-example-row {
+  color: #60A5FA;
+}
+
+.oddball-screen--instructions .oddball-example-target {
+  color: #F87171;
+}
+
+.oddball-screen--instructions .oddball-example-legend,
+.oddball-screen--instructions .oddball-example-note {
+  color: #9AA6C9;
+}
+
+.oddball-screen--instructions .oddball-legend-mark {
+  color: #60A5FA;
+}
+
+.oddball-screen--instructions .oddball-legend-mark--target {
+  color: #F87171;
+}
+
+/* --- Practice + real Assessment (game board) --- */
+
+.oddball-screen--game .oddball-game-title {
+  color: #F7F9FF;
+}
+
+.oddball-screen--game .oddball-trial-count {
+  color: #9AA6C9;
+}
+
+.oddball-screen--game .oddball-timer {
+  background: rgba(15, 26, 51, 0.6);
+  border: 1px solid rgba(139, 130, 246, 0.45);
+  color: #F7F9FF;
+}
+
+.oddball-screen--game .oddball-stimulus-area {
+  background:
+    radial-gradient(circle at 50% 45%, rgba(124, 58, 237, 0.16), transparent 62%),
+    linear-gradient(165deg, rgba(6, 10, 22, 0.96) 0%, rgba(6, 14, 28, 0.96) 100%);
+  border: 1px solid rgba(103, 232, 249, 0.28);
+  box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.5);
+}
+
+.oddball-screen--game .oddball-fixation {
+  color: rgba(103, 232, 249, 0.65);
+}
+
+/* Stimulus shapes are drawn as glowing neon outlines (stroke, not solid
+   fill) to match the tutorial preview shapes in OddballInstructions —
+   same accent colors (#3B82F6 circle / #A855F7 triangle) reused here for
+   visual consistency between "what you'll see" and the live stimulus. */
+.oddball-screen--game .oddball-shape--circle {
+  color: #3B82F6;
+  filter: drop-shadow(0 0 14px rgba(59, 130, 246, 0.65)) drop-shadow(0 0 30px rgba(59, 130, 246, 0.35));
+}
+
+.oddball-screen--game .oddball-shape--triangle {
+  color: #A855F7;
+  filter: drop-shadow(0 0 14px rgba(168, 85, 247, 0.65)) drop-shadow(0 0 30px rgba(168, 85, 247, 0.35));
+}
+
+.oddball-screen--game .oddball-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.oddball-screen--game .oddball-hint-icon {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+
+.oddball-screen--game .oddball-hint-kw {
+  color: #A855F7;
+  font-weight: 700;
+}
+
+.oddball-screen--game .oddball-progress-track {
+  background: rgba(148, 178, 220, 0.16);
+}
+
+.oddball-screen--game .oddball-progress-fill {
+  background: linear-gradient(90deg, #2563EB, #8B5CF6);
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.55);
+}
+
+.oddball-screen--game .oddball-progress-label {
+  color: #9AA6C9;
+}
+
+.oddball-screen--game .oddball-progress-count {
+  color: #A855F7;
+  font-weight: 800;
+}
+
+/* --- Practice Complete / Completing / Countdown --- */
+
+.oddball-screen--practice-complete .oddball-check-badge,
+.oddball-screen--completing .oddball-check-badge,
+.oddball-screen--results .oddball-check-badge {
+  background: linear-gradient(135deg, #22C55E, #16A34A);
+  box-shadow: 0 0 22px rgba(34, 197, 94, 0.45);
+}
+
+.oddball-screen--countdown .oddball-countdown-value {
+  color: #F7F9FF;
+  text-shadow: 0 0 30px rgba(34, 211, 238, 0.6), 0 0 60px rgba(124, 58, 237, 0.35);
+}
+
+/* --- Results --- */
+
+.oddball-screen--results {
+  text-align: left;
+}
+
+.oddball-screen--results .oddball-section-title {
+  color: #7DD3FC;
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 28px 0 14px;
+}
+
+.oddball-screen--results .oddball-metric-card {
+  background: rgba(15, 22, 45, 0.55);
+  border: 1px solid rgba(103, 232, 249, 0.22);
+}
+
+.oddball-screen--results .oddball-metric-card--primary {
+  background: rgba(124, 58, 237, 0.14);
+  border-color: rgba(167, 139, 250, 0.45);
+}
+
+.oddball-screen--results .oddball-metric-label {
+  color: #9AA6C9;
+}
+
+.oddball-screen--results .oddball-metric-value {
+  color: #F7F9FF;
+  text-shadow: 0 0 18px rgba(34, 211, 238, 0.25);
+}
+
+.oddball-screen--results .oddball-metric-unit,
+.oddball-screen--results .oddball-metric-sublabel {
+  color: #9AA6C9;
+}
+
+.oddball-screen--results .oddball-half-card {
+  background: rgba(15, 22, 45, 0.55);
+  border: 1px solid rgba(103, 232, 249, 0.22);
+}
+
+.oddball-screen--results .oddball-half-stat {
+  color: #F7F9FF;
+}
+
+.oddball-screen--results .oddball-half-stat-label,
+.oddball-screen--results .oddball-result-note,
+.oddball-screen--results .oddball-interpretation p {
+  color: #AEB9D6;
+}
+
+.oddball-screen--results .oddball-trend-toggle {
+  gap: 8px;
+}
+
+.oddball-screen--results .oddball-toggle-btn {
+  height: 38px;
+  padding: 0 18px;
+  border-radius: 20px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  background: rgba(8, 14, 35, 0.9);
+  border: 1px solid rgba(70, 130, 180, 0.45);
+  color: #B9C3DD;
+}
+
+.oddball-screen--results .oddball-toggle-btn--active {
+  background: linear-gradient(90deg, #8D24FF, #4D3CFF);
+  border-color: transparent;
+  box-shadow: 0 0 18px rgba(123, 45, 255, 0.3);
+  color: #ffffff;
+}
+
+.oddball-screen--results .oddball-chart-empty {
+  background: rgba(8, 13, 28, 0.4);
+  border: 1px dashed rgba(103, 232, 249, 0.28);
+  color: #AEB9D6;
+}
+
+.oddball-screen--results .oddball-baseline-card {
+  background: rgba(8, 13, 28, 0.4);
+  border: 1px solid rgba(103, 232, 249, 0.28);
+  border-radius: 18px;
+}
+
+.oddball-screen--results .oddball-baseline-card p {
+  color: #C7D0EA;
+}
+
+.oddball-screen--results .oddball-info-label {
+  color: #9AA6C9;
+}
+
+.oddball-screen--results .oddball-info-value {
+  color: #F7F9FF;
+}
+
+.oddball-screen--results .oddball-disclaimer {
+  background: rgba(8, 13, 28, 0.4);
+  border: 1px solid rgba(103, 232, 249, 0.18);
+  border-left: 4px solid rgba(34, 211, 238, 0.5);
+  border-radius: 10px;
+  margin-top: 28px;
+  padding: 8px 14px;
+  display: inline-block;
+  cursor: help;
+}
+
+.oddball-screen--results .oddball-disclaimer p {
+  color: #7C879F;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.oddball-screen--results .oddball-device-note {
+  color: #7C879F;
+  font-size: 0.8rem;
+}
+
+/* =========================================================================
+   Results — full redesign (header, session/insight row, trend + baseline
+   grid, at-a-glance row, action buttons, footer links). All rules below are
+   scoped under .oddball-screen--results only — every class they touch
+   (.oddball-halves, .oddball-metric-grid, .seq-cs-actions, etc.) is shared
+   with other modules' Results/History screens, so nothing here can leak
+   outside this one screen.
+   ========================================================================= */
+
+/* Outer card: wide desktop dashboard proportions + overflow safety. This
+   re-declares .oddball-screen--results (already defined near the top of the
+   file with the shared dark-theme background/border/shadow) purely to win
+   the cascade for border-radius/border/background/box-shadow/overflow on
+   THIS screen — every property not set here keeps the value from the
+   earlier shared rule. */
+.oddball-screen--results {
+  border-radius: 34px;
+  border: 1px solid rgba(145, 65, 255, 0.75);
+  background: rgba(3, 7, 22, 0.88);
+  box-shadow: 0 0 30px rgba(100, 35, 255, 0.1), inset 0 0 35px rgba(30, 80, 255, 0.025);
+  overflow-x: hidden;
+}
+
+/* Header hero row: checkmark + flourishes sit inline with the title on one
+   horizontal line (not stacked above it) — width:100% + relative
+   positioning so the flourishes can sit toward the outer edges while the
+   checkmark+title stay as a centered inline group. */
+.oddball-results-header-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+.oddball-results-header-row .oddball-howto-flourish {
+  flex: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.oddball-results-header-row .oddball-howto-flourish--left {
+  left: 8%;
+}
+
+.oddball-results-header-row .oddball-howto-flourish--right {
+  right: 8%;
+}
+
+.oddball-screen--results .oddball-heading {
+  font-size: clamp(2.625rem, 4vw, 3.5rem);
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  margin-bottom: 0;
+  white-space: nowrap;
+}
+
+.oddball-results-accent {
+  background: linear-gradient(90deg, #8B3DFF, #5E8BFF, #38CFFF);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.oddball-screen--results .oddball-subheading-muted {
+  margin-top: 8px;
+  font-size: 1.4rem;
+  line-height: 1.2;
+  background: linear-gradient(90deg, #B24CFF 0%, #6675FF 50%, #36CFFF 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.oddball-results-tagline {
+  color: #AEB9D6;
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 1.4;
+  margin-top: 6px;
+}
+
+/* Reference shows an outlined green ring badge here (not the filled solid
+   circle Practice Complete / Completing use) — scoped to Results only so
+   those other two screens keep their existing filled-circle style. */
+.oddball-screen--results .oddball-check-badge {
+  flex: none;
+  width: 84px;
+  height: 84px;
+  min-width: 84px;
+  background: rgba(0, 255, 136, 0.06);
+  border: 3px solid #00FF88;
+  color: #ffffff;
+  box-shadow: 0 0 20px rgba(0, 255, 140, 0.25), 0 0 40px rgba(0, 255, 140, 0.1);
+  font-size: 1.7rem;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .oddball-results-header-row {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .oddball-results-header-row .oddball-howto-flourish {
+    display: none;
+  }
+
+  .oddball-screen--results .oddball-heading {
+    font-size: clamp(2.1rem, 7vw, 2.5rem);
+    white-space: normal;
+  }
+
+  .oddball-screen--results .oddball-check-badge {
+    width: 64px;
+    height: 64px;
+    min-width: 64px;
+    font-size: 1.3rem;
+  }
+
+  .oddball-screen--results .oddball-subheading-muted {
+    font-size: 1.2rem;
+  }
+
+  .oddball-results-tagline {
+    font-size: 0.95rem;
+  }
+}
+
+.oddball-screen--results .oddball-section-title {
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+}
+
+/* --- Performance Across the Session: First Half / Second Half / Session Insight --- */
+
+.oddball-screen--results .oddball-halves {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 0.72fr);
+  gap: 18px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1100px) {
+  .oddball-screen--results .oddball-halves {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .oddball-screen--results .oddball-session-insight-card {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 768px) {
+  .oddball-screen--results .oddball-halves {
+    grid-template-columns: 1fr;
+  }
+
+  .oddball-screen--results .oddball-session-insight-card {
+    grid-column: auto;
+  }
+}
+
+.oddball-screen--results .oddball-half-card,
+.oddball-screen--results .oddball-session-insight-card {
+  width: 100%;
+  min-width: 0;
+  min-height: 198px;
+  box-sizing: border-box;
+  padding: 20px 26px;
+  border-radius: 16px;
+}
+
+.oddball-screen--results .oddball-half-card {
+  background: rgba(7, 12, 34, 0.8);
+  border: 1px solid rgba(65, 130, 200, 0.45);
+}
+
+/* First Half = purple accent, Second Half = blue/cyan accent — derived
+   structurally (1st/2nd child of .oddball-halves) rather than adding a new
+   modifier class, since the card order never changes. */
+.oddball-screen--results .oddball-halves > .oddball-half-card:nth-child(1) .oddball-info-label {
+  color: #A78BFA;
+}
+
+.oddball-screen--results .oddball-halves > .oddball-half-card:nth-child(2) .oddball-info-label {
+  color: #4CC9FF;
+}
+
+.oddball-screen--results .oddball-half-card .oddball-info-label {
+  font-size: 1rem;
+}
+
+.oddball-screen--results .oddball-half-stat {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 12px;
+  margin-bottom: 8px;
+}
+
+.oddball-half-icon-badge,
+.oddball-session-insight-icon-badge {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(139, 92, 246, 0.08);
+}
+
+.oddball-screen--results .oddball-halves > .oddball-half-card:nth-child(1) .oddball-half-icon-badge {
+  border: 1.5px solid rgba(167, 139, 250, 0.5);
+  box-shadow: 0 0 12px rgba(167, 139, 250, 0.25);
+}
+
+.oddball-screen--results .oddball-halves > .oddball-half-card:nth-child(2) .oddball-half-icon-badge {
+  border: 1.5px solid rgba(76, 201, 255, 0.5);
+  box-shadow: 0 0 12px rgba(76, 201, 255, 0.25);
+}
+
+.oddball-session-insight-icon-badge {
+  width: 34px;
+  height: 34px;
+  border: 1.5px solid rgba(167, 139, 250, 0.5);
+  margin-right: 8px;
+}
+
+.oddball-half-icon {
+  width: 43px;
+  height: 43px;
+  object-fit: contain;
+}
+
+.oddball-session-insight-icon-badge .oddball-half-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.oddball-screen--results .oddball-half-stat-text {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: #F4F6FF;
+  line-height: 1;
+}
+
+.oddball-screen--results .oddball-half-stat-label {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-left: 2px;
+}
+
+.oddball-session-insight-card {
+  background: rgba(7, 12, 34, 0.8);
+  border: 1px solid rgba(167, 139, 250, 0.4);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.oddball-session-insight-title {
+  display: flex;
+  align-items: center;
+  font-size: 1.06rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #C56CFF;
+}
+
+.oddball-session-insight-card p {
+  color: #E0E4F5;
+  font-size: 1rem;
+  line-height: 1.65;
+  margin: 0;
+  text-align: left;
+}
+
+.oddball-results-kw {
+  color: #C56CFF;
+  font-weight: 800;
+}
+
+.oddball-result-note--compact {
+  margin-top: 10px;
+  font-size: 0.85rem;
+}
+
+/* --- Performance Trend + Baseline Comparison, side by side --- */
+
+.oddball-results-grid2 {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: stretch;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 28px;
+}
+
+@media (max-width: 1100px) {
+  .oddball-results-grid2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.oddball-results-panel {
+  background: rgba(5, 10, 27, 0.8);
+  border: 1px solid rgba(55, 110, 180, 0.45);
+  border-radius: 16px;
+  padding: 18px 26px 22px;
+  width: 100%;
+  min-width: 0;
+  min-height: 330px;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.oddball-screen--results .oddball-section-title--panel {
+  margin: 0 0 14px;
+}
+
+.oddball-screen--results .oddball-section-title--cyan {
+  color: #67E8F9;
+}
+
+.oddball-baseline-panel .oddball-baseline-card {
+  background: none;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+}
+
+.oddball-baseline-panel .oddball-baseline-values {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 0.8fr);
+  column-gap: 20px;
+  margin-bottom: 14px;
+}
+
+.oddball-baseline-panel .oddball-baseline-values + .oddball-baseline-values {
+  border-top: 1px solid rgba(100, 130, 180, 0.18);
+  padding-top: 14px;
+  margin-top: 4px;
+}
+
+@media (max-width: 480px) {
+  .oddball-baseline-panel .oddball-baseline-values {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
+.oddball-baseline-panel .oddball-info-value {
+  font-size: 1.55rem;
+  font-weight: 800;
+}
+
+.oddball-info-value--baseline {
+  color: #C4B5FD;
+}
+
+.oddball-info-value--current {
+  color: #67E8F9;
+}
+
+.oddball-info-value--change-positive {
+  color: #4ADE80;
+}
+
+.oddball-info-value--change-warning {
+  color: #FBBF24;
+}
+
+.oddball-info-value--change-neutral {
+  color: #F7F9FF;
+}
+
+.oddball-baseline-insight {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 11px 15px;
+  border-radius: 12px;
+  border: 1px solid rgba(145, 45, 255, 0.65);
+  background: linear-gradient(90deg, rgba(70, 20, 120, 0.35), rgba(20, 35, 100, 0.25));
+}
+
+.oddball-baseline-insight--warning {
+  border-color: rgba(251, 191, 36, 0.55);
+  background: rgba(120, 80, 10, 0.14);
+}
+
+.oddball-baseline-insight p {
+  margin: 0;
+  color: #E7EEFC;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.oddball-results-inline-icon {
+  flex: none;
+  color: #C4B5FD;
+  margin-top: 2px;
+}
+
+.oddball-baseline-insight--warning .oddball-results-inline-icon {
+  color: #FBBF24;
+}
+
+/* --- At a Glance: compact 6-across row --- */
+
+.oddball-screen--results .oddball-metric-grid--glance {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 28px;
+}
+
+@media (max-width: 1100px) {
+  .oddball-screen--results .oddball-metric-grid--glance {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .oddball-screen--results .oddball-metric-grid--glance {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .oddball-screen--results .oddball-metric-grid--glance {
+    grid-template-columns: 1fr;
+  }
+}
+
+.oddball-screen--results .oddball-metric-card {
+  width: 100%;
+  min-width: 0;
+  min-height: 140px;
+  padding: 16px 14px;
+  box-sizing: border-box;
+  border-radius: 14px;
+  background: rgba(5, 10, 28, 0.85);
+  border: 1px solid rgba(60, 110, 180, 0.35);
+}
+
+/* Wrapper stays out of the layout tree by default (`display: contents`) so
+   every other module's metric cards — none of which pass an `icon` prop —
+   render pixel-identically to before this wrapper was introduced. Only the
+   Oddball Results "At a Glance" grid turns it into a real row below. */
+.oddball-metric-header-row {
+  display: contents;
+}
+
+.oddball-screen--results .oddball-metric-grid--glance .oddball-metric-header-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.oddball-screen--results .oddball-metric-grid--glance .oddball-metric-card {
+  gap: 14px;
+}
+
+.oddball-screen--results .oddball-metric-grid--glance .oddball-metric-label {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.oddball-metric-icon-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+}
+
+.oddball-metric-icon {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+}
+
+/* --- Action buttons: Play Again / Download Report / Share Results --- */
+
+.oddball-screen--results .seq-cs-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 30px;
+}
+
+@media (max-width: 768px) {
+  .oddball-screen--results .seq-cs-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+.oddball-screen--results .seq-cs-btn {
+  width: 100%;
+  min-width: 0;
+  min-height: 64px;
+  box-sizing: border-box;
+  font-size: 1.05rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  border-radius: 14px;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.oddball-screen--results .seq-cs-btn:hover {
+  transform: translateY(-1px);
+}
+
+.oddball-screen--results .seq-cs-btn--primary {
+  background: linear-gradient(90deg, #8B2CFF, #4A7DFF, #009DFF);
+  box-shadow: 0 0 25px rgba(100, 50, 255, 0.3);
+}
+
+.oddball-screen--results .seq-cs-btn--secondary {
+  background: rgba(7, 12, 34, 0.8);
+  border: 1px solid rgba(95, 115, 190, 0.55);
+  color: #F0F2FF;
+}
+
+.oddball-screen--results .seq-cs-btn--secondary:hover {
+  border-color: #8C4DFF;
+  background: rgba(30, 15, 70, 0.55);
+  box-shadow: 0 0 18px rgba(110, 50, 255, 0.2);
+}
+
+.oddball-results-btn-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+/* --- Footer: divider, View past assessments, Back to Dashboard --- */
+
+.oddball-results-divider {
+  height: 0;
+  margin: 30px 0 18px;
+  border-top: 1px dashed rgba(80, 125, 190, 0.45);
+  background: none;
+}
+
+.oddball-screen--results .seq-cs-history-link {
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-size: 0.95rem;
+}
+
+.oddball-results-footer-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+}
+
+.oddball-screen--results .seq-cs-history-link {
+  margin-top: 0;
+}
+
+.oddball-results-back-link {
+  background: none;
+  border: none;
+  color: #9AA6C9;
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.oddball-results-back-link:hover {
+  color: #C7D0EA;
+}
+
+/* --- Content-cutoff safety net (scoped to this screen only) --- */
+
+.oddball-screen--results .oddball-session-insight-card p,
+.oddball-screen--results .oddball-baseline-insight p,
+.oddball-screen--results .oddball-metric-value,
+.oddball-screen--results .oddball-half-stat {
+  overflow-wrap: break-word;
+  min-width: 0;
+}
+
+.oddball-screen--results img {
+  max-width: 100%;
+}
+
+.oddball-screen--results .oddball-chart,
+.oddball-screen--results .oddball-chart svg {
+  max-width: 100%;
+}
+
+/* =========================================================================
+   Assessment history — dark theme (all 5 games)
+   Every game's own History screen (SequenceHistory, OddballHistory,
+   PointClickHistory, ImagePairsHistory, WhackMoleHistory) already shares
+   this one .oddball-screen--history class plus the .oddball-heading /
+   .oddball-trend-toggle / .oddball-history-table / .oddball-status-pill /
+   .oddball-empty-state classes above — so this single dark-theme pass
+   covers all five at once. Every rule below is scoped under
+   .oddball-screen--history specifically because those base classes are
+   also reused elsewhere (Results screens, WhackMole's difficulty picker),
+   which must stay on the light theme, untouched.
+   ========================================================================= */
+
+.oddball-screen--history {
+  background: linear-gradient(165deg, rgba(9, 14, 29, 0.92) 0%, rgba(16, 12, 34, 0.92) 100%);
+  border: 1px solid rgba(148, 163, 255, 0.32);
+  border-top: none;
+  border-radius: 28px;
+  box-shadow:
+    0 0 0 1px rgba(167, 139, 250, 0.12),
+    0 0 46px rgba(59, 130, 246, 0.16),
+    0 0 80px rgba(124, 58, 237, 0.12),
+    var(--shadow-md);
+  backdrop-filter: blur(16px);
+  color: #E7EEFC;
+}
+
+.oddball-screen--history .oddball-heading {
+  font-family: 'Manrope', var(--font-sans);
+  color: #F7F9FF;
+  letter-spacing: 0.02em;
+}
+
+.oddball-screen--history .oddball-trend-toggle {
+  gap: 8px;
+}
+
+.oddball-screen--history .oddball-toggle-btn {
+  background: rgba(15, 26, 51, 0.6);
+  border: 1px solid rgba(125, 178, 255, 0.28);
+  color: #C7D0EA;
+}
+
+.oddball-screen--history .oddball-toggle-btn--active {
+  background: linear-gradient(120deg, #2563EB 0%, #7C3AED 100%);
+  border-color: transparent;
+  color: #fff;
+}
+
+.oddball-screen--history .oddball-history-table th,
+.oddball-screen--history .oddball-history-table td {
+  border-bottom: 1px solid rgba(125, 178, 255, 0.16);
+  color: #E7EEFC;
+}
+
+.oddball-screen--history .oddball-history-table th {
+  color: #AEB9D6;
+}
+
+.oddball-screen--history .oddball-history-table tbody tr:hover {
+  background: rgba(125, 178, 255, 0.06);
+}
+
+.oddball-screen--history .oddball-status-pill {
+  background: rgba(34, 197, 94, 0.16);
+  border: 1px solid rgba(74, 222, 128, 0.55);
+  color: #4ADE80;
+}
+
+.oddball-screen--history .oddball-empty-state {
+  background: rgba(8, 13, 28, 0.4);
+  border: 1px solid rgba(125, 178, 255, 0.28);
+  border-style: solid;
+  color: #AEB9D6;
+}
+
+.oddball-chart--dark {
+  background: rgba(8, 13, 28, 0.4);
+  border: 1px solid rgba(125, 178, 255, 0.28);
+}
+
+.oddball-chart-axis-label--dark {
+  fill: #9AA6C9;
+}
+
+.oddball-chart-axis-title--dark {
+  fill: #C7D0EA;
+}
+
+.oddball-chart-empty--dark {
+  background: rgba(8, 13, 28, 0.4);
+  border: 1px dashed rgba(125, 178, 255, 0.28);
+  color: #AEB9D6;
+}
+
+/* =========================================================================
+   Cognitive Dashboard
+   Dark, futuristic neuroscience-technology theme — deliberately distinct
+   from the light clinical theme used by the assessment modules themselves.
+   Scoped entirely under .dash-dark / .dash-* classes so nothing here leaks
+   into (or is affected by) the rest of the app's design system.
+   ========================================================================= */
+
+.dash-dark {
+  --dash-bg-0: #050912;
+  --dash-bg-1: #071022;
+  --dash-bg-2: #0A1730;
+  --dash-cyan: #38BDF8;
+  --dash-cyan-bright: #22D3EE;
+  --dash-purple: #A78BFA;
+  --dash-blue: #3B82F6;
+  --dash-glass: rgba(15, 26, 51, 0.55);
+  --dash-glass-border: rgba(125, 178, 255, 0.22);
+  min-height: 100vh;
+  color: #E7EEFC;
+  position: relative;
+  overflow-x: hidden;
+  background-color: var(--dash-bg-0);
+  /* The provided circuit-board/neural-network image IS the background — it
+     covers the entire visible area at every scroll position
+     (background-attachment: fixed), not just a corner of the hero. */
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 65% 35%;
+  background-attachment: fixed;
+}
+
+/* A fixed dark scrim + soft color glows over the full-bleed photo, so text
+   and glass cards stay readable no matter which part of the image is
+   showing behind them. */
+.dash-bg-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 900px 520px at 85% 4%, rgba(56, 189, 248, 0.1), transparent 60%),
+    radial-gradient(ellipse 750px 550px at 8% 96%, rgba(139, 92, 246, 0.08), transparent 60%),
+    linear-gradient(
+      180deg,
+      rgba(5, 9, 18, 0.35) 0%,
+      rgba(5, 9, 18, 0.2) 20%,
+      rgba(5, 9, 18, 0.55) 55%,
+      rgba(5, 9, 18, 0.88) 100%
+    );
+}
+
+/* ---------- Header ---------- */
+
+.dash-header {
+  border-bottom: 1px solid rgba(125, 178, 255, 0.14);
+  padding: 18px 32px;
+  position: relative;
+  z-index: 2;
+}
+
+.dash-header-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.dash-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dash-brand-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(125, 178, 255, 0.28);
+}
+
+.dash-brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dash-brand-mark {
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  font-size: 1.15rem;
+}
+
+.dash-brand-sub {
+  color: #93A6C9;
+  font-size: 0.85rem;
+}
+
+.dash-account {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dash-account-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #fff;
+  background: linear-gradient(135deg, var(--dash-purple), var(--dash-blue));
+}
+
+.dash-account-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #EAF1FF;
+}
+
+.dash-account-chevron {
+  color: #93A6C9;
+  font-size: 0.8rem;
+}
+
+/* ---------- Main / hero ---------- */
+
+.dash-main {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 24px 72px;
+  position: relative;
+  z-index: 1;
+}
+
+.dash-hero {
+  position: relative;
+  padding: 56px 0 24px;
+}
+
+/* The glowing brain-on-chip cutout, positioned the way the reference mockup
+   placed it: top-right of the hero, overlapping the page background. It's
+   a transparent PNG/WebP already, so it just floats over the full-bleed
+   background + scrim underneath — no edge-fade mask needed. */
+.dash-hero-visual {
+  position: absolute;
+  top: -8%;
+  right: -2%;
+  width: min(42vw, 520px);
+  height: auto;
+  object-fit: contain;
+  pointer-events: none;
+  z-index: 0;
+  filter: drop-shadow(0 0 46px rgba(56, 189, 248, 0.35));
+}
+
+.dash-hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 620px;
+}
+
+.dash-greeting {
+  color: var(--dash-cyan-bright);
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.dash-title {
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+
+.dash-lead {
+  color: #AFC0DE;
+  margin-top: 14px;
+  font-size: 1.02rem;
+  line-height: 1.6;
+}
+
+/* ---------- Summary cards ---------- */
+
+.dash-summary-cards {
+  display: flex;
+  gap: 16px;
+  margin-top: 28px;
+  flex-wrap: wrap;
+}
+
+.dash-summary-card {
+  background: var(--dash-glass);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--dash-glass-border);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 260px;
+  flex: 1 1 260px;
+  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.05), 0 12px 30px rgba(3, 8, 20, 0.45);
+}
+
+.dash-summary-icon {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dash-summary-icon-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.dash-summary-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.dash-summary-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #8CA2C8;
+}
+
+.dash-summary-value {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.dash-summary-hint {
+  font-size: 0.8rem;
+  color: var(--dash-cyan);
+}
+
+.dash-summary-spark {
+  flex-shrink: 0;
+  width: 92px;
+  height: 52px;
+  opacity: 0.95;
+}
+
+.dash-summary-spark-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* ---------- Domain cards ---------- */
+
+.dash-domains {
+  margin-top: 36px;
+}
+
+.dash-domain-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.dash-domain-card {
+  position: relative;
+  background: var(--dash-glass);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--dash-glass-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  min-height: 210px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: 6px;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  box-shadow: 0 12px 30px rgba(3, 8, 20, 0.45);
+}
+
+.dash-domain-card:hover,
+.dash-domain-card:focus-visible {
+  transform: translateY(-3px);
+}
+
+.dash-domain-card--memory {
+  border-color: rgba(167, 139, 250, 0.35);
+  background: linear-gradient(155deg, rgba(88, 58, 161, 0.28), rgba(15, 26, 51, 0.6));
+}
+.dash-domain-card--memory:hover,
+.dash-domain-card--memory:focus-visible {
+  box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.4), 0 16px 34px rgba(88, 58, 161, 0.3);
+}
+
+.dash-domain-card--attention {
+  border-color: rgba(34, 211, 238, 0.35);
+  background: linear-gradient(155deg, rgba(13, 100, 105, 0.3), rgba(15, 26, 51, 0.6));
+}
+.dash-domain-card--attention:hover,
+.dash-domain-card--attention:focus-visible {
+  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.4), 0 16px 34px rgba(13, 100, 105, 0.3);
+}
+
+.dash-domain-card--reaction {
+  border-color: rgba(59, 130, 246, 0.35);
+  background: linear-gradient(155deg, rgba(29, 63, 138, 0.3), rgba(15, 26, 51, 0.6));
+}
+.dash-domain-card--reaction:hover,
+.dash-domain-card--reaction:focus-visible {
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.4), 0 16px 34px rgba(29, 63, 138, 0.3);
+}
+
+.dash-domain-illustration {
+  position: absolute;
+  right: -16px;
+  bottom: -16px;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Matches the exact rendered size (140x140) of the SVG illustrations this
+   replaces, so swapping in the real images doesn't shift size/position. */
+.dash-domain-illustration-img {
+  display: block;
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+}
+
+.dash-domain-icon {
+  position: relative;
+  width: 54px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+
+.dash-domain-icon-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.dash-domain-name {
+  position: relative;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.dash-domain-desc {
+  position: relative;
+  color: #AFC0DE;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  flex-grow: 1;
+}
+
+.dash-domain-cta {
+  position: relative;
+  margin-top: 10px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(148, 178, 220, 0.16);
+  width: 100%;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.dash-domain-card--memory .dash-domain-cta {
+  color: var(--dash-purple);
+}
+.dash-domain-card--attention .dash-domain-cta {
+  color: var(--dash-cyan-bright);
+}
+.dash-domain-card--reaction .dash-domain-cta {
+  color: #60A5FA;
+}
+
+/* ---------- Domain detail (the 2 games inside a domain) ---------- */
+
+.dash-detail {
+  margin-top: 36px;
+}
+
+.dash-back-btn {
+  background: var(--dash-glass);
+  border: 1px solid var(--dash-glass-border);
+  color: #EAF1FF;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 12px 22px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  margin-bottom: 24px;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.dash-back-btn:hover,
+.dash-back-btn:focus-visible {
+  border-color: rgba(125, 178, 255, 0.5);
+  background: rgba(56, 189, 248, 0.1);
+}
+
+.dash-detail-heading {
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 18px;
+}
+
+.dash-detail-games {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.dash-detail-card {
+  background: var(--dash-glass);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--dash-glass-border);
+  border-radius: var(--radius-md);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 12px 30px rgba(3, 8, 20, 0.45);
+}
+
+.dash-detail-card--available {
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.dash-detail-game-name {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #fff;
+}
+
+.dash-detail-game-desc {
+  color: #AFC0DE;
+  font-size: 0.92rem;
+  flex-grow: 1;
+  line-height: 1.5;
+}
+
+.dash-detail-card .oddball-btn {
+  margin-top: 8px;
+  min-width: 0;
+  width: 100%;
+}
+
+.dash-detail-badge {
+  margin-top: 8px;
+  align-self: flex-start;
+  background: rgba(148, 178, 220, 0.12);
+  color: #AFC0DE;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+
+/* =========================================================================
+   Sequence Memory
+   Same shell/typography/card system as the rest of Neuromorph, with a
+   purple/lavender accent identity layered on top of the shared navy shell.
+   ========================================================================= */
+
+.seq-screen {
+  border-top: 4px solid var(--purple-500);
+}
+
+.seq-subtitle {
+  display: block;
+  letter-spacing: 0.08em;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--purple-700);
+  margin: 2px 0 14px;
+}
+
+.seq-brain-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+/* =========================================================================
+   Sequence Memory — "Color Sequence" welcome screen only
+   Scoped entirely to .seq-screen--welcome so Instructions/Practice/
+   Results/History keep the standard light .oddball-screen card. Reuses the
+   same dark PCB background/design language as the Cognitive Dashboard
+   (electric blue + purple neon glass), per the approved reference design.
+   ========================================================================= */
+
+.seq-screen--welcome,
+.seq-screen--instructions,
+.seq-screen--game,
+.seq-screen--intro,
+.seq-screen--results {
+  background: linear-gradient(165deg, rgba(9, 14, 29, 0.92) 0%, rgba(16, 12, 34, 0.92) 100%);
+  border: 1px solid rgba(148, 163, 255, 0.32);
+  border-radius: 28px;
+  box-shadow:
+    0 0 0 1px rgba(167, 139, 250, 0.12),
+    0 0 46px rgba(59, 130, 246, 0.16),
+    0 0 80px rgba(124, 58, 237, 0.12),
+    var(--shadow-md);
+  backdrop-filter: blur(16px);
+  color: #E7EEFC;
+  padding: 44px 40px 40px;
+}
+
+.seq-screen--welcome .oddball-eyebrow {
+  color: #38BDF8;
+}
+
+.seq-cs-title {
+  margin: 6px 0 0;
+  line-height: 1;
+}
+
+.seq-cs-title-main,
+.seq-cs-title-sub {
+  display: block;
+  font-family: 'Manrope', var(--font-sans);
+  font-weight: 700;
+  color: #F3F6FF;
+  text-transform: uppercase;
+}
+
+.seq-cs-title-main {
+  font-size: clamp(2.4rem, 8vw, 4rem);
+  letter-spacing: 0.1em;
+  padding-left: 0.1em;
+  text-shadow: 0 0 24px rgba(59, 130, 246, 0.45), 0 0 46px rgba(124, 58, 237, 0.25);
+}
+
+.seq-cs-title-sub {
+  font-size: clamp(1rem, 3vw, 1.5rem);
+  letter-spacing: 0.35em;
+  padding-left: 0.35em;
+  margin-top: 6px;
+  color: #CBD5F5;
+}
+
+.seq-cs-domain-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: 20px 0 30px;
+}
+
+.seq-cs-domain-line::before,
+.seq-cs-domain-line::after {
+  content: '';
+  height: 1px;
+  width: 44px;
+  background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.7));
+}
+
+.seq-cs-domain-line::after {
+  background: linear-gradient(90deg, rgba(167, 139, 250, 0.7), transparent);
+}
+
+.seq-cs-domain-text {
+  letter-spacing: 0.08em;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #C4B5FD;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.seq-cs-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  max-width: 420px;
+  margin: 0 auto 32px;
+}
+
+.seq-cs-tile {
+  aspect-ratio: 1;
+  border-radius: 14px;
+}
+
+.seq-cs-tile--red {
+  background: linear-gradient(160deg, #FF6B6B 0%, #DC2626 60%, #9F1D1D 100%);
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.55), inset 0 2px 4px rgba(255, 255, 255, 0.35),
+    inset 0 -6px 10px rgba(0, 0, 0, 0.35);
+}
+
+.seq-cs-tile--green {
+  background: linear-gradient(160deg, #6EE7A0 0%, #16A34A 60%, #0B5C29 100%);
+  box-shadow: 0 0 16px rgba(34, 197, 94, 0.55), inset 0 2px 4px rgba(255, 255, 255, 0.35),
+    inset 0 -6px 10px rgba(0, 0, 0, 0.35);
+}
+
+.seq-cs-tile--blue {
+  background: linear-gradient(160deg, #7DB4FF 0%, #2563EB 60%, #123B94 100%);
+  box-shadow: 0 0 16px rgba(59, 130, 246, 0.55), inset 0 2px 4px rgba(255, 255, 255, 0.35),
+    inset 0 -6px 10px rgba(0, 0, 0, 0.35);
+}
+
+.seq-cs-tile--yellow {
+  background: linear-gradient(160deg, #FFEB80 0%, #EAB308 60%, #92640A 100%);
+  box-shadow: 0 0 16px rgba(234, 179, 8, 0.55), inset 0 2px 4px rgba(255, 255, 255, 0.4),
+    inset 0 -6px 10px rgba(0, 0, 0, 0.3);
+}
+
+.seq-cs-info-panel {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  text-align: left;
+  background: rgba(12, 18, 38, 0.55);
+  border: 1px solid rgba(125, 178, 255, 0.22);
+  border-radius: 16px;
+  padding: 20px 22px;
+  margin: 0 0 28px;
+}
+
+.seq-cs-info-icon {
+  flex: none;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 2px solid rgba(167, 139, 250, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(124, 58, 237, 0.08);
+}
+
+.seq-cs-info-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #F3F6FF;
+  margin: 0 0 4px;
+}
+
+.seq-cs-info-text {
+  font-size: 0.98rem;
+  color: #AEB9D6;
+  margin: 0;
+}
+
+.seq-cs-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.seq-cs-btn {
+  flex: 1 1 200px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  border-radius: 14px;
+  padding: 15px 22px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.seq-cs-btn:active {
+  transform: translateY(1px);
+}
+
+.seq-cs-btn--primary {
+  border: none;
+  background: linear-gradient(120deg, #2563EB 0%, #7C3AED 100%);
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(99, 74, 235, 0.4);
+}
+
+.seq-cs-btn--primary:hover {
+  box-shadow: 0 10px 30px rgba(99, 74, 235, 0.55);
+}
+
+.seq-cs-btn-arrow {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #fff;
+  color: #4338CA;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.seq-cs-btn--secondary {
+  background: rgba(15, 22, 45, 0.55);
+  border: 1px solid rgba(139, 130, 246, 0.4);
+  color: #DCE3FA;
+}
+
+.seq-cs-btn--secondary:hover {
+  border-color: rgba(167, 139, 250, 0.7);
+  background: rgba(15, 22, 45, 0.75);
+}
+
+.seq-cs-history-link {
+  margin-top: 22px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: #C4B5FD;
+  font-size: 0.98rem;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 8px;
+}
+
+/* =========================================================================
+   Sequence Memory — "How To Play" (Instructions) screen only
+   Scoped to .seq-screen--instructions, reusing the same dark glass panel
+   base as .seq-screen--welcome above (see the shared selector) and the
+   same .seq-cs-btn button classes, so both screens share one visual
+   language and one set of button styles.
+   ========================================================================= */
+
+.seq-htp-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.seq-htp-title {
+  font-size: clamp(1.9rem, 5vw, 2.6rem);
+  font-weight: 800;
+  color: #F7F9FF;
+  margin: 0;
+}
+
+.seq-deco-line {
+  flex: none;
+  opacity: 0.85;
+}
+
+.seq-deco-line--flip {
+  transform: scaleX(-1);
+}
+
+.seq-htp-desc {
+  text-align: center;
+  color: #AEB9D6;
+  font-size: 1.02rem;
+  max-width: 560px;
+  margin: 0 auto 26px;
+}
+
+.seq-htp-panel {
+  border: 1px solid rgba(125, 178, 255, 0.28);
+  border-radius: 20px;
+  background: rgba(8, 13, 28, 0.4);
+  padding: 26px 20px 22px;
+  margin: 0 0 24px;
+}
+
+.seq-htp-stages {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  flex-wrap: wrap;
+}
+
+.seq-htp-stage {
+  flex: 1 1 190px;
+  max-width: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  padding: 0 6px;
+}
+
+.seq-htp-stage-arrow {
+  flex: none;
+  color: #7DB2FF;
+  font-size: 1.3rem;
+  opacity: 0.8;
+  align-self: center;
+}
+
+.seq-htp-step-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid rgba(125, 178, 255, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #CBD5F5;
+}
+
+.seq-htp-stage-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2px 0;
+}
+
+.seq-htp-stage-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #F3F6FF;
+}
+
+.seq-htp-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  width: 100%;
+  max-width: 168px;
+  margin: 6px auto;
+}
+
+.seq-htp-tile {
+  aspect-ratio: 1;
+  border-radius: 6px;
+  position: relative;
+  transition: filter 0.2s ease, box-shadow 0.2s ease;
+}
+
+.seq-htp-tile--red {
+  background: linear-gradient(160deg, #FF6B6B 0%, #DC2626 60%, #9F1D1D 100%);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.55);
+}
+
+.seq-htp-tile--green {
+  background: linear-gradient(160deg, #6EE7A0 0%, #16A34A 60%, #0B5C29 100%);
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.55);
+}
+
+.seq-htp-tile--blue {
+  background: linear-gradient(160deg, #7DB4FF 0%, #2563EB 60%, #123B94 100%);
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.55);
+}
+
+.seq-htp-tile--yellow {
+  background: linear-gradient(160deg, #FFEB80 0%, #EAB308 60%, #92640A 100%);
+  box-shadow: 0 0 8px rgba(234, 179, 8, 0.55);
+}
+
+.seq-htp-tile--dim {
+  filter: brightness(0.32) saturate(0.55);
+  box-shadow: none;
+}
+
+.seq-htp-tap {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  color: #1E293B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  font-weight: 800;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.65);
+}
+
+.seq-htp-stage-caption {
+  font-size: 0.88rem;
+  color: #AEB9D6;
+  margin: 2px 0 0;
+  max-width: 170px;
+}
+
+.seq-htp-example {
+  border: 1px solid rgba(125, 178, 255, 0.28);
+  border-radius: 18px;
+  background: rgba(8, 13, 28, 0.4);
+  padding: 22px 24px;
+  margin: 0 0 30px;
+  text-align: center;
+}
+
+.seq-htp-example-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.seq-htp-example-dot {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.seq-htp-example-dot--red {
+  background: radial-gradient(circle at 35% 30%, #FF9B9B, #DC2626 70%);
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.6);
+}
+
+.seq-htp-example-dot--green {
+  background: radial-gradient(circle at 35% 30%, #8FF0B8, #16A34A 70%);
+  box-shadow: 0 0 14px rgba(34, 197, 94, 0.6);
+}
+
+.seq-htp-example-dot--blue {
+  background: radial-gradient(circle at 35% 30%, #A9CBFF, #2563EB 70%);
+  box-shadow: 0 0 14px rgba(59, 130, 246, 0.6);
+}
+
+.seq-htp-example-arrow {
+  color: #7DB2FF;
+  font-size: 1.2rem;
+}
+
+.seq-htp-example-caption {
+  margin: 0;
+  color: #C7D0EA;
+  font-size: 1rem;
+}
+
+.seq-htp-word--red {
+  color: #F87171;
+  font-weight: 700;
+}
+
+.seq-htp-word--green {
+  color: #4ADE80;
+  font-weight: 700;
+}
+
+.seq-htp-word--blue {
+  color: #60A5FA;
+  font-weight: 700;
+}
+
+/* =========================================================================
+   Sequence Memory — "Practice Complete" (Assessment Intro) screen only
+   Scoped to .seq-screen--intro, reusing the shared dark glass panel base
+   (see the shared selector above), .seq-htp-title/-desc for the heading,
+   .seq-cs-info-panel for the assessment-info box, and .seq-cs-btn for the
+   Start Assessment button — no new panel/button styles duplicated here.
+   ========================================================================= */
+
+.seq-ai-check-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 6px;
+}
+
+.seq-ai-check-badge {
+  flex: none;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(74, 222, 128, 0.6);
+  background: rgba(34, 197, 94, 0.1);
+  box-shadow: 0 0 22px rgba(34, 197, 94, 0.45);
+}
+
+.seq-ai-ready-panel {
+  text-align: left;
+}
+
+.seq-ai-ready-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 0.06em;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #C4B5FD;
+  text-transform: uppercase;
+  margin: 0 0 16px;
+}
+
+.seq-ai-check-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.seq-ai-check-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(15, 22, 45, 0.5);
+  border: 1px solid rgba(125, 178, 255, 0.2);
+  border-radius: 12px;
+  padding: 10px 14px;
+}
+
+.seq-ai-check-icon {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(125, 178, 255, 0.1);
+}
+
+.seq-ai-check-label {
+  flex: 1;
+  font-size: 0.95rem;
+  color: #E7EEFC;
+}
+
+.seq-ai-check-ok {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(34, 197, 94, 0.18);
+  border: 1px solid rgba(74, 222, 128, 0.55);
+  color: #4ADE80;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+/* =========================================================================
+   Sequence Memory — Assessment Complete (Results) screen only
+   Scoped to .seq-screen--results. Unlike the other redesigned screens this
+   one also overrides the shared .oddball-screen width/alignment, since the
+   brief specifically calls for a full landscape dashboard rather than a
+   narrow centered card. MetricCard and TrendChart are shared with other
+   games' Results screens, so every override below targets them only
+   through this .seq-screen--results ancestor — nothing here is global.
+   ========================================================================= */
+
+.seq-screen--results {
+  max-width: 1360px;
+  width: 100%;
+  text-align: left;
+  padding: 32px 40px 40px;
+}
+
+.seq-res-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(125, 178, 255, 0.16);
+}
+
+.seq-res-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.seq-res-brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.seq-res-brand-mark {
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  font-size: 0.95rem;
+  color: #F3F6FF;
+}
+
+.seq-res-brand-sub {
+  font-size: 0.72rem;
+  color: #9AA6C9;
+  letter-spacing: 0.02em;
+}
+
+.seq-res-datetime {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #C7D0EA;
+  background: rgba(15, 26, 51, 0.5);
+  border: 1px solid rgba(125, 178, 255, 0.28);
+  border-radius: 999px;
+  padding: 8px 16px;
+}
+
+.seq-res-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(340px, 1.05fr);
+  gap: 32px;
+  align-items: start;
+}
+
+.seq-res-col--right {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.seq-res-complete {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.seq-res-eyebrow-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0 16px;
+}
+
+.seq-res-eyebrow-row::before,
+.seq-res-eyebrow-row::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(167, 139, 250, 0.35);
+}
+
+.seq-screen--results .oddball-heading {
+  font-family: 'Manrope', var(--font-sans);
+  color: #F7F9FF;
+  letter-spacing: 0.02em;
+  margin-top: 12px;
+}
+
+.seq-screen--results .oddball-subheading-muted {
+  color: #67E8F9;
+  font-weight: 700;
+}
+
+.seq-screen--results .oddball-section-title {
+  color: #C4B5FD;
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  margin: 28px 0 14px;
+}
+
+.seq-res-eyebrow-row .oddball-section-title {
+  margin: 0;
+}
+
+.seq-screen--results .oddball-metric-card {
+  background: rgba(15, 22, 45, 0.55);
+  border: 1px solid rgba(125, 178, 255, 0.22);
+}
+
+.seq-screen--results .oddball-metric-card--primary {
+  background: rgba(124, 58, 237, 0.12);
+  border-color: rgba(167, 139, 250, 0.45);
+}
+
+.seq-screen--results .oddball-metric-label {
+  color: #9AA6C9;
+}
+
+.seq-screen--results .oddball-metric-value {
+  color: #F7F9FF;
+  text-shadow: 0 0 18px rgba(59, 130, 246, 0.25);
+}
+
+.seq-screen--results .oddball-metric-unit,
+.seq-screen--results .oddball-metric-sublabel {
+  color: #9AA6C9;
+}
+
+.seq-screen--results .oddball-result-note {
+  color: #AEB9D6;
+  font-size: 0.92rem;
+}
+
+.seq-screen--results .oddball-baseline-card {
+  background: rgba(8, 13, 28, 0.4);
+  border: 1px solid rgba(125, 178, 255, 0.28);
+  border-radius: 18px;
+}
+
+.seq-screen--results .oddball-baseline-card p {
+  color: #C7D0EA;
+}
+
+.seq-screen--results .oddball-info-label {
+  color: #9AA6C9;
+}
+
+.seq-screen--results .oddball-info-value {
+  color: #F7F9FF;
+}
+
+.seq-screen--results .oddball-disclaimer {
+  background: rgba(8, 13, 28, 0.4);
+  border: 1px solid rgba(125, 178, 255, 0.18);
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-top: 28px;
+}
+
+.seq-screen--results .oddball-disclaimer p {
+  color: #9AA6C9;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.seq-screen--results .oddball-device-note {
+  color: #7C879F;
+}
+
+.seq-screen--results .oddball-actions--results {
+  justify-content: flex-start;
+  margin-top: 18px;
+}
+
+.seq-cs-btn--success {
+  border: none;
+  background: linear-gradient(120deg, #16A34A 0%, #22C55E 100%);
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(34, 197, 94, 0.35);
+}
+
+.seq-cs-btn--success:hover {
+  box-shadow: 0 10px 30px rgba(34, 197, 94, 0.5);
+}
+
+@media (max-width: 980px) {
+  .seq-res-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .seq-screen--results {
+    padding: 26px 20px 30px;
+  }
+
+  .seq-res-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.seq-stage-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 22px 0 26px;
+}
+
+.seq-stage-card {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 18px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.seq-stage-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--violet-100);
+  margin-bottom: 4px;
+}
+
+.seq-stage-title {
+  font-weight: 700;
+  color: var(--navy-900);
+  font-size: 0.98rem;
+}
+
+.seq-stage-desc {
+  color: var(--text-secondary);
+  font-size: 0.86rem;
+}
+
+.seq-example {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 22px;
+  margin: 8px auto 24px;
+  max-width: 420px;
+}
+
+.seq-example-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.seq-example-dot {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.seq-example-dot--red {
+  background: var(--red-600);
+}
+.seq-example-dot--blue {
+  background: var(--blue-600);
+}
+.seq-example-dot--green {
+  background: var(--green-600);
+}
+.seq-example-dot--yellow {
+  background: var(--yellow-500);
+}
+
+.seq-example-arrow {
+  color: var(--gray-600);
+  font-size: 1.2rem;
+}
+
+.seq-example-caption {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  text-align: center;
+}
+
+.seq-ready-checklist {
+  text-align: left;
+  max-width: 420px;
+  margin: 20px auto;
+}
+
+.seq-ready-checklist ul {
+  padding-left: 22px;
+  color: var(--text-secondary);
+  line-height: 1.9;
+}
+
+/* --- game area (Practice + real assessment, shared via SequenceTrialView) --- */
+
+.seq-game-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.seq-screen--game .oddball-eyebrow {
+  color: #38BDF8;
+}
+
+.seq-game-title {
+  margin: 2px 0 0;
+  line-height: 1;
+  text-align: center;
+}
+
+.seq-game-title-main,
+.seq-game-title-sub {
+  display: block;
+  font-family: 'Manrope', var(--font-sans);
+  font-weight: 700;
+  color: #F3F6FF;
+  text-transform: uppercase;
+}
+
+.seq-game-title-main {
+  font-size: clamp(1.7rem, 5vw, 2.4rem);
+  letter-spacing: 0.08em;
+  padding-left: 0.08em;
+  text-shadow: 0 0 20px rgba(59, 130, 246, 0.4), 0 0 36px rgba(124, 58, 237, 0.22);
+}
+
+.seq-game-title-sub {
+  font-size: clamp(0.75rem, 2.4vw, 1.05rem);
+  letter-spacing: 0.28em;
+  padding-left: 0.28em;
+  margin-top: 3px;
+  color: #CBD5F5;
+}
+
+.seq-game-domain-text {
+  letter-spacing: 0.06em;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #C4B5FD;
+  text-transform: uppercase;
+  margin: 8px 0 0;
+  text-align: center;
+}
+
+.seq-game-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.seq-status-text {
+  font-weight: 700;
+  color: #67E8F9;
+  letter-spacing: 0.04em;
+  font-size: 1.05rem;
+  margin: 16px 0 18px;
+  min-height: 1.4em;
+  text-align: center;
+}
+
+.seq-progress-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 18px;
+}
+
+.seq-progress-chip {
+  background: rgba(15, 26, 51, 0.6);
+  border: 1px solid rgba(125, 178, 255, 0.28);
+  color: #C7D0EA;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 6px 14px;
+  border-radius: 999px;
+}
+
+.seq-progress-chip--active {
+  background: rgba(124, 58, 237, 0.18);
+  border-color: rgba(167, 139, 250, 0.55);
+  color: #E9D5FF;
+}
+
+.seq-hint {
+  color: #AEB9D6;
+  font-size: 1rem;
+  margin-top: 22px;
+  text-align: center;
+}
+
+/* --- board & buttons: real, clickable 4x4 grid (16 tiles, 4 colors x4 —
+   see SEQUENCE_BOARD_LAYOUT in sequenceConfig.js). Every tile of a given
+   color is a valid tap for that color; useSequenceEngine only ever deals
+   in colors, never tile position, so this is presentation-only. --- */
+
+.seq-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  width: min(420px, 88vw);
+  margin: 10px auto 0;
+}
+
+.seq-button {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  border-radius: 14px;
+  border: 2px solid rgba(8, 13, 28, 0.6);
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.12s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 64px;
+}
+
+.seq-button--red {
+  background: linear-gradient(160deg, #FF6B6B 0%, #DC2626 60%, #9F1D1D 100%);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.3),
+    inset 0 -6px 8px rgba(0, 0, 0, 0.35);
+}
+.seq-button--blue {
+  background: linear-gradient(160deg, #7DB4FF 0%, #2563EB 60%, #123B94 100%);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.3),
+    inset 0 -6px 8px rgba(0, 0, 0, 0.35);
+}
+.seq-button--green {
+  background: linear-gradient(160deg, #6EE7A0 0%, #16A34A 60%, #0B5C29 100%);
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.3),
+    inset 0 -6px 8px rgba(0, 0, 0, 0.35);
+}
+.seq-button--yellow {
+  background: linear-gradient(160deg, #FFEB80 0%, #EAB308 60%, #92640A 100%);
+  box-shadow: 0 0 10px rgba(234, 179, 8, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.35),
+    inset 0 -6px 8px rgba(0, 0, 0, 0.3);
+}
+
+.seq-board--presenting .seq-button:not(.seq-button--active) {
+  filter: brightness(0.4) saturate(0.6);
+}
+
+.seq-button--active {
+  transform: scale(1.06);
+  filter: brightness(1.1);
+}
+
+.seq-button--active.seq-button--red {
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.55), 0 0 26px rgba(239, 68, 68, 0.9),
+    inset 0 2px 4px rgba(255, 255, 255, 0.4);
+}
+.seq-button--active.seq-button--blue {
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.55), 0 0 26px rgba(59, 130, 246, 0.9),
+    inset 0 2px 4px rgba(255, 255, 255, 0.4);
+}
+.seq-button--active.seq-button--green {
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.55), 0 0 26px rgba(34, 197, 94, 0.9),
+    inset 0 2px 4px rgba(255, 255, 255, 0.4);
+}
+.seq-button--active.seq-button--yellow {
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.55), 0 0 26px rgba(234, 179, 8, 0.9),
+    inset 0 2px 4px rgba(255, 255, 255, 0.4);
+}
+
+.seq-button--pressed {
+  transform: scale(0.9);
+}
+
+.seq-button:disabled {
+  cursor: default;
+}
+
+.seq-button:not(:disabled):hover {
+  filter: brightness(1.15);
+  transform: scale(1.03);
+}
+
+.seq-button:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring), 0 0 0 3px rgba(125, 178, 255, 0.5);
+}
+
+/* =========================================================================
+   Point & Click
+   Same shell/typography/card system as the rest of Neuromorph, with a
+   teal/cyan accent identity layered on top of the shared navy shell.
+   ========================================================================= */
+
+/* =========================================================================
+   Point & Click — dark NEUROMORPH theme
+   Reference-researched redesign (see chat): UX ethos borrowed from
+   CogniFit's "Test & Brain Games" — a calm, single-focus evaluation screen
+   with minimal chrome, restrained (non-gamified) feedback, and a quiet
+   progress indicator, rendered in NeuroMorph's own dark/electric-blue/cyan
+   identity (this game sits in the "Reaction" domain, so blue+cyan is used
+   here instead of Sequence Memory's purple-leaning palette, for visual
+   differentiation between modules).
+
+   Every truly Point & Click-only class (already prefixed `pc-`, e.g.
+   .pc-board/.pc-object/.pc-modal/.pc-target-card) is restyled directly —
+   these are never reused by any other module. Every genuinely shared class
+   (the `oddball-*` base classes, .seq-stage-card, .seq-cs-btn, etc., which
+   Oddball/Image Pairs/Whack the Mole/Sequence Memory also depend on) is
+   overridden ONLY inside the .pc-screen--* scoped selectors below, exactly
+   like the Sequence Memory / History dark-theme passes — so nothing here
+   affects any other still-light-themed screen.
+   ========================================================================= */
+
+.pc-screen--welcome,
+.pc-screen--instructions,
+.pc-screen--game,
+.pc-screen--practice-complete,
+.pc-screen--completing,
+.pc-screen--results {
+  background: linear-gradient(165deg, rgba(8, 13, 26, 0.93) 0%, rgba(7, 17, 34, 0.93) 100%);
+  border: 1px solid rgba(56, 189, 248, 0.32);
+  border-top: none;
+  border-radius: 28px;
+  box-shadow:
+    0 0 0 1px rgba(34, 211, 238, 0.1),
+    0 0 46px rgba(37, 99, 235, 0.2),
+    0 0 80px rgba(34, 211, 238, 0.12),
+    var(--shadow-md);
+  backdrop-filter: blur(16px);
+  color: #E7EEFC;
+}
+
+.pc-screen--welcome .oddball-eyebrow,
+.pc-screen--instructions .oddball-eyebrow,
+.pc-screen--game .oddball-eyebrow,
+.pc-screen--practice-complete .oddball-eyebrow,
+.pc-screen--completing .oddball-eyebrow,
+.pc-screen--results .oddball-eyebrow {
+  color: #22D3EE;
+}
+
+.pc-screen--welcome .oddball-title,
+.pc-screen--instructions .oddball-heading,
+.pc-screen--practice-complete .oddball-heading,
+.pc-screen--completing .oddball-heading,
+.pc-screen--results .oddball-heading {
+  color: #F7F9FF;
+}
+
+.pc-screen--results .oddball-subheading-muted {
+  color: #67E8F9;
+  font-weight: 700;
+}
+
+.pc-screen--welcome .oddball-lead,
+.pc-screen--instructions .oddball-lead,
+.pc-screen--practice-complete .oddball-lead {
+  color: #AEB9D6;
+}
+
+.pc-screen--welcome .oddball-hint,
+.pc-screen--practice-complete .oddball-hint,
+.pc-screen--completing .oddball-hint {
+  color: #9AA6C9;
+}
+
+.pc-screen--instructions .oddball-instruction-list {
+  color: #C7D0EA;
+}
+
+.pc-screen--instructions .oddball-instruction-list li::marker {
+  color: #38BDF8;
+}
+
+.pc-screen--welcome .oddball-link-btn {
+  display: inline-flex;
+  margin-top: 22px;
+  background: none;
+  border: none;
+  color: #67E8F9;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 8px;
+}
+
+.pc-screen--practice-complete .oddball-check-badge,
+.pc-screen--completing .oddball-check-badge,
+.pc-screen--results .oddball-check-badge {
+  background: linear-gradient(135deg, #22C55E, #16A34A);
+  box-shadow: 0 0 22px rgba(34, 197, 94, 0.45);
+}
+
+.pc-screen--results .oddball-section-title {
+  color: #7DD3FC;
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 28px 0 14px;
+}
+
+.pc-screen--results .oddball-metric-card {
+  background: rgba(15, 22, 45, 0.55);
+  border: 1px solid rgba(96, 165, 250, 0.22);
+}
+
+.pc-screen--results .oddball-metric-card--primary {
+  background: rgba(37, 99, 235, 0.14);
+  border-color: rgba(96, 165, 250, 0.45);
+}
+
+.pc-screen--results .oddball-metric-label {
+  color: #9AA6C9;
+}
+
+.pc-screen--results .oddball-metric-value {
+  color: #F7F9FF;
+  text-shadow: 0 0 18px rgba(34, 211, 238, 0.25);
+}
+
+.pc-screen--results .oddball-metric-unit,
+.pc-screen--results .oddball-metric-sublabel {
+  color: #9AA6C9;
+}
+
+.pc-screen--results .oddball-result-note {
+  color: #AEB9D6;
+  font-size: 0.92rem;
+}
+
+.pc-screen--results .oddball-trend-toggle {
+  gap: 8px;
+}
+
+.pc-screen--results .oddball-toggle-btn {
+  background: rgba(15, 26, 51, 0.6);
+  border: 1px solid rgba(96, 165, 250, 0.28);
+  color: #C7D0EA;
+}
+
+.pc-screen--results .oddball-toggle-btn--active {
+  background: linear-gradient(120deg, #2563EB 0%, #22D3EE 100%);
+  border-color: transparent;
+  color: #061018;
+}
+
+.pc-screen--results .oddball-history-table th,
+.pc-screen--results .oddball-history-table td {
+  border-bottom: 1px solid rgba(96, 165, 250, 0.16);
+  color: #E7EEFC;
+}
+
+.pc-screen--results .oddball-history-table th {
+  color: #AEB9D6;
+}
+
+.pc-screen--results .oddball-chart-empty {
+  background: rgba(8, 13, 28, 0.4);
+  border: 1px dashed rgba(96, 165, 250, 0.28);
+  color: #AEB9D6;
+}
+
+.pc-screen--results .oddball-baseline-card {
+  background: rgba(8, 13, 28, 0.4);
+  border: 1px solid rgba(96, 165, 250, 0.28);
+  border-radius: 18px;
+}
+
+.pc-screen--results .oddball-baseline-card p {
+  color: #C7D0EA;
+}
+
+.pc-screen--results .oddball-info-label {
+  color: #9AA6C9;
+}
+
+.pc-screen--results .oddball-info-value {
+  color: #F7F9FF;
+}
+
+.pc-screen--results .oddball-disclaimer {
+  background: rgba(8, 13, 28, 0.4);
+  border: 1px solid rgba(96, 165, 250, 0.18);
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-top: 28px;
+}
+
+.pc-screen--results .oddball-disclaimer p {
+  color: #9AA6C9;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.pc-screen--results .oddball-device-note {
+  color: #7C879F;
+}
+
+.pc-screen--practice-complete .seq-ready-checklist h2,
+.pc-screen--practice-complete .seq-ready-checklist ul {
+  color: #E7EEFC;
+}
+
+.pc-screen--practice-complete .seq-ready-checklist ul {
+  color: #C7D0EA;
+}
+
+.pc-screen--instructions .seq-stage-card {
+  background: rgba(15, 22, 45, 0.55);
+  border: 1px solid rgba(96, 165, 250, 0.24);
+}
+
+.pc-screen--instructions .seq-stage-icon {
+  background: rgba(34, 211, 238, 0.12);
+}
+
+.pc-screen--instructions .seq-stage-title {
+  color: #F3F6FF;
+}
+
+.pc-screen--instructions .seq-stage-desc {
+  color: #AEB9D6;
+}
+
+.pc-screen--game {
+  max-width: 760px;
+  padding: 28px 28px 36px;
+}
+
+.pc-subtitle {
+  display: block;
+  letter-spacing: 0.08em;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #67E8F9;
+  margin: 2px 0 14px;
+}
+
+.pc-brain-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+/* --- instructions example --- */
+
+.pc-example {
+  background: rgba(8, 13, 28, 0.4);
+  border: 1px solid rgba(96, 165, 250, 0.24);
+  border-radius: var(--radius-md);
+  padding: 22px;
+  margin: 8px auto 24px;
+  max-width: 480px;
+}
+
+.pc-example-target {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.pc-example-target-label {
+  color: #9AA6C9;
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+.pc-example-target-name {
+  font-weight: 700;
+  color: #F7F9FF;
+  font-size: 1.05rem;
+}
+
+.pc-example-board {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+  padding: 14px;
+  background: rgba(15, 22, 45, 0.5);
+  border-radius: var(--radius-sm);
+}
+
+.pc-example-object {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(148, 178, 220, 0.3);
+}
+
+.pc-example-caption {
+  color: #9AA6C9;
+  font-size: 0.9rem;
+  text-align: center;
+  margin: 14px 0 0;
+}
+
+/* --- game area (Practice + real scored assessment, shared via
+       PointClickTrialView) --- */
+
+.pc-game-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.pc-screen--game .oddball-game-title {
+  color: #F7F9FF;
+}
+
+.pc-pause-btn {
+  background: rgba(15, 26, 51, 0.6);
+  border: 1px solid rgba(96, 165, 250, 0.32);
+  color: #C7D0EA;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.pc-pause-btn:hover {
+  border-color: #22D3EE;
+  color: #22D3EE;
+}
+
+.pc-pause-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.pc-game-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Slim, quiet round-progress indicator — pure presentation over the
+   engine's existing trialNumber/totalTrials (no new data, no logic). Fills
+   as completed trials accumulate; a professional, low-noise alternative to
+   a bare "Trial X of Y" line, in the spirit of the researched reference's
+   uncluttered single-focus test screen. */
+.pc-progress-wrap {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto 4px;
+}
+
+.pc-progress-bar {
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(148, 178, 220, 0.16);
+  overflow: hidden;
+}
+
+.pc-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #2563EB, #22D3EE);
+  box-shadow: 0 0 10px rgba(34, 211, 238, 0.55);
+  transition: width 0.3s ease;
+}
+
+.pc-progress-text {
+  color: #9AA6C9;
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.03em;
+  text-align: center;
+  margin: 6px 0 6px;
+}
+
+.pc-target-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(15, 26, 51, 0.6);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  border-radius: 999px;
+  padding: 10px 22px;
+  margin: 2px auto 12px;
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.14);
+}
+
+.pc-target-card--compact {
+  padding: 6px 16px;
+}
+
+.pc-target-card-label {
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #22D3EE;
+}
+
+.pc-target-card-icon {
+  display: flex;
+  align-items: center;
+}
+
+.pc-target-card-name {
+  font-weight: 700;
+  color: #F7F9FF;
+  font-size: 1.05rem;
+}
+
+.pc-status-text {
+  font-weight: 600;
+  color: #7DD3FC;
+  letter-spacing: 0.02em;
+  font-size: 1rem;
+  margin: 4px 0 10px;
+  min-height: 1.4em;
+  text-align: center;
+}
+
+/* --- board: a dark "scan field" instead of a flat gray box --- */
+
+.pc-board {
+  position: relative;
+  width: 100%;
+  height: min(52vh, 440px);
+  min-height: 300px;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(37, 99, 235, 0.14), transparent 62%),
+    radial-gradient(rgba(148, 178, 220, 0.14) 1px, transparent 1px),
+    linear-gradient(165deg, rgba(6, 10, 22, 0.96) 0%, rgba(6, 14, 28, 0.96) 100%);
+  background-size: auto, 26px 26px, auto;
+  border: 1px solid rgba(56, 189, 248, 0.26);
+  border-radius: var(--radius-lg);
+  margin: 6px 0 12px;
+  overflow: hidden;
+  user-select: none;
+  box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.5);
+}
+
+.pc-object {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(148, 178, 220, 0.32);
+  background: rgba(15, 23, 42, 0.6);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pc-object:disabled {
+  cursor: default;
+}
+
+.pc-object:not(:disabled):hover {
+  transform: translate(-50%, -50%) scale(1.08);
+  border-color: rgba(34, 211, 238, 0.65);
+  box-shadow: 0 0 16px rgba(34, 211, 238, 0.35);
+}
+
+.pc-object:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.55), 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+
+.pc-object--correct {
+  border-color: #4ADE80;
+  box-shadow: 0 0 0 5px rgba(34, 197, 94, 0.22), 0 0 18px rgba(34, 197, 94, 0.45);
+}
+
+.pc-object--incorrect {
+  border-color: #F87171;
+  box-shadow: 0 0 0 5px rgba(239, 68, 68, 0.22), 0 0 18px rgba(239, 68, 68, 0.45);
+}
+
+.pc-object--missed-target {
+  border-color: #FBBF24;
+  border-style: dashed;
+  box-shadow: 0 0 0 5px rgba(251, 191, 36, 0.18);
+}
+
+.pc-feedback-slot {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.pc-feedback-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  background: rgba(15, 26, 51, 0.6);
+  border: 1px solid transparent;
+}
+
+.pc-feedback-pill--correct {
+  border-color: rgba(74, 222, 128, 0.5);
+  color: #4ADE80;
+}
+
+.pc-feedback-pill--incorrect {
+  border-color: rgba(248, 113, 113, 0.5);
+  color: #F87171;
+}
+
+.pc-feedback-pill--missed {
+  border-color: rgba(251, 191, 36, 0.4);
+  color: #FBBF24;
+}
+
+/* --- pause modal --- */
+
+.pc-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 8, 18, 0.72);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 50;
+}
+
+.pc-modal {
+  background: linear-gradient(165deg, rgba(11, 17, 33, 0.98) 0%, rgba(9, 20, 38, 0.98) 100%);
+  border: 1px solid rgba(56, 189, 248, 0.32);
+  border-radius: var(--radius-lg);
+  padding: 32px 28px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.08), 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.pc-modal-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #F7F9FF;
+  margin-bottom: 10px;
+}
+
+.pc-modal-text {
+  color: #9AA6C9;
+  margin-bottom: 4px;
+}
+
+.seq-cs-btn--danger {
+  border: none;
+  background: linear-gradient(120deg, #DC2626 0%, #EF4444 100%);
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.35);
+}
+
+.seq-cs-btn--danger:hover {
+  box-shadow: 0 10px 30px rgba(239, 68, 68, 0.5);
+}
+
+/* =========================================================================
+   Image Pairs
+   Same shell/typography/card system as the rest of Neuromorph, with an
+   indigo/lavender accent identity layered on top of the shared navy shell.
+   ========================================================================= */
+
+.ip-screen {
+  border-top: 4px solid var(--indigo-600);
+}
+
+.ip-screen--game {
+  max-width: 640px;
+  padding: 24px 24px 32px;
+}
+
+.ip-subtitle {
+  display: block;
+  letter-spacing: 0.08em;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--indigo-700);
+  margin: 2px 0 14px;
+}
+
+.ip-brain-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+/* --- game area --- */
+
+.ip-board-shell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.ip-game-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.ip-game-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ip-pairs-counter {
+  font-variant-numeric: tabular-nums;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--navy-800);
+  background: var(--gray-50);
+  border-radius: var(--radius-sm);
+  padding: 6px 14px;
+  white-space: nowrap;
+}
+
+.ip-timer--low {
+  color: var(--red-600);
+}
+
+/* --- card grid --- */
+
+.ip-card-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--ip-grid-cols, 4), 1fr);
+  gap: 12px;
+  width: min(520px, 100%);
+  margin: 18px auto 4px;
+}
+
+.ip-card {
+  aspect-ratio: 3 / 4;
+  min-height: 60px;
+  border: 2px solid rgba(255, 255, 255, 0.28);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  overflow: hidden;
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0px, rgba(255, 255, 255, 0.07) 2px, transparent 2px, transparent 10px),
+    linear-gradient(135deg, var(--purple-500) 0%, var(--indigo-600) 100%);
+}
+
+.ip-card:disabled {
+  cursor: default;
+}
+
+.ip-card--revealed,
+.ip-card--matched {
+  background: var(--surface);
+  border-color: var(--gray-200);
+}
+
+.ip-card--matched {
+  border-color: var(--green-600);
+  background: rgba(22, 163, 74, 0.06);
+  opacity: 0.88;
+}
+
+.ip-card:not(:disabled):hover {
+  box-shadow: var(--shadow-md);
+}
+
+.ip-card:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring), var(--shadow-sm);
+}
+
+.ip-card-face {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16%;
+  box-sizing: border-box;
+}
+
+.ip-card-icon {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ip-card-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Brief horizontal-squash pulse on state change, standing in for a card
+   flip without depending on 3D-transform/backface-visibility rendering
+   (unreliable inside <button> elements across browsers). */
+.ip-card--flipping .ip-card-face {
+  animation: ip-flip-pulse 0.3s ease;
+}
+
+@keyframes ip-flip-pulse {
+  0% {
+    transform: scaleX(1);
+  }
+  45% {
+    transform: scaleX(0.05);
+  }
+  55% {
+    transform: scaleX(0.05);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+/* =========================================================================
+   Whack the Mole
+   Same shell/typography/card system as the rest of Neuromorph, with a
+   green accent identity for chrome and a distinct grass/wood palette for
+   the game board itself.
+   ========================================================================= */
+
+.wm-screen {
+  border-top: 4px solid var(--green-700);
+}
+
+.wm-screen--game {
+  max-width: 640px;
+  padding: 24px 24px 32px;
+}
+
+.wm-subtitle {
+  display: block;
+  letter-spacing: 0.08em;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--green-700);
+  margin: 2px 0 14px;
+}
+
+.wm-mole-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.wm-difficulty-block {
+  margin: 4px 0 20px;
+  text-align: left;
+}
+
+.wm-difficulty-block .oddball-info-label {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.wm-difficulty-block .oddball-metric-sublabel {
+  margin-top: 6px;
+}
+
+.wm-stage-cards {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* --- "How it works" 1-2-3-4 row on Welcome --- */
+
+.wm-howitworks {
+  display: flex;
+  justify-content: center;
+  gap: 22px;
+  margin: 6px 0 22px;
+  flex-wrap: wrap;
+}
+
+.wm-howitworks-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: var(--navy-800);
+  font-size: 0.92rem;
+}
+
+.wm-howitworks-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--green-tint-50);
+  border: 2px solid var(--green-700);
+  color: var(--green-700);
+  font-weight: 800;
+}
+
+/* --- device check --- */
+
+.wm-device-check-area {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gray-50);
+  border: 2px dashed var(--gray-200);
+  border-radius: var(--radius-lg);
+  margin: 20px auto;
+  max-width: 340px;
+}
+
+.wm-device-check-target {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: var(--green-700);
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+}
+
+/* --- game header --- */
+
+.wm-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.wm-score-badge {
+  font-variant-numeric: tabular-nums;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--navy-800);
+  background: var(--gray-50);
+  border-radius: var(--radius-sm);
+  padding: 6px 14px;
+  white-space: nowrap;
+}
+
+.wm-timer--low {
+  color: var(--red-600);
+}
+
+.wm-instruction-line {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  margin: 6px 0 18px;
+}
+
+.wm-status-text {
+  text-align: center;
+  font-weight: 700;
+  color: var(--green-700);
+  font-size: 1.1rem;
+  min-height: 1.6em;
+  margin: 8px 0 4px;
+}
+
+/* --- board --- */
+
+.wm-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  width: min(420px, 100%);
+  margin: 10px auto 18px;
+  padding: 18px;
+  background: linear-gradient(180deg, var(--grass-500) 0%, var(--grass-600) 100%);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.wm-hole {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  min-height: 72px;
+  border: none;
+  padding: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  overflow: hidden;
+  background: radial-gradient(ellipse at center, var(--hole-950) 0%, var(--wood-700) 72%, var(--wood-500) 100%);
+  box-shadow: inset 0 6px 10px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.2);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.wm-hole:disabled {
+  cursor: default;
+}
+
+.wm-hole:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring), inset 0 6px 10px rgba(0, 0, 0, 0.5);
+}
+
+.wm-hole-rim {
+  position: absolute;
+  inset: 6%;
+  border-radius: 50%;
+  border: 3px solid rgba(0, 0, 0, 0.25);
+  pointer-events: none;
+}
+
+.wm-hole-shadow {
+  position: absolute;
+  left: 50%;
+  bottom: 14%;
+  width: 55%;
+  height: 16%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 50%;
+  filter: blur(2px);
+  pointer-events: none;
+}
+
+.wm-mole-slot {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Simple, robust 2D transform (translateY) for the pop-up — deliberately
+   not a 3D/backface-visibility trick, which renders inconsistently across
+   browsers when applied inside a <button> (see Image Pairs card lesson). */
+.wm-mole {
+  width: 84%;
+  transform: translateY(38%);
+  animation: wm-mole-rise 0.22s ease-out forwards;
+}
+
+@keyframes wm-mole-rise {
+  0% {
+    transform: translateY(90%);
+  }
+  70% {
+    transform: translateY(30%);
+  }
+  100% {
+    transform: translateY(38%);
+  }
+}
+
+.wm-hole--hit .wm-hole-rim {
+  border-color: rgba(21, 128, 61, 0.55);
+}
+
+.wm-hole--miss .wm-hole-rim {
+  border-color: rgba(0, 0, 0, 0.25);
+}
+
+.wm-hole--false {
+  animation: wm-false-pulse 0.32s ease;
+}
+
+@keyframes wm-false-pulse {
+  0% {
+    box-shadow: inset 0 6px 10px rgba(0, 0, 0, 0.5), 0 0 0 0 rgba(151, 163, 182, 0.35);
+  }
+  50% {
+    box-shadow: inset 0 6px 10px rgba(0, 0, 0, 0.5), 0 0 0 8px rgba(151, 163, 182, 0.28);
+  }
+  100% {
+    box-shadow: inset 0 6px 10px rgba(0, 0, 0, 0.5), 0 0 0 0 rgba(151, 163, 182, 0);
+  }
+}
+
+/* --- bottom stats --- */
+
+.wm-stats-bar {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin: 4px 0 16px;
+}
+
+.wm-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+/* --- results --- */
+
+.wm-score-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: var(--green-tint-50);
+  border: 1px solid var(--green-700);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin: 4px 0 8px;
+}
+
+.wm-score-summary-value {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--green-700);
+}
+
+.wm-thirds-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+/* =========================================================================
+   Responsive
+   ========================================================================= */
+
+@media (max-width: 768px) {
+  .dash-domain-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dash-detail-games {
+    grid-template-columns: 1fr;
+  }
+
+  .dash-dark {
+    /* Fixed-attachment backgrounds can be janky/heavy on mobile browsers,
+       and repositioning here keeps the busiest part of the image from
+       sitting directly behind the stacked hero text. */
+    background-attachment: scroll;
+    background-position: 70% 20%;
+  }
+
+  .dash-bg-overlay {
+    background:
+      radial-gradient(ellipse 900px 520px at 85% 4%, rgba(56, 189, 248, 0.08), transparent 60%),
+      linear-gradient(180deg, rgba(5, 9, 18, 0.55) 0%, rgba(5, 9, 18, 0.4) 20%, rgba(5, 9, 18, 0.7) 55%, rgba(5, 9, 18, 0.92) 100%);
+  }
+
+  .assessment-bg {
+    /* Fixed-attachment backgrounds can be janky/heavy on mobile browsers. */
+    background-attachment: scroll;
+    background-position: 70% 20%;
+  }
+
+  .dash-hero-visual {
+    width: min(55vw, 320px);
+    opacity: 0.6;
+    top: -4%;
+    right: -6%;
+  }
+
+  .dash-hero-content {
+    max-width: 100%;
+  }
+
+  .dash-summary-cards {
+    flex-direction: column;
+  }
+
+  .dash-summary-card {
+    min-width: 0;
+  }
+
+  .dash-header-inner {
+    justify-content: flex-start;
+  }
+
+  .oddball-screen {
+    padding: 28px 20px 32px;
+  }
+
+  .oddball-metric-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .oddball-btn {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .oddball-baseline-values {
+    gap: 18px;
+  }
+
+  .seq-stage-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .seq-htp-stage {
+    flex-basis: 100%;
+    max-width: 280px;
+  }
+
+  .seq-htp-stage-arrow {
+    display: none;
+  }
+
+  .seq-deco-line {
+    width: 60px;
+  }
+
+  .seq-board {
+    width: min(320px, 82vw);
+    gap: 8px;
+  }
+
+  .pc-board {
+    height: min(50vh, 380px);
+    min-height: 280px;
+  }
+
+  .pc-object {
+    width: 50px;
+    height: 50px;
+  }
+
+  .ip-screen--game {
+    padding: 20px 16px 28px;
+  }
+
+  .ip-card-grid {
+    gap: 9px;
+  }
+
+  .wm-screen--game {
+    padding: 20px 16px 28px;
+  }
+
+  .wm-stage-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .wm-board {
+    gap: 10px;
+    padding: 14px;
+  }
+
+  .wm-thirds-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .dash-hero-visual {
+    display: none;
+  }
+
+  .dash-bg-overlay {
+    background: rgba(5, 9, 18, 0.82);
+  }
+
+  .dash-account-name {
+    display: none;
+  }
+
+  .dash-title {
+    font-size: 1.9rem;
+  }
+
+  .oddball-metric-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .oddball-stimulus-area {
+    height: 42vh;
+    min-height: 220px;
+  }
+
+  .oddball-example-row {
+    font-size: 1.5rem;
+    gap: 8px;
+  }
+
+  .seq-board {
+    width: min(300px, 88vw);
+    gap: 6px;
+  }
+
+  .seq-button {
+    min-height: 0;
+    border-radius: 10px;
+  }
+
+  .pc-board {
+    height: min(46vh, 320px);
+    min-height: 260px;
+  }
+
+  .pc-object {
+    width: 48px;
+    height: 48px;
+  }
+
+  .pc-example-object {
+    width: 48px;
+    height: 48px;
+  }
+
+  .ip-card-grid {
+    gap: 7px;
+  }
+
+  .ip-game-header-right {
+    gap: 6px;
+  }
+
+  .ip-pairs-counter,
+  .oddball-timer {
+    font-size: 0.88rem;
+    padding: 5px 10px;
+  }
+
+  .wm-score-badge {
+    font-size: 0.88rem;
+    padding: 5px 10px;
+  }
+
+  .wm-stage-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .wm-stats-bar {
+    gap: 24px;
+  }
+}
+
+/* =========================================================================
+   Spot the Difference — dark NEUROMORPH theme
+
+   Same pattern as the Point & Click / Visual Oddball dark-theme passes:
+   every rule below is scoped under one of the .sd-screen--* modifier
+   classes (or the already-shared .oddball-screen--history, which every
+   module's History screen reuses directly — see spotdifference/
+   SpotDifferenceHistory.jsx), so nothing here affects any other
+   still-differently-themed screen or module.
+   ========================================================================= */
+
+.sd-screen--welcome,
+.sd-screen--instructions,
+.sd-screen--level-select,
+.sd-screen--level-intro,
+.sd-screen--game,
+.sd-screen--level-complete,
+.sd-screen--results {
+  background: linear-gradient(165deg, rgba(8, 13, 26, 0.93) 0%, rgba(7, 17, 34, 0.93) 100%);
+  border: 1px solid rgba(56, 189, 248, 0.32);
+  border-top: none;
+  border-radius: 28px;
+  box-shadow:
+    0 0 0 1px rgba(34, 211, 238, 0.1),
+    0 0 46px rgba(37, 99, 235, 0.2),
+    0 0 80px rgba(34, 211, 238, 0.12),
+    var(--shadow-md);
+  backdrop-filter: blur(16px);
+  color: #E7EEFC;
+}
+
+.sd-screen--welcome .oddball-eyebrow,
+.sd-screen--results .oddball-eyebrow {
+  color: #22D3EE;
+}
+
+.sd-screen--welcome .oddball-title,
+.sd-screen--instructions .oddball-heading,
+.sd-screen--level-select .oddball-heading,
+.sd-screen--level-intro .oddball-heading,
+.sd-screen--level-complete .oddball-heading,
+.sd-screen--results .oddball-heading {
+  color: #F7F9FF;
+}
+
+.sd-screen--results .oddball-subheading-muted,
+.sd-screen--level-select .oddball-subheading-muted {
+  color: #67E8F9;
+  font-weight: 700;
+}
+
+.sd-screen--welcome .oddball-lead,
+.sd-screen--level-intro .oddball-lead,
+.sd-screen--level-complete .oddball-lead {
+  color: #AEB9D6;
+}
+
+.sd-screen--welcome .oddball-hint {
+  color: #9AA6C9;
+}
+
+.sd-screen--instructions .oddball-instruction-list {
+  color: #C7D0EA;
+}
+
+.sd-screen--instructions .oddball-instruction-list li::marker {
+  color: #38BDF8;
+}
+
+.sd-screen--welcome .oddball-link-btn {
+  display: inline-flex;
+  margin-top: 22px;
+  background: none;
+  border: none;
+  color: #67E8F9;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 8px;
+}
+
+.sd-screen--level-complete .oddball-tag,
+.sd-screen--level-intro .oddball-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(15, 26, 51, 0.55);
+  border: 1px solid rgba(167, 139, 250, 0.32);
+  color: #DCE3FA;
+}
+
+.sd-screen--results .oddball-check-badge,
+.sd-screen--level-complete .oddball-check-badge {
+  background: linear-gradient(135deg, #22C55E, #16A34A);
+  box-shadow: 0 0 22px rgba(34, 197, 94, 0.45);
+}
+
+.sd-screen--results .oddball-section-title {
+  color: #7DD3FC;
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 28px 0 14px;
+}
+
+.sd-screen--results .oddball-metric-card {
+  background: rgba(15, 22, 45, 0.55);
+  border: 1px solid rgba(96, 165, 250, 0.22);
+}
+
+.sd-screen--results .oddball-metric-card--primary {
+  background: rgba(37, 99, 235, 0.14);
+  border-color: rgba(96, 165, 250, 0.45);
+}
+
+.sd-screen--results .oddball-metric-label {
+  color: #9AA6C9;
+}
+
+.sd-screen--results .oddball-metric-value {
+  color: #F7F9FF;
+  text-shadow: 0 0 18px rgba(34, 211, 238, 0.25);
+}
+
+.sd-screen--results .oddball-metric-unit,
+.sd-screen--results .oddball-metric-sublabel {
+  color: #9AA6C9;
+}
+
+.sd-screen--results .oddball-result-note,
+.sd-screen--results .oddball-half-stat-label {
+  color: #AEB9D6;
+}
+
+.sd-screen--results .oddball-half-card {
+  background: rgba(15, 22, 45, 0.55);
+  border: 1px solid rgba(103, 232, 249, 0.22);
+}
+
+.sd-screen--results .oddball-half-stat,
+.sd-screen--results .oddball-info-value {
+  color: #F7F9FF;
+}
+
+.sd-screen--results .oddball-info-label {
+  color: #9AA6C9;
+}
+
+.sd-screen--results .oddball-trend-toggle {
+  gap: 8px;
+}
+
+.sd-screen--results .oddball-toggle-btn {
+  background: rgba(15, 26, 51, 0.6);
+  border: 1px solid rgba(96, 165, 250, 0.28);
+  color: #C7D0EA;
+}
+
+.sd-screen--results .oddball-toggle-btn--active {
+  background: linear-gradient(120deg, #2563EB 0%, #22D3EE 100%);
+  border-color: transparent;
+  color: #061018;
+}
+
+.sd-screen--results .oddball-chart-empty {
+  background: rgba(8, 13, 28, 0.4);
+  border: 1px dashed rgba(96, 165, 250, 0.28);
+  color: #AEB9D6;
+}
+
+.sd-screen--results .oddball-baseline-card {
+  background: rgba(8, 13, 28, 0.4);
+  border: 1px solid rgba(96, 165, 250, 0.28);
+  border-radius: 18px;
+}
+
+.sd-screen--results .oddball-baseline-card p {
+  color: #C7D0EA;
+}
+
+.sd-screen--results .oddball-disclaimer {
+  background: rgba(8, 13, 28, 0.4);
+  border: 1px solid rgba(96, 165, 250, 0.18);
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-top: 28px;
+}
+
+.sd-screen--results .oddball-disclaimer p {
+  color: #9AA6C9;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.sd-screen--instructions .seq-stage-card {
+  background: rgba(15, 22, 45, 0.55);
+  border: 1px solid rgba(96, 165, 250, 0.24);
+}
+
+.sd-screen--instructions .seq-stage-icon {
+  background: rgba(34, 211, 238, 0.12);
+}
+
+.sd-screen--instructions .seq-stage-title {
+  color: #F3F6FF;
+}
+
+.sd-screen--instructions .seq-stage-desc {
+  color: #AEB9D6;
+}
+
+/* --- wider layouts for the level grid and the two-picture board --- */
+
+.sd-screen--level-select {
+  max-width: 1040px;
+}
+
+.sd-screen--game {
+  max-width: 980px;
+  padding: 28px 28px 36px;
+}
+
+/* --- Level Select: level cards --- */
+
+.sd-level-cards-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin: 22px 0 6px;
+}
+
+@media (max-width: 820px) {
+  .sd-level-cards-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sd-level-card {
+  font-family: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  background: rgba(15, 22, 45, 0.55);
+  border: 1px solid rgba(96, 165, 250, 0.24);
+  border-radius: 20px;
+  padding: 22px 20px;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  color: #E7EEFC;
+}
+
+.sd-level-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(56, 189, 248, 0.5);
+  box-shadow: 0 14px 30px rgba(37, 99, 235, 0.25);
+}
+
+.sd-level-card--done {
+  border-color: rgba(34, 197, 94, 0.5);
+  background: rgba(20, 40, 30, 0.5);
+}
+
+.sd-level-card-stars {
+  font-size: 1.1rem;
+  letter-spacing: 3px;
+  color: #FBBF24;
+  margin-bottom: 6px;
+}
+
+.sd-level-card-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #F7F9FF;
+  margin-bottom: 4px;
+}
+
+.sd-level-card-sub {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #67E8F9;
+  margin-bottom: 8px;
+}
+
+.sd-level-card-tagline {
+  font-size: 0.86rem;
+  color: #AEB9D6;
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.sd-level-card-done-badge {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #4ADE80;
+  margin-bottom: 8px;
+}
+
+.sd-level-card-play {
+  font-weight: 800;
+  color: #38BDF8;
+  font-size: 0.88rem;
+  margin-top: auto;
+}
+
+/* --- Level Intro --- */
+
+.sd-level-badge {
+  margin-bottom: 10px;
+}
+
+.sd-level-intro-stars {
+  font-size: 1.4rem;
+  letter-spacing: 6px;
+  color: #FBBF24;
+  margin: 0 0 6px;
+}
+
+.sd-hint-box {
+  background: rgba(15, 26, 51, 0.55);
+  border: 1px solid rgba(103, 232, 249, 0.24);
+  border-radius: 14px;
+  padding: 14px 18px;
+  font-size: 0.9rem;
+  color: #C7D0EA;
+  margin: 16px 0;
+  text-align: left;
+}
+
+.sd-diff-count {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #67E8F9;
+  margin: 10px 0 22px;
+}
+
+/* --- Game board --- */
+
+.sd-status-card {
+  background: rgba(15, 22, 45, 0.55);
+  border: 1px solid rgba(96, 165, 250, 0.24);
+  border-radius: 20px;
+  padding: 18px 24px;
+  max-width: 100%;
+  margin: 0 auto 20px;
+  text-align: center;
+}
+
+.sd-status-title {
+  font-size: 1rem;
+  color: #F7F9FF;
+  margin: 0 0 8px;
+  font-weight: 800;
+}
+
+.sd-progress-count {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #67E8F9;
+  margin: 0 0 12px;
+}
+
+.sd-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sd-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(15, 26, 51, 0.7);
+  border: 2px solid rgba(96, 165, 250, 0.35);
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+
+.sd-dot--found {
+  background: #22C55E;
+  border-color: #22C55E;
+  transform: scale(1.15);
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+}
+
+.sd-complete-banner {
+  margin-top: 14px;
+  background: rgba(34, 197, 94, 0.14);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  color: #4ADE80;
+  font-weight: 800;
+  font-size: 1.05rem;
+  padding: 12px 16px;
+  border-radius: 14px;
+  animation: sd-banner-pop 0.4s ease;
+}
+
+@keyframes sd-banner-pop {
+  0% { transform: scale(0.92); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.sd-wrong-tip {
+  max-width: 640px;
+  margin: 0 auto 14px;
+  text-align: center;
+  background: rgba(239, 68, 68, 0.14);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #FCA5A5;
+  font-weight: 700;
+  font-size: 0.92rem;
+  padding: 10px 16px;
+  border-radius: 12px;
+}
+
+.sd-panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+@media (max-width: 820px) {
+  .sd-panels {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sd-panel {
+  background: rgba(8, 13, 28, 0.4);
+  border: 1px solid rgba(96, 165, 250, 0.22);
+  border-radius: 18px;
+  padding: 10px;
+}
+
+.sd-panel-label {
+  text-align: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: #7DD3FC;
+  letter-spacing: 0.03em;
+  margin: 0 0 8px;
+}
+
+.sd-image-frame {
+  position: relative;
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(96, 165, 250, 0.24);
+  cursor: crosshair;
+  background: #0a0e1c;
+  user-select: none;
+}
+
+.sd-image-frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+}
+
+.sd-marker {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  margin-left: -16px;
+  margin-top: -16px;
+  border-radius: 50%;
+  border: 3px solid #22C55E;
+  background: rgba(34, 197, 94, 0.22);
+  pointer-events: none;
+  animation: sd-marker-pop 0.35s ease;
+}
+
+.sd-marker::after {
+  content: "✓";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4ADE80;
+  font-weight: 900;
+  font-size: 16px;
+}
+
+@keyframes sd-marker-pop {
+  0% { transform: scale(0.3); opacity: 0; }
+  65% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+.sd-flash {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  margin-left: -16px;
+  margin-top: -16px;
+  border-radius: 50%;
+  border: 3px solid #EF4444;
+  background: rgba(239, 68, 68, 0.18);
+  pointer-events: none;
+  animation: sd-flash-fade 0.7s ease forwards;
+}
+
+.sd-flash::after {
+  content: "✕";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FCA5A5;
+  font-weight: 900;
+  font-size: 15px;
+}
+
+@keyframes sd-flash-fade {
+  0% { opacity: 1; transform: scale(0.7); }
+  100% { opacity: 0; transform: scale(1.3); }
+}
+
+.sd-gentle-note {
+  max-width: 640px;
+  margin: 20px auto 0;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #9AA6C9;
+  line-height: 1.5;
+}
+
+/* --- Results: per-level breakdown --- */
+
+.sd-level-breakdown {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin: 8px 0 4px;
+}
+
+@media (max-width: 600px) {
+  .sd-screen--game {
+    padding: 20px 16px 28px;
+  }
+
+  .sd-status-card {
+    padding: 14px 16px;
+  }
+
+  .sd-image-frame {
+    cursor: pointer;
+  }
+}
+
+/* =========================================================================
+   Visual Oddball — "How To Play" redesign
+
+   All rules below are scoped under .oddball-screen--instructions, which
+   (unlike most other .oddball-screen--* modifiers) is exclusive to this one
+   Oddball screen — every other module names its own Instructions screen
+   with its own prefix (.pc-screen--instructions, .wm-screen--instructions,
+   etc.), so nothing here can leak into another module.
+   ========================================================================= */
+
+.oddball-screen--instructions {
+  max-width: 1120px;
+  padding: 24px 32px 22px;
+}
+
+.oddball-screen--instructions .oddball-heading {
+  font-size: 2.2rem;
+  margin-bottom: 2px;
+}
+
+.oddball-howto-titlewrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+
+.oddball-howto-flourish {
+  color: #38BDF8;
+  flex: none;
+  display: none;
+}
+
+@media (min-width: 720px) {
+  .oddball-howto-flourish {
+    display: block;
+  }
+}
+
+.oddball-howto-flourish--right {
+  color: #A78BFA;
+}
+
+.oddball-howto-subtitle {
+  margin: 4px 0 4px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  background: linear-gradient(100deg, #A78BFA 0%, #38BDF8 60%, #22D3EE 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.oddball-screen--instructions .oddball-lead {
+  max-width: 640px;
+  margin: 4px auto 0;
+  font-size: 1.02rem;
+}
+
+/* --- 4-step tutorial --- */
+
+.oddball-howto-steps {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: stretch;
+  gap: 0;
+  margin: 16px 0;
+  text-align: left;
+  background: rgba(15, 22, 45, 0.55);
+  border: 1px solid rgba(139, 130, 246, 0.4);
+  border-radius: 16px;
+  padding: 16px 18px;
+  box-shadow: 0 0 20px rgba(139, 130, 246, 0.16), inset 0 0 16px rgba(103, 232, 249, 0.04);
+}
+
+@media (max-width: 980px) {
+  .oddball-howto-steps {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 14px;
+  }
+  .oddball-howto-step-arrow {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .oddball-howto-steps {
+    grid-template-columns: 1fr;
+  }
+}
+
+.oddball-howto-step-card {
+  position: relative;
+  background: none;
+  border: none;
+  border-radius: 0;
+  padding: 0 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 5px;
+  box-shadow: none;
+}
+
+.oddball-howto-step-arrow {
+  align-self: center;
+  width: 16px;
+  height: 16px;
+  flex: none;
+  background-image: url('./assets/icons/oddball-howto/oddball-icon-chevron.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.oddball-howto-kw--triangle {
+  color: #C084FC;
+}
+
+.oddball-howto-kw--circle {
+  color: #60A5FA;
+}
+
+.oddball-howto-kw--cyan {
+  color: #67E8F9;
+}
+
+.oddball-howto-step-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.oddball-howto-step-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #C4B5FD;
+  border: 1.5px solid rgba(167, 139, 250, 0.6);
+  background: rgba(124, 58, 237, 0.14);
+}
+
+.oddball-howto-step-title {
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #C4B5FD;
+}
+
+.oddball-howto-step-text {
+  color: #AEB9D6;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  min-height: 2.5em;
+}
+
+.oddball-howto-shape-box {
+  position: relative;
+  width: 100%;
+  min-height: 78px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8, 13, 28, 0.5);
+  border: 1px solid rgba(96, 165, 250, 0.35);
+  border-radius: 12px;
+  margin-top: 2px;
+  box-shadow: 0 0 22px rgba(96, 165, 250, 0.16), inset 0 0 18px rgba(96, 165, 250, 0.05);
+}
+
+.oddball-howto-glyph--circle {
+  color: #3B82F6;
+  filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.65));
+}
+
+.oddball-howto-glyph--triangle {
+  color: #A855F7;
+  filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.65));
+}
+
+.oddball-howto-shape-badge {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.oddball-howto-cursor-badge,
+.oddball-howto-forbidden-badge {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* --- Shapes You Will See / Important, side by side --- */
+
+.oddball-howto-grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 0 0 14px;
+  text-align: left;
+}
+
+@media (max-width: 780px) {
+  .oddball-howto-grid2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.oddball-howto-panel {
+  background: rgba(15, 22, 45, 0.55);
+  border: 1px solid rgba(139, 130, 246, 0.4);
+  border-radius: 16px;
+  padding: 14px 16px;
+  box-shadow: 0 0 24px rgba(139, 130, 246, 0.16), inset 0 0 20px rgba(139, 130, 246, 0.04);
+}
+
+.oddball-howto-panel--important {
+  border-color: rgba(34, 211, 238, 0.4);
+  box-shadow: 0 0 24px rgba(34, 211, 238, 0.18), inset 0 0 20px rgba(34, 211, 238, 0.04);
+}
+
+.oddball-howto-panel-title {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #C4B5FD;
+  text-align: center;
+}
+
+.oddball-howto-panel-title--cyan {
+  color: #67E8F9;
+}
+
+.oddball-howto-shapes-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: start;
+  justify-items: center;
+  width: 100%;
+}
+
+.oddball-howto-shape-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  gap: 3px;
+}
+
+.oddball-howto-shapes-divider {
+  align-self: stretch;
+  width: 1px;
+  min-height: 60px;
+  margin: 4px 22px;
+  background: rgba(139, 130, 246, 0.25);
+}
+
+.oddball-howto-shape-label {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #F7F9FF;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.oddball-howto-shape-label--circle {
+  color: #60A5FA;
+}
+
+.oddball-howto-shape-label--triangle {
+  color: #C084FC;
+}
+
+.oddball-howto-shape-sub {
+  font-size: 0.78rem;
+  color: #9AA6C9;
+}
+
+.oddball-howto-shape-card--target .oddball-howto-shape-sub {
+  color: #C4B5FD;
+}
+
+.oddball-howto-important-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.oddball-howto-important-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: #C7D0EA;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.oddball-howto-important-icon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  margin-top: -1px;
+}
+
+/* --- Reminder strip --- */
+
+.oddball-howto-reminder {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 640px;
+  box-sizing: border-box;
+  background: rgba(124, 58, 237, 0.1);
+  border: 1px solid rgba(167, 139, 250, 0.45);
+  border-radius: 14px;
+  padding: 10px 18px;
+  margin: 0 auto 14px;
+  box-shadow: 0 0 22px rgba(167, 139, 250, 0.18), inset 0 0 20px rgba(167, 139, 250, 0.05);
+  text-align: left;
+}
+
+.oddball-howto-reminder-icon {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.oddball-howto-bulb-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.oddball-howto-reminder p {
+  margin: 0;
+  color: #DCE3FA;
+  font-size: 0.84rem;
+  line-height: 1.4;
+}
+
+/* --- Instructions: Start Practice / Back buttons (matches the reference) --- */
+
+.oddball-screen--instructions .seq-cs-actions {
+  max-width: 640px;
+  margin: 4px auto 0;
+  justify-content: center;
+}
+
+.oddball-screen--instructions .seq-cs-btn {
+  flex: 0 0 auto;
+  padding: 13px 26px;
+  gap: 10px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-radius: 12px;
+}
+
+.oddball-screen--instructions .seq-cs-btn--primary {
+  background: linear-gradient(100deg, #8B5CF6 0%, #7C3AED 40%, #1E3A8A 100%);
+  box-shadow: 0 0 24px rgba(124, 58, 237, 0.4), 0 0 40px rgba(37, 99, 235, 0.28);
+}
+
+.oddball-screen--instructions .seq-cs-btn--secondary {
+  min-width: 220px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(8, 13, 28, 0.55);
+  border: 1px solid rgba(167, 139, 250, 0.45);
+  color: #DCE3FA;
+}
+
+.oddball-screen--instructions .seq-cs-btn--secondary svg {
+  color: #C084FC;
+}
+
+.oddball-screen--instructions .seq-cs-btn-arrow {
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  background: none;
+  color: #fff;
+  display: inline-flex;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.7));
+}
+
+.oddball-howto-play-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.oddball-screen--instructions .seq-cs-history-link {
+  margin-top: 8px;
+}
+
+.oddball-howto-calendar-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+@media (max-width: 600px) {
+  .oddball-screen--instructions {
+    padding: 20px 16px 18px;
+  }
+
+  .oddball-screen--instructions .oddball-heading {
+    font-size: 1.7rem;
+  }
+}
+
+/* =========================================================================
+   Visual Oddball Intro — user-provided neon icon artwork
+
+   .oddball-icon-img is used inside .oddball-info-label (Duration/Input
+   cards) and .oddball-tag (domain pills) on OddballIntro.jsx only, in place
+   of the earlier hand-drawn inline-SVG icons. These PNGs already carry
+   their own baked-in neon glow/gradient, so unlike the stroke="currentColor"
+   icons used elsewhere, they need no color styling here — only sizing.
+   ========================================================================= */
+
+.oddball-icon-img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  flex: none;
+  vertical-align: middle;
+}
+
+.oddball-icon-img--tag {
+  width: 18px;
+  height: 18px;
+}

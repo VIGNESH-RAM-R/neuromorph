@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--nm-ink, #1A2333)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Lamp">
+  <title>Lamp</title>
+  <path d="M7 4h10l-2 6H9L7 4Z"/>
+  <path d="M12 10v8"/>
+  <path d="M8 20h8"/>
+</svg>

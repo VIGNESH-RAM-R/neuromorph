@@ -1,0 +1,24 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgm" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3a6fc4"/>
+      <stop offset="100%" stop-color="#1f3f7a"/>
+    </linearGradient>
+  </defs>
+  <!-- Maskable variant: full-bleed square background, no rounded corners.
+       The OS applies its own mask shape (circle/squircle/rounded-square) on
+       top, so the background must fill the entire canvas and the motif must
+       stay inside the safe zone (a centered circle at about 80% of the
+       canvas, i.e. radius under 205px from center 256,256) or it risks
+       being clipped. -->
+  <rect width="512" height="512" fill="url(#bgm)"/>
+  <g stroke="#ffffff" stroke-width="12" stroke-linecap="round" fill="none" opacity="0.92">
+    <path d="M 168 330 L 226 262 L 300 296 L 356 208" />
+  </g>
+  <g fill="#ffffff">
+    <circle cx="168" cy="330" r="17"/>
+    <circle cx="226" cy="262" r="14"/>
+    <circle cx="300" cy="296" r="14"/>
+    <circle cx="356" cy="208" r="20"/>
+  </g>
+</svg>

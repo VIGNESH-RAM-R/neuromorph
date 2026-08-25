@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--nm-ink, #1A2333)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Burst">
+  <title>Burst</title>
+  <path d="M12 4v16"/>
+  <path d="M4.5 8l15 8"/>
+  <path d="M19.5 8l-15 8"/>
+</svg>

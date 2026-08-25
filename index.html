@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NEUROMORPH -- Patient App</title>
+
+    <!-- 2026-08-20: PWA installability (see OVERNIGHT_PLAN.md's "own
+         2-hour build" note in PROGRESS.md) -- manifest, icons, and the
+         iOS-specific meta tags Android/desktop already cover via the
+         manifest alone. public/sw.js is registered from main.jsx. -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#0a0818" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="NEUROMORPH" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Clear, humanist typography for clinical UI readability. -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="nmpa-file-protocol-warning" class="nmpa-file-protocol-warning" style="display:none;">
+      <strong>This page needs to run through a dev server, not be opened directly.</strong>
+      <p>
+        You opened this file with a double-click (the address bar shows <code>file://...</code>).
+        React/Vite apps can't run that way -- browsers can't parse JSX or resolve the module
+        imports over the file protocol. Open a terminal in this folder and run:
+      </p>
+      <pre>npm install
+npm run dev</pre>
+      <p>Then open the local address it prints (usually <code>http://localhost:5174</code>). See README.md for full VS Code steps.</p>
+    </div>
+    <div id="root"></div>
+    <script>
+      if (location.protocol === 'file:') {
+        document.getElementById('nmpa-file-protocol-warning').style.display = 'block';
+      }
+    </script>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

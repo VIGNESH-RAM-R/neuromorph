@@ -1,0 +1,1658 @@
+/* NEUROMORPH Patient App -- shared design tokens. Two full themes (light,
+   dark), switched by a single `data-theme` attribute on <html> (see
+   useTheme.js) so every token below just re-resolves -- no component ever
+   branches on theme itself. Prefix: nmpa- (NEUROMORPH Patient App).
+
+   2026-08-23 redesign, 2nd pass (VR request: "premium, professional, not a
+   college project"): dialed back from the first pass's rainbow-gradient/
+   heavy-glow/grid-overlay look toward the restrained, structured style of
+   real premium SaaS products (Linear/Stripe/Notion-adjacent) -- a single
+   accent color used sparingly rather than gradient-text on every number,
+   solid (not glass-blurred) cards with a subtle 1px border and a soft drop
+   shadow, gentle blurred ambient glow instead of a hard grid or a spinning
+   conic swirl, and normal-case typography instead of the previous
+   all-caps-everywhere treatment. This exact direction was prototyped in
+   Figma first (see the "NEUROMORPH -- Premium Redesign" file) and every
+   token below matches that file's Foundations variables so the app and the
+   Figma spec stay in lockstep. Every class name is unchanged from the
+   previous pass -- only values, plus a small number of new bento-grid
+   classes for HomeSection's rebuilt layout (see the Home section below). */
+
+:root,
+:root[data-theme='light'] {
+  --nmpa-bg: radial-gradient(1000px 700px at 10% -8%, rgba(37, 99, 235, 0.10) 0%, transparent 55%),
+             radial-gradient(900px 640px at 108% 12%, rgba(14, 165, 233, 0.08) 0%, transparent 52%),
+             #f6f9fd;
+  --nmpa-bg-elevated: #ffffff;
+  --nmpa-surface: #ffffff;
+  --nmpa-surface-elevated: #ffffff;
+  --nmpa-surface-muted: #eef5fd;
+  --nmpa-border: #dce7f3;
+  --nmpa-border-strong: #c5d7eb;
+  --nmpa-ink: #13233a;
+  --nmpa-ink-muted: #52677f;
+  --nmpa-ink-faint: #7d91a8;
+
+  --nmpa-glass-blur: none;
+  --nmpa-glass-blur-sm: none;
+
+  --nmpa-accent: #1769c2;
+  --nmpa-accent-2: #0b91c7;
+  --nmpa-accent-strong: #0f4f9b;
+  --nmpa-accent-soft: #e8f2fc;
+  --nmpa-accent-ink: #ffffff;
+  --nmpa-gradient-brand: linear-gradient(135deg, #1769c2 0%, #0b91c7 100%);
+
+  /* ---- Electric glow pass (2026-08-23): light theme keeps the same vivid
+     accent hues but skips the heavy glow/glass treatment dark mode gets
+     (VR's choice -- glow reads as muddy smudges on a white background).
+     Every token below resolves to a plain/neutral equivalent so shared
+     components (.nmpa-card, buttons, charts) don't need theme branching. */
+  --nmpa-gradient-electric: var(--nmpa-accent);
+  --nmpa-gradient-warm: var(--nmpa-mild);
+  --nmpa-surface-glass: var(--nmpa-surface);
+  --nmpa-card-hover-shadow: var(--nmpa-shadow-md);
+  --nmpa-button-bg: var(--nmpa-accent);
+  /* Zero-strength-but-valid values (not the bare `none` keyword) so these
+     safely compose in a comma-joined box-shadow list or a space-joined
+     filter function list at the few call sites that combine them with
+     another shadow/filter -- `none` is only valid as a sole value and
+     would break those. */
+  --nmpa-button-glow: 0 0 0 transparent;
+  --nmpa-ring-glow: drop-shadow(0 0 0 transparent);
+  --nmpa-line-glow: drop-shadow(0 0 0 transparent);
+  --nmpa-point-glow: drop-shadow(0 0 0 transparent);
+  --nmpa-heatmap-glow: drop-shadow(0 0 0 transparent);
+  --nmpa-bar-glow: 0 0 0 transparent;
+  --nmpa-flame-glow: drop-shadow(0 0 0 transparent);
+  --nmpa-blob-drift-opacity: 0;
+
+  /* ---------- Auth brand panel ---------- */
+  --nmpa-auth-brand-bg: radial-gradient(130% 150% at 22% 8%, #1c1240 0%, #0e0a28 45%, #05030f 100%);
+  --nmpa-auth-brand-ink: #ffffff;
+  --nmpa-auth-brand-glass-bg: rgba(255, 255, 255, 0.06);
+  --nmpa-auth-brand-glass-bg-strong: rgba(255, 255, 255, 0.12);
+  --nmpa-auth-brand-glass-border: rgba(255, 255, 255, 0.16);
+  --nmpa-auth-blob-a: rgba(37, 99, 235, 0.30);
+  --nmpa-auth-blob-b: rgba(14, 165, 233, 0.22);
+  --nmpa-auth-brand-bottom-bg: rgba(4, 2, 12, 0.55);
+
+  --nmpa-mild: #b45309;
+  --nmpa-reduced: #be123c;
+  --nmpa-excellent: #047857;
+  --nmpa-neutral: #6b7280;
+
+  --nmpa-danger-bg: #fdecec;
+  --nmpa-danger-border: #e6b3b3;
+  --nmpa-warn-bg: #fdf4e3;
+  --nmpa-warn-border: #e8cf9c;
+  --nmpa-info-bg: #e8f2fc;
+  --nmpa-info-border: #bfdaef;
+
+  --nmpa-radius-sm: 10px;
+  --nmpa-radius-md: 16px;
+  --nmpa-radius-lg: 20px;
+  --nmpa-radius-pill: 999px;
+
+  --nmpa-shadow-sm: 0 1px 2px rgba(21, 57, 91, 0.05), 0 1px 3px rgba(21, 57, 91, 0.06);
+  --nmpa-shadow-md: 0 8px 24px -6px rgba(28, 81, 137, 0.12);
+  --nmpa-shadow-lg: 0 24px 56px -20px rgba(20, 67, 112, 0.20);
+  --nmpa-focus-ring: 0 0 0 4px rgba(23, 105, 194, 0.16);
+
+  --nmpa-scrim: rgba(19, 53, 87, 0.04);
+  --nmpa-scrollbar-thumb: rgba(23, 105, 194, 0.22);
+
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  /* 2026-08-23, 3rd pass (VR request, reference: a dark "electric glow"
+     productivity dashboard -- gradient rings, glowing charts, glassmorphic
+     cards, ambient animation). This supersedes the 2nd pass's restrained/
+     no-glow direction IN DARK MODE ONLY (VR's choice: dark gets the full
+     electric treatment, light stays calm/solid -- see the light block's
+     matching tokens below, all set to neutral/none). Built directly in
+     code, not Figma, after repeatedly hitting the Figma Starter-plan rate
+     limit earlier this session. Base surface/border/ink tokens are
+     unchanged from the Figma-approved 2nd pass; accent shifted to a more
+     saturated electric blue-violet + cyan pair, and a set of new glow/
+     glass/gradient tokens were added below -- every component that already
+     reads --nmpa-accent etc. picks the new color up automatically. */
+  --nmpa-bg: radial-gradient(1000px 680px at 10% -8%, rgba(124, 108, 255, 0.20) 0%, transparent 55%),
+             radial-gradient(900px 620px at 108% 10%, rgba(34, 211, 238, 0.12) 0%, transparent 52%),
+             #07060f;
+  --nmpa-bg-elevated: #0c0b18;
+  --nmpa-surface: #121120;
+  --nmpa-surface-elevated: #15142a;
+  --nmpa-surface-muted: #15141f;
+  --nmpa-border: #232132;
+  --nmpa-border-strong: #302e45;
+  --nmpa-ink: #f5f4fa;
+  --nmpa-ink-muted: #9b96b3;
+  --nmpa-ink-faint: #6c6884;
+
+  --nmpa-glass-blur: blur(20px);
+  --nmpa-glass-blur-sm: blur(10px);
+
+  --nmpa-accent: #7c6cff;
+  --nmpa-accent-2: #22d3ee;
+  --nmpa-accent-strong: #a78bfa;
+  --nmpa-accent-soft: #1b1834;
+  --nmpa-accent-ink: #ffffff;
+  --nmpa-gradient-brand: linear-gradient(135deg, #7c6cff 0%, #22d3ee 100%);
+
+  /* ---- Electric glow pass: gradients, glass surface, glow shadows ---- */
+  --nmpa-gradient-electric: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 55%, #22d3ee 100%);
+  --nmpa-gradient-warm: linear-gradient(135deg, #fb923c 0%, #ef4444 100%);
+  --nmpa-surface-glass: rgba(22, 20, 42, 0.6);
+  --nmpa-card-hover-shadow: var(--nmpa-shadow-md), 0 0 0 1px rgba(124, 108, 255, 0.28), 0 0 32px rgba(124, 108, 255, 0.24), 0 0 64px rgba(34, 211, 238, 0.12);
+  --nmpa-button-bg: var(--nmpa-gradient-electric);
+  --nmpa-button-glow: 0 0 18px rgba(124, 108, 255, 0.55), 0 0 40px rgba(34, 211, 238, 0.22);
+  --nmpa-ring-glow: drop-shadow(0 0 10px rgba(124, 108, 255, 0.65)) drop-shadow(0 0 22px rgba(34, 211, 238, 0.32));
+  --nmpa-line-glow: drop-shadow(0 0 5px rgba(124, 108, 255, 0.7));
+  --nmpa-point-glow: drop-shadow(0 0 4px rgba(34, 211, 238, 0.85));
+  --nmpa-heatmap-glow: drop-shadow(0 0 4px rgba(124, 108, 255, 0.6));
+  --nmpa-bar-glow: 0 0 10px rgba(124, 108, 255, 0.45);
+  --nmpa-flame-glow: drop-shadow(0 0 6px rgba(251, 146, 60, 0.75));
+  --nmpa-blob-drift-opacity: 1;
+
+  --nmpa-auth-brand-bg: radial-gradient(130% 150% at 22% 8%, #1c1240 0%, #0e0a28 45%, #05030f 100%);
+  --nmpa-auth-brand-ink: #ffffff;
+  --nmpa-auth-brand-glass-bg: rgba(255, 255, 255, 0.07);
+  --nmpa-auth-brand-glass-bg-strong: rgba(255, 255, 255, 0.14);
+  --nmpa-auth-brand-glass-border: rgba(255, 255, 255, 0.18);
+  --nmpa-auth-blob-a: rgba(139, 124, 246, 0.34);
+  --nmpa-auth-blob-b: rgba(165, 148, 255, 0.24);
+  --nmpa-auth-brand-bottom-bg: rgba(3, 2, 10, 0.55);
+
+  --nmpa-mild: #f5c563;
+  --nmpa-reduced: #f17e85;
+  --nmpa-excellent: #3ed598;
+  --nmpa-neutral: #9b96b3;
+
+  --nmpa-danger-bg: rgba(241, 126, 133, 0.10);
+  --nmpa-danger-border: rgba(241, 126, 133, 0.28);
+  --nmpa-warn-bg: rgba(245, 197, 99, 0.10);
+  --nmpa-warn-border: rgba(245, 197, 99, 0.26);
+  --nmpa-info-bg: #1b1834;
+  --nmpa-info-border: #302e45;
+
+  --nmpa-radius-sm: 10px;
+  --nmpa-radius-md: 16px;
+  --nmpa-radius-lg: 20px;
+  --nmpa-radius-pill: 999px;
+
+  --nmpa-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --nmpa-shadow-md: 0 10px 26px rgba(0, 0, 0, 0.4);
+  --nmpa-shadow-lg: 0 28px 64px -20px rgba(0, 0, 0, 0.55);
+  --nmpa-focus-ring: 0 0 0 4px rgba(139, 124, 246, 0.3);
+
+  --nmpa-scrim: rgba(0, 0, 0, 0.3);
+  --nmpa-scrollbar-thumb: rgba(139, 124, 246, 0.4);
+
+  color-scheme: dark;
+}
+
+:root {
+  --nmpa-font: 'Source Sans 3', 'Segoe UI', sans-serif;
+  --nmpa-font-heading: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+  --nmpa-font-brand: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+  --nmpa-motion-fast: 140ms cubic-bezier(0.4, 0, 0.2, 1);
+  --nmpa-motion-med: 240ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Required by the copied-in Morphy widget CSS below -- do not rename. */
+  --nm-ink: var(--nmpa-ink);
+  --nm-bg: var(--nmpa-bg);
+  --nm-surface: var(--nmpa-surface);
+  --nm-border: var(--nmpa-border);
+  --nm-accent: var(--nmpa-accent);
+  --nm-accent-ink: var(--nmpa-accent-ink);
+  --nm-reduced: var(--nmpa-reduced);
+  --nm-morphy: #3b82c4;
+  --nm-morphy-dark: #1769c2;
+}
+
+* { box-sizing: border-box; }
+html { color-scheme: light dark; }
+body {
+  margin: 0;
+  background: var(--nmpa-bg);
+  background-attachment: fixed;
+  color: var(--nmpa-ink);
+  font-family: var(--nmpa-font);
+  font-size: 16px;
+  line-height: 1.5;
+  transition: background-color var(--nmpa-motion-med), color var(--nmpa-motion-med);
+  min-height: 100vh;
+  /* 2026-08-23 (2nd pass): the previous "everything in caps" treatment is
+     gone -- normal sentence/title case throughout, the same choice every
+     real premium product in the reference makes. Long paragraphs (chat
+     replies, FAQ answers) read naturally again; headings/buttons rely on
+     Space Grotesk's weight and size for emphasis instead of caps. */
+}
+
+/* Slim, accent-tinted scrollbars -- a small "premium product" detail that
+   costs nothing. Falls back to the browser default where unsupported. */
+* { scrollbar-width: thin; scrollbar-color: var(--nmpa-scrollbar-thumb) transparent; }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: var(--nmpa-scrollbar-thumb); border-radius: 999px; border: 2px solid transparent; background-clip: padding-box; }
+
+::selection { background: var(--nmpa-accent); color: var(--nmpa-accent-ink); }
+
+/* 2026-08-18: app-wide heading/subtitle font -- every real heading element
+   plus the "acts like a heading" utility classes used throughout this app
+   (card titles, section titles, the auth heading, eyebrow kickers, the
+   brand-panel tagline). Everything else keeps inheriting body's Inter. */
+h1, h2, h3, h4,
+.nmpa-card__title,
+.nmpa-home__title,
+.nmpa-auth__heading,
+.nmpa-auth__tagline,
+.nmpa-rolegate__lede,
+.nmpa-rolegate__card-title,
+.nmpa-home__score,
+.nmpa-cognitive-score-result__value {
+  font-family: var(--nmpa-font-heading);
+}
+
+.nmpa-file-protocol-warning {
+  background: var(--nmpa-danger-bg); border: 1px solid var(--nmpa-danger-border);
+  color: var(--nmpa-reduced); padding: 16px 20px; border-radius: 8px; margin: 20px;
+  font-family: var(--nmpa-font);
+}
+
+/* ---------- Brand wordmark ---------- */
+.nmpa-brand-mark {
+  font-family: var(--nmpa-font-heading); font-weight: 700; font-size: 19px; letter-spacing: 0.02em;
+  color: var(--nmpa-ink);
+}
+.nmpa-brand-mark--sm { font-size: 15px; }
+.nmpa-brand-mark--lg {
+  font-family: var(--nmpa-font-brand);
+  font-weight: 700;
+  font-size: 30px;
+  margin: 0 0 4px;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+}
+
+/* 2026-08-25 ADDITION -- the real logo image (see BrandLogo.jsx), replacing
+   plain-text .nmpa-brand-mark wherever it's used. Sized in `em`s off the
+   same font-size scale the old text marks used, so it drops into the exact
+   same topbar/loading-screen slots without any layout shift. */
+.nmpa-brand-logo { display: inline-flex; align-items: center; line-height: 0; }
+.nmpa-brand-logo__img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  image-rendering: auto;
+}
+.nmpa-brand-logo--sm .nmpa-brand-logo__img { height: 56px; }
+.nmpa-brand-logo--lg .nmpa-brand-logo__img { height: 96px; margin: 0 0 4px; }
+.nmpa-sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+
+/* ---------- Session loading ---------- */
+.nmpa-session-loading {
+  min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 6px; background: var(--nmpa-bg);
+}
+
+/* ============================================================
+   Auth screens (Login / Signup) -- premium two-panel layout
+   ============================================================ */
+.nmpa-auth {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  background: var(--nmpa-bg);
+  position: relative;
+  --nmpa-font: 'Source Sans 3', 'Segoe UI', sans-serif;
+  --nmpa-font-heading: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+  --nmpa-font-brand: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+}
+
+.nmpa-auth__theme-toggle-slot { position: absolute; top: 20px; right: 24px; z-index: 5; }
+
+.nmpa-auth__panel { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 40px; position: relative; }
+
+.nmpa-auth__panel--brand {
+  background: var(--nmpa-auth-brand-bg);
+  color: var(--nmpa-auth-brand-ink);
+  text-align: center;
+  overflow: hidden;
+  isolation: isolate;
+}
+/* 2026-08-23 (2nd pass): the previous spinning conic swirl + animated
+   neural-network SVG replaced with two soft, static, blurred glow blobs --
+   the exact treatment approved in the Figma spec. Calmer, and reads as
+   "premium ambient light" rather than "hackathon demo animation". The
+   underlying neural-network components (RoleGateBackdrop / AuthNeural
+   Backdrop) are left in the codebase but hidden here rather than deleted,
+   in case a future pass wants them back. */
+.nmpa-auth-swirl,
+.nmpa-auth-neural,
+.nmpa-auth-blobs { display: none; }
+.nmpa-auth__panel--brand::before,
+.nmpa-auth__panel--brand::after,
+.nmpa-rolegate::before,
+.nmpa-rolegate::after {
+  content: ''; position: absolute; border-radius: 50%; pointer-events: none; z-index: -1; filter: blur(90px);
+}
+.nmpa-auth__panel--brand::before,
+.nmpa-rolegate::before {
+  width: 560px; height: 560px; top: -160px; left: -140px;
+  background: var(--nmpa-auth-blob-a);
+}
+.nmpa-auth__panel--brand::after,
+.nmpa-rolegate::after {
+  width: 480px; height: 480px; bottom: -140px; right: -120px;
+  background: var(--nmpa-auth-blob-b);
+}
+/* Electric glow pass (2026-08-23): slow ambient drift on the two blur
+   blobs, dark theme only (light theme's matching blobs stay static, per
+   VR's "light stays calmer" choice) -- reuses the same blob elements from
+   the 2nd pass rather than reintroducing the old spinning-swirl/neural-net
+   backdrop that VR previously felt looked "hackathon demo". */
+:root[data-theme='dark'] .nmpa-auth__panel--brand::before,
+:root[data-theme='dark'] .nmpa-rolegate::before {
+  animation: nmpa-blob-drift-a 16s ease-in-out infinite alternate;
+}
+:root[data-theme='dark'] .nmpa-auth__panel--brand::after,
+:root[data-theme='dark'] .nmpa-rolegate::after {
+  animation: nmpa-blob-drift-b 18s ease-in-out infinite alternate;
+}
+@keyframes nmpa-blob-drift-a {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(40px, 30px) scale(1.08); }
+}
+@keyframes nmpa-blob-drift-b {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-30px, -24px) scale(1.1); }
+}
+.nmpa-auth__cover-image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; }
+.nmpa-auth__brand-content--badge-only { position: relative; z-index: 1; align-items: flex-start; }
+.nmpa-auth__brand-content { display: flex; flex-direction: column; align-items: center; max-width: 380px; }
+
+.nmpa-auth__panel--brand-split { padding: 0; justify-content: flex-start; align-items: stretch; }
+.nmpa-auth__brand-top {
+  position: relative; isolation: isolate; overflow: hidden; flex: 0 0 auto;
+  min-height: 220px; display: flex; align-items: flex-end; justify-content: center;
+  padding: 60px 32px 26px;
+}
+.nmpa-auth__brand-top-content { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; }
+.nmpa-auth__brand-divider {
+  flex: 0 0 auto; height: 1px; margin: 0 32px;
+  background: linear-gradient(90deg, transparent, var(--nmpa-auth-brand-glass-border) 50%, transparent);
+}
+.nmpa-auth__brand-bottom {
+  flex: 1 1 auto; display: flex; flex-direction: column; align-items: center;
+  padding: 26px 40px 40px; background: var(--nmpa-auth-brand-bottom-bg);
+}
+.nmpa-auth__avatar-frame {
+  width: 140px; height: 140px; border-radius: var(--nmpa-radius-pill);
+  background: var(--nmpa-auth-brand-glass-bg); border: 1px solid var(--nmpa-auth-brand-glass-border);
+  display: flex; align-items: center; justify-content: center; margin-bottom: 6px;
+}
+.nmpa-auth__panel--brand .nmpa-brand-mark--lg { color: var(--nmpa-auth-brand-ink); }
+.nmpa-auth__role-badge {
+  display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+  padding: 4px 12px; border-radius: var(--nmpa-radius-pill);
+  background: var(--nmpa-auth-brand-glass-bg-strong); border: 1px solid var(--nmpa-auth-brand-glass-border);
+  margin-bottom: 10px;
+}
+.nmpa-auth__tagline { font-size: 26px; font-weight: 700; margin: 10px 0 12px; line-height: 1.28; }
+.nmpa-auth__sublede { max-width: 36ch; opacity: 0.85; font-size: 14.5px; line-height: 1.6; }
+
+.nmpa-auth__trust-list { list-style: none; margin: 22px 0 0; padding: 0; display: flex; flex-direction: column; gap: 12px; text-align: left; width: 100%; }
+.nmpa-auth__trust-list li { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 500; opacity: 0.9; }
+.nmpa-auth__trust-list li svg { flex: none; opacity: 0.85; color: var(--nmpa-accent-strong); }
+
+/* ---------- Role gate (patient vs doctor, first screen) ---------- */
+.nmpa-rolegate {
+  min-height: 100vh; position: relative; overflow: hidden; isolation: isolate;
+  display: flex; align-items: center; justify-content: center; padding: 112px 32px 64px;
+  background: linear-gradient(118deg, #07172a 0%, #0a2440 48%, #06101e 100%);
+  color: var(--nmpa-auth-brand-ink);
+}
+.nmpa-rolegate::before, .nmpa-rolegate::after { display: none; }
+.nmpa-rolegate__visual { position: absolute; inset: 0 auto 0 0; width: min(58vw, 900px); pointer-events: none; opacity: .34; background: url('/assets/brand/role-gate-cover.png') center left / cover no-repeat; mask-image: linear-gradient(90deg, #000 0%, rgba(0,0,0,.82) 38%, transparent 100%); }
+.nmpa-rolegate::marker { display: none; }
+.nmpa-rolegate__topbar { position: absolute; z-index: 2; top: 28px; left: clamp(24px, 5vw, 72px); right: clamp(24px, 5vw, 72px); display: flex; align-items: center; justify-content: space-between; }
+.nmpa-rolegate__topbar-brand { color: #fff; font-size: 17px; letter-spacing: .08em; }
+.nmpa-rolegate__topbar-actions { display: flex; align-items: center; gap: 16px; }
+.nmpa-rolegate__secure { display: inline-flex; align-items: center; gap: 8px; color: rgba(235,245,255,.72); font-size: 13px; font-weight: 500; }
+.nmpa-rolegate__secure i { width: 7px; height: 7px; border-radius: 50%; background: #38bdf8; box-shadow: 0 0 0 4px rgba(56,189,248,.12); }
+.nmpa-rolegate .nmpa-theme-toggle { border-color: rgba(255,255,255,.18); background: rgba(7,23,42,.52); }
+.nmpa-rolegate__content { position: relative; z-index: 1; max-width: 980px; width: 100%; text-align: center; }
+.nmpa-rolegate__eyebrow { margin: 0 0 12px; color: #93c5fd; font-size: 13px; font-weight: 700; letter-spacing: .10em; text-transform: uppercase; }
+.nmpa-rolegate__brand { margin: 0; color: #fff; font-family: var(--nmpa-font-heading); font-size: clamp(34px, 5vw, 56px); font-weight: 700; letter-spacing: -.045em; line-height: 1; }
+.nmpa-rolegate__lede { font-size: 18px; font-weight: 400; color: rgba(235,245,255,.78); margin: 14px 0 44px; }
+.nmpa-rolegate__cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; text-align: left; }
+.nmpa-rolegate__card {
+  /* Always sits on --nmpa-auth-brand-bg, which stays a fixed dark-purple
+     gradient regardless of the light/dark toggle (see that token's own
+     comment) -- so this MUST use the theme-aware auth-brand-glass tokens,
+     not the general --nmpa-surface/--nmpa-border tokens, which flip to
+     opaque white in light theme and would render illegible white-on-white
+     or (as briefly shipped) a jarring white card on a dark panel. */
+  display: flex; flex-direction: column; align-items: flex-start; text-align: left; gap: 20px;
+  min-height: 218px; background: rgba(13, 35, 61, .64); border: 1px solid rgba(191,219,254,.20);
+  border-radius: 18px; padding: 25px; cursor: pointer; color: #f8fbff; backdrop-filter: blur(14px);
+  transition: border-color var(--nmpa-motion-med), transform var(--nmpa-motion-med), box-shadow var(--nmpa-motion-med), background var(--nmpa-motion-med);
+}
+.nmpa-rolegate__card:hover {
+  background: rgba(18, 55, 91, .82); border-color: rgba(125,211,252,.65); transform: translateY(-6px);
+  box-shadow: 0 22px 45px rgba(0,0,0,.28);
+}
+.nmpa-rolegate__card:focus-visible { outline: none; box-shadow: 0 0 0 4px rgba(125,211,252,.38); }
+.nmpa-rolegate__card-icon { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; font-family: var(--nmpa-font-heading); font-size: 24px; font-weight: 500; line-height: 1; }
+.nmpa-rolegate__card-icon--patient { background: rgba(56,189,248,.16); color: #7dd3fc; }
+.nmpa-rolegate__card-icon--caregiver { background: rgba(45,212,191,.14); color: #5eead4; }
+.nmpa-rolegate__card-icon--doctor { background: rgba(147,197,253,.14); color: #bfdbfe; }
+.nmpa-rolegate__card-copy { display: flex; flex-direction: column; gap: 7px; }
+.nmpa-rolegate__card-title { font-size: 17px; font-weight: 600; }
+.nmpa-rolegate__card-sub { font-size: 14px; color: rgba(226,232,240,.74); line-height: 1.5; }
+.nmpa-rolegate__card-arrow { margin-top: auto; color: #7dd3fc; font-size: 21px; line-height: 1; }
+.nmpa-rolegate__privacy { margin: 28px 0 0; color: rgba(226,232,240,.58); font-size: 13px; }
+@media (max-width: 720px) {
+  .nmpa-rolegate { padding: 108px 20px 42px; }
+  .nmpa-rolegate__topbar { top: 20px; left: 20px; right: 20px; }
+  .nmpa-rolegate__secure { display: none; }
+  .nmpa-rolegate__visual { width: 100%; opacity: .18; mask-image: linear-gradient(180deg, #000 0%, transparent 72%); }
+  .nmpa-rolegate__cards { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
+  .nmpa-rolegate__card { min-height: 0; gap: 14px; padding: 20px; }
+}
+
+/* ---------- Public landing page ---------- */
+.nmpa-landing { --landing-ink: #edf6ff; --landing-muted: #aec3db; min-height: 100vh; overflow: hidden; background: #071229; color: var(--landing-ink); font-family: var(--nmpa-font); }
+.nmpa-landing, .nmpa-landing * { box-sizing: border-box; }
+.nmpa-landing__particles, .nmpa-landing__particles i { position: absolute; inset: 0; pointer-events: none; }
+.nmpa-landing__particles { position: fixed; z-index: 0; overflow: hidden; }
+.nmpa-landing__particles i { inset: auto; left: var(--x); top: var(--y); width: 4px; height: 4px; border-radius: 50%; background: #a78bfa; box-shadow: 0 0 16px #60a5fa; opacity: .36; animation: nmpa-landing-particle 10s ease-in-out infinite alternate; animation-delay: calc(var(--particle) * -400ms); }
+@keyframes nmpa-landing-particle { from { transform: translate3d(0, 0, 0) scale(.8); } to { transform: translate3d(var(--dx), -46px, 80px) scale(1.45); } }
+.nmpa-landing__nav { position: absolute; z-index: 3; top: 24px; left: 50%; display: flex; align-items: center; justify-content: space-between; width: min(1120px, calc(100% - 48px)); min-height: 58px; padding: 8px 10px 8px 22px; transform: translateX(-50%); border: 1px solid rgba(191,219,254,.18); border-radius: 999px; background: rgba(7,18,41,.62); backdrop-filter: blur(18px); }
+.nmpa-landing__wordmark { color: #fff; font-family: var(--nmpa-font-heading); font-size: 15px; font-weight: 700; letter-spacing: .07em; text-decoration: none; }
+.nmpa-landing__links, .nmpa-landing__nav-actions, .nmpa-landing__hero-actions { display: flex; align-items: center; gap: 24px; }
+.nmpa-landing__links a, .nmpa-landing__text-cta, .nmpa-landing__footer a { color: var(--landing-muted); font-size: 13px; font-weight: 600; text-decoration: none; transition: color var(--nmpa-motion-med); }
+.nmpa-landing__links a { font-family: var(--nmpa-font-heading); letter-spacing: .04em; }
+.nmpa-landing__links a:first-child, .nmpa-landing__links a:last-child { text-transform: uppercase; }
+.nmpa-landing__links a:hover, .nmpa-landing__text-cta:hover, .nmpa-landing__footer a:hover { color: #fff; }
+.nmpa-landing__nav-cta, .nmpa-landing__primary-cta { display: inline-flex; align-items: center; gap: 14px; color: #fff; background: linear-gradient(125deg, #2563eb, #7c3aed); box-shadow: 0 12px 30px rgba(79,70,229,.26); text-decoration: none; font-size: 13px; font-weight: 600; transition: transform var(--nmpa-motion-med), box-shadow var(--nmpa-motion-med); }
+.nmpa-landing__nav-cta { padding: 11px 18px; border-radius: 999px; }.nmpa-landing__primary-cta { padding: 15px 21px; border-radius: 12px; }.nmpa-landing__nav-cta:hover, .nmpa-landing__primary-cta:hover { transform: translateY(-2px); box-shadow: 0 18px 38px rgba(79,70,229,.38); }
+.nmpa-landing__hero { position: relative; z-index: 1; display: grid; grid-template-columns: 1.05fr .95fr; align-items: center; min-height: min(760px, 100vh); width: min(1120px, calc(100% - 48px)); margin: 0 auto; padding: 130px 0 80px; }
+.nmpa-landing__hero-copy { position: relative; z-index: 2; max-width: 630px; }.nmpa-landing__kicker, .nmpa-landing__eyebrow { color: #a5b4fc; font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.nmpa-landing__kicker { display: inline-flex; align-items: center; gap: 9px; margin: 0 0 20px; }.nmpa-landing__kicker span { width: 8px; height: 8px; border-radius: 50%; background: #60a5fa; box-shadow: 0 0 0 5px rgba(96,165,250,.13); }
+.nmpa-landing__hero h1 { max-width: 650px; margin: 0; font-family: var(--nmpa-font-heading); font-size: clamp(46px, 5.3vw, 76px); font-weight: 500; letter-spacing: -.055em; line-height: .99; }.nmpa-landing__hero h1 em { color: #a5b4fc; font-style: normal; }
+.nmpa-landing__hero-lede { max-width: 580px; margin: 25px 0 30px; color: var(--landing-muted); font-size: 18px; line-height: 1.65; }.nmpa-landing__hero-note { max-width: 500px; margin: 30px 0 0; color: rgba(174,195,219,.68); font-size: 12px; line-height: 1.5; }
+.nmpa-landing__orb { position: absolute; border-radius: 50%; filter: blur(10px); pointer-events: none; }.nmpa-landing__orb--one { top: 10%; right: -10%; width: 440px; height: 440px; background: rgba(99,102,241,.28); }.nmpa-landing__orb--two { right: 20%; bottom: 7%; width: 250px; height: 250px; background: rgba(14,165,233,.18); }
+/* 2026-08-23 SIMPLIFIED (VR feedback: "this is how i want the first
+   representation in the landing page", referencing the raw
+   role-gate-cover.png -- brain profile + hexagon domain badges -- with
+   NONE of the extra effects below). The image already contains everything
+   (glow, badges, labels) baked in; the old mix-blend-mode:screen + filter
+   stack + ::before/::after glow overlays were fighting the image itself
+   (washing out contrast, cropping edges via inset:-2%) instead of just
+   showing it. Now it just displays the actual asset, larger and
+   undistorted, at its real 774:692 aspect ratio. The old neural-sweep/
+   glow-node/signal decorative layers are neutralized via display:none
+   just below (markup left alone in RoleGateScreen.jsx, in case a lighter
+   decorative touch is wanted back later) rather than deleted outright. */
+.nmpa-landing__hero-art { position:relative; display:grid; place-items:center; width:min(620px,100%); aspect-ratio:774/692; margin-left:auto; isolation:isolate; overflow:visible; }
+.nmpa-landing__brain-image { position:absolute; inset:0; z-index:0; background:url('/assets/brand/role-gate-cover.png') center / contain no-repeat; }
+.nmpa-landing__hero-art::before, .nmpa-landing__hero-art::after, .nmpa-landing__signal { display:none; }
+@keyframes nmpa-landing-float { 0%,100% { transform: translate3d(0,0,0) rotateX(0deg); } 50% { transform: translate3d(0,-18px,25px) rotateX(4deg); } }@keyframes nmpa-landing-neural-sweep { 0%,100% { transform:translateX(-14%) rotate(-7deg) scale(.94); opacity:.14; } 48% { opacity:.76; } 55% { transform:translateX(17%) rotate(-7deg) scale(1.08); opacity:.63; } 70% { opacity:.12; } }@keyframes nmpa-landing-neural-nodes { 0%,100% { transform:scale(.75); opacity:.36; } 50% { transform:scale(1.2); opacity:1; } }@keyframes nmpa-landing-signal { 50% { transform:scale(1.65); opacity:.48; } }
+.nmpa-landing__section { position: relative; z-index: 1; width: min(1120px, calc(100% - 48px)); margin: 0 auto; padding: 120px 0; }.nmpa-landing__approach { border-top: 1px solid rgba(191,219,254,.12); }.nmpa-landing__section-heading { max-width: 670px; }.nmpa-landing h2 { margin: 11px 0 18px; font-family: var(--nmpa-font-heading); font-size: clamp(32px, 4vw, 48px); font-weight: 500; letter-spacing: -.04em; line-height: 1.08; }.nmpa-landing__section-heading > p:last-child, .nmpa-landing__access-heading > p:last-child { color: var(--landing-muted); font-size: 16px; line-height: 1.65; }
+.nmpa-landing__feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 48px; }.nmpa-landing__feature-card { position: relative; min-height: 270px; padding: 25px; border: 1px solid rgba(191,219,254,.14); border-radius: 18px; background: linear-gradient(145deg, rgba(19,40,76,.72), rgba(10,22,47,.72)); }.nmpa-landing__feature-number { position: absolute; top: 22px; right: 23px; color: rgba(165,180,252,.5); font-size: 12px; font-weight: 700; }.nmpa-landing__feature-icon { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: rgba(99,102,241,.17); color: #a5b4fc; }.nmpa-landing__feature-icon svg { width: 25px; height: 25px; }.nmpa-landing__feature-card h3 { margin: 42px 0 10px; font-size: 19px; font-weight: 600; }.nmpa-landing__feature-card p { margin: 0; color: var(--landing-muted); font-size: 14px; line-height: 1.6; }
+.nmpa-landing__workflow { display:grid; grid-template-columns:.85fr 1.15fr; gap:clamp(48px,9vw,130px); align-items:center; }.nmpa-landing__workflow-visual { position:relative; min-height:360px; border:1px solid rgba(125,211,252,.2); border-radius:26px; background:radial-gradient(circle at 50% 46%,rgba(79,70,229,.34),transparent 27%),radial-gradient(circle at 80% 14%,rgba(14,165,233,.15),transparent 33%),#081735; overflow:hidden; isolation:isolate; }.nmpa-landing__workflow-visual::before { content:''; position:absolute; inset:0; background-image:linear-gradient(rgba(125,211,252,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(125,211,252,.055) 1px,transparent 1px); background-size:25px 25px; mask-image:radial-gradient(circle at center,#000,transparent 78%); }.nmpa-landing__workflow-visual::after { content:''; position:absolute; z-index:2; inset:17% 13% 24%; border-radius:50%; pointer-events:none; background:linear-gradient(110deg,transparent 34%,rgba(207,250,254,.4) 48%,transparent 61%); filter:blur(8px); mix-blend-mode:screen; animation:nmpa-score-sweep 5.5s ease-in-out infinite; }.nmpa-score-orbit { position:absolute; z-index:1; left:50%; top:47%; border:1px solid rgba(125,211,252,.26); border-radius:50%; transform:translate(-50%,-50%) rotateX(68deg); animation:nmpa-score-orbit 12s linear infinite; }.nmpa-score-orbit--outer { width:294px; height:168px; border-color:rgba(139,92,246,.43); }.nmpa-score-orbit--inner { width:212px; height:122px; animation-direction:reverse; animation-duration:8s; }.nmpa-score-core { position:absolute; z-index:3; left:50%; top:47%; display:grid; place-items:center; width:132px; height:132px; border:1px solid rgba(196,181,253,.86); border-radius:50%; background:radial-gradient(circle at 34% 23%,rgba(125,211,252,.46),rgba(91,33,182,.78) 66%,rgba(47,15,105,.9)); box-shadow:0 0 47px rgba(139,92,246,.55),inset 0 0 25px rgba(224,231,255,.46); transform:translate(-50%,-50%); animation:nmpa-score-core 4.5s ease-in-out infinite; }.nmpa-score-core span,.nmpa-score-core small,.nmpa-score-trend span { font-size:8px; font-weight:700; letter-spacing:.12em; color:#e0e7ff; text-align:center; }.nmpa-score-core strong { margin:-5px 0; font:600 47px/1 var(--nmpa-font-heading); color:#fff; text-shadow:0 0 18px #c4b5fd; }.nmpa-score-core small { color:#c4b5fd; letter-spacing:.01em; }.nmpa-score-core small b { color:#2dd4bf; }.nmpa-score-domain { position:absolute; z-index:3; display:flex; align-items:center; gap:6px; padding:6px 8px; border:1px solid rgba(125,211,252,.23); border-radius:9px; background:rgba(8,25,57,.78); box-shadow:0 8px 24px rgba(3,7,18,.28); backdrop-filter:blur(7px); animation:nmpa-score-domain 4s ease-in-out infinite; }.nmpa-score-domain b { color:#e0e7ff; font-size:9px; font-weight:600; }.nmpa-score-domain i { display:grid; place-items:center; width:20px; height:20px; border-radius:50%; background:rgba(34,211,238,.15); color:#2dd4bf; font-size:8px; font-style:normal; }.nmpa-score-domain--memory { left:5%; top:11%; }.nmpa-score-domain--language { right:5%; top:12%; animation-delay:-2.2s; }.nmpa-score-domain--attention { left:3%; top:48%; animation-delay:-1.4s; }.nmpa-score-domain--speed { right:3%; top:48%; animation-delay:-.6s; }.nmpa-score-domain--expression { left:12%; bottom:24%; animation-delay:-2.9s; }.nmpa-score-domain--executive { right:10%; bottom:24%; animation-delay:-1.8s; }.nmpa-score-trend { position:absolute; z-index:4; left:9%; bottom:3%; display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:7px; width:82%; padding:9px 12px; border-radius:11px; background:rgba(8,25,57,.8); border:1px solid rgba(125,211,252,.22); box-shadow:0 10px 26px rgba(3,9,24,.35); animation:nmpa-score-trend-lift 4.2s ease-in-out infinite; }.nmpa-score-trend svg { width:104px; height:36px; overflow:visible; }.nmpa-score-trend__line { stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:100; animation:nmpa-score-chart 4s ease-in-out infinite; filter:drop-shadow(0 0 6px rgba(139,92,246,.65)); }
+.nmpa-score-trend__area { animation:nmpa-trend-area-in 4s ease-in-out infinite; }
+.nmpa-score-trend__dot { fill:#e0e7ff; filter:drop-shadow(0 0 8px #a78bfa); animation:nmpa-trend-dot-in 4s ease-in-out infinite; }.nmpa-score-trend b { color:#2dd4bf; font-size:10px; }.nmpa-score-particles i { position:absolute; z-index:2; width:4px; height:4px; border-radius:50%; background:#67e8f9; box-shadow:0 0 12px #38bdf8; animation:nmpa-score-particle 5s ease-in-out infinite; }.nmpa-score-particles i:nth-child(3n) { background:#c4b5fd; box-shadow:0 0 12px #8b5cf6; }.nmpa-score-particles i:nth-child(1){left:12%;top:15%}.nmpa-score-particles i:nth-child(2){left:24%;top:72%;animation-delay:-1s}.nmpa-score-particles i:nth-child(3){left:78%;top:12%;animation-delay:-2s}.nmpa-score-particles i:nth-child(4){left:84%;top:64%;animation-delay:-3s}.nmpa-score-particles i:nth-child(5){left:37%;top:17%;animation-delay:-4s}.nmpa-score-particles i:nth-child(6){left:58%;top:82%;animation-delay:-.5s}.nmpa-score-particles i:nth-child(7){left:16%;top:51%;animation-delay:-1.6s}.nmpa-score-particles i:nth-child(8){left:65%;top:25%;animation-delay:-2.6s}.nmpa-score-particles i:nth-child(9){left:48%;top:9%;animation-delay:-3.6s}.nmpa-score-particles i:nth-child(10){left:91%;top:43%;animation-delay:-.8s}.nmpa-score-particles i:nth-child(11){left:30%;top:91%;animation-delay:-1.8s}.nmpa-score-particles i:nth-child(12){left:9%;top:81%;animation-delay:-2.8s}.nmpa-score-particles i:nth-child(13){left:72%;top:91%;animation-delay:-3.8s}.nmpa-score-particles i:nth-child(14){left:42%;top:64%;animation-delay:-1.2s}.nmpa-score-particles i:nth-child(15){left:55%;top:32%;animation-delay:-2.2s}.nmpa-score-particles i:nth-child(16){left:88%;top:83%;animation-delay:-3.2s}.nmpa-score-particles i:nth-child(17){left:22%;top:35%;animation-delay:-.2s}.nmpa-score-particles i:nth-child(18){left:69%;top:54%;animation-delay:-1.9s}.nmpa-landing__workflow ol { display:grid; gap:26px; padding:0; margin:35px 0 0; list-style:none; }.nmpa-landing__workflow li { display:flex; gap:16px; }.nmpa-landing__workflow li > span { flex:0 0 auto; display:grid; place-items:center; width:28px; height:28px; border-radius:50%; background:rgba(99,102,241,.22); color:#c4b5fd; font-size:12px; font-weight:700; }.nmpa-landing__workflow strong { font-size:16px; font-weight:600; }.nmpa-landing__workflow li p { margin:5px 0 0; color:var(--landing-muted); font-size:14px; line-height:1.55; }@keyframes nmpa-score-orbit { to { transform:translate(-50%,-50%) rotateX(68deg) rotate(360deg); } }@keyframes nmpa-score-core { 50% { box-shadow:0 0 70px rgba(139,92,246,.8),inset 0 0 38px rgba(224,231,255,.55); transform:translate(-50%,-50%) scale(1.045); } }@keyframes nmpa-score-domain { 50% { transform:translateY(-4px); border-color:rgba(103,232,249,.58); } }@keyframes nmpa-score-sweep { 0%,100% { transform:translateX(-15%) rotate(-7deg); opacity:.08; } 48% { opacity:.78; } 56% { transform:translateX(18%) rotate(-7deg); opacity:.52; } 72% { opacity:.06; } }@keyframes nmpa-score-chart { 0%,10% { stroke-dashoffset:100; } 60%,100% { stroke-dashoffset:0; } }
+@keyframes nmpa-trend-area-in { 0%,10% { opacity:0; } 60%,100% { opacity:1; } }
+@keyframes nmpa-trend-dot-in { 0%,58% { opacity:0; transform:scale(.4); } 66% { opacity:1; transform:scale(1.5); } 78%,92% { opacity:1; transform:scale(1); } 100% { opacity:.55; transform:scale(.85); } }
+@keyframes nmpa-score-trend-lift { 0%,100% { transform:translateY(0); box-shadow:0 10px 26px rgba(3,9,24,.35); } 50% { transform:translateY(-7px); box-shadow:0 22px 40px rgba(3,9,24,.5); } }@keyframes nmpa-score-particle { 0%,100% { transform:translate3d(0,0,0) scale(.7); opacity:.25; } 50% { transform:translate3d(12px,-17px,22px) scale(1.45); opacity:1; } }
+.nmpa-landing__access { position: relative; z-index: 1; padding: 110px max(24px, calc((100% - 1120px) / 2)); background: linear-gradient(135deg, rgba(31,41,116,.82), rgba(19,34,75,.96)); border-top: 1px solid rgba(191,219,254,.16); border-bottom: 1px solid rgba(191,219,254,.16); }.nmpa-landing__access-heading { max-width: 610px; margin: 0 auto 45px; text-align: center; }.nmpa-landing__roles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; max-width: 1120px; margin: 0 auto; }.nmpa-landing__role { display: flex; min-height: 190px; padding: 24px; border: 1px solid rgba(191,219,254,.2); border-radius: 18px; background: rgba(7,18,41,.48); color: #fff; text-align: left; cursor: pointer; transition: transform var(--nmpa-motion-med), border-color var(--nmpa-motion-med), background var(--nmpa-motion-med); }.nmpa-landing__role:hover { transform: translateY(-6px); border-color: rgba(165,180,252,.65); background: rgba(19,40,76,.78); }.nmpa-landing__role:focus-visible { outline: 3px solid #7dd3fc; outline-offset: 4px; }.nmpa-landing__role-icon { display: grid; place-items: center; flex: 0 0 auto; width: 39px; height: 39px; margin-right: 15px; border-radius: 11px; background: rgba(96,165,250,.16); color: #93c5fd; font-size: 22px; }.nmpa-landing__role--caregiver .nmpa-landing__role-icon { color:#5eead4; background:rgba(45,212,191,.13); }.nmpa-landing__role-copy { display: flex; flex-direction: column; gap: 8px; }.nmpa-landing__role-title { font-size: 16px; font-weight: 600; }.nmpa-landing__role-description { color: var(--landing-muted); font-size: 13px; line-height: 1.5; }.nmpa-landing__role-arrow { align-self: flex-end; margin-left: auto; color: #a5b4fc; font-size: 20px; }.nmpa-landing__footer { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; width: min(1120px, calc(100% - 48px)); margin: 0 auto; padding: 28px 0; color: var(--landing-muted); font-size: 12px; }.nmpa-landing__footer > span { color: #fff; font-family: var(--nmpa-font-heading); font-weight: 700; letter-spacing: .07em; }.nmpa-landing__footer p { margin: 0; }
+@media (max-width: 760px) { .nmpa-landing__nav { top: 14px; width: calc(100% - 28px); padding-left: 16px; }.nmpa-landing__links, .nmpa-landing__nav-cta { display: none; }.nmpa-landing__nav-actions { margin-left:auto; }.nmpa-landing__hero { grid-template-columns: 1fr; min-height: 720px; padding-top: 150px; }.nmpa-landing__hero-art { position: absolute; width: 260px; right: -35px; top: 130px; opacity: .5; }.nmpa-landing__hero-copy { padding-bottom: 30px; }.nmpa-landing__hero h1 { font-size: clamp(43px, 12vw, 60px); }.nmpa-landing__hero-lede { font-size: 16px; }.nmpa-landing__section { padding: 80px 0; }.nmpa-landing__feature-grid, .nmpa-landing__roles, .nmpa-landing__workflow { grid-template-columns: 1fr; }.nmpa-landing__workflow { gap: 44px; }.nmpa-landing__workflow-visual { min-height: 280px; }.nmpa-landing__access { padding-top: 80px; padding-bottom: 80px; }.nmpa-landing__footer { flex-direction: column; align-items: flex-start; gap: 12px; } }
+@media (prefers-reduced-motion: reduce) { .nmpa-landing *, .nmpa-landing *::before, .nmpa-landing *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; } }
+
+/* ---------- Cognitive score dashboard (2026-08-25 REDESIGN) ---------- */
+.nmpa-landing__workflow--dashboard { display: block; }
+.nmpa-landing__workflow--dashboard .nmpa-landing__workflow-copy { max-width: 720px; margin: 64px auto 0; }
+.nmpa-cscore { position: relative; padding: 36px clamp(20px, 4vw, 44px) 32px; border: 1px solid rgba(139,92,246,.28); border-radius: 26px; background: radial-gradient(circle at 22% 12%, rgba(88,28,135,.32), transparent 55%), radial-gradient(circle at 82% 88%, rgba(14,165,233,.16), transparent 45%), #0a1230; overflow: hidden; isolation: isolate; }
+.nmpa-cscore__brain { position: absolute; z-index: 0; inset: 0; opacity: .12; background: radial-gradient(circle at 12% 30%, rgba(125,211,252,.55), transparent 22%), radial-gradient(circle at 8% 55%, rgba(139,92,246,.5), transparent 20%), radial-gradient(circle at 16% 75%, rgba(125,211,252,.4), transparent 18%); filter: blur(1px); pointer-events: none; }
+.nmpa-cscore__grid { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr auto 1fr; grid-template-rows: auto auto; column-gap: clamp(14px, 2.4vw, 28px); row-gap: 18px; align-items: center; }
+.nmpa-cscore__circle { grid-row: 1 / 3; grid-column: 2; justify-self: center; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; width: clamp(168px, 20vw, 224px); height: clamp(168px, 20vw, 224px); border-radius: 50%; border: 1px solid rgba(196,181,253,.75); background: radial-gradient(circle at 35% 25%, rgba(125,211,252,.5), rgba(91,33,182,.85) 60%, rgba(47,15,105,.95)); box-shadow: 0 0 60px rgba(139,92,246,.5), inset 0 0 30px rgba(224,231,255,.35); text-align: center; }
+.nmpa-cscore__circle::before { content: ''; position: absolute; inset: -16px; border: 1px solid rgba(139,92,246,.28); border-radius: 50%; }
+.nmpa-cscore__circle span { font-size: 11px; font-weight: 700; letter-spacing: .1em; color: #e0e7ff; line-height: 1.4; }
+.nmpa-cscore__circle strong { margin: 6px 0 2px; font: 700 clamp(38px, 5vw, 54px)/1 var(--nmpa-font-heading); color: #fff; text-shadow: 0 0 20px #c4b5fd; }
+.nmpa-cscore__circle small { font-size: 12px; color: #c4b5fd; }
+.nmpa-cscore__circle b { font-size: 14px; color: #2dd4bf; font-weight: 700; }
+.nmpa-cscore__domain { position: relative; z-index: 1; display: flex; align-items: flex-start; gap: 12px; padding: 15px 16px; border: 1px solid rgba(139,92,246,.28); border-radius: 14px; background: rgba(10,20,50,.62); backdrop-filter: blur(6px); }
+.nmpa-cscore__domain-icon { display: grid; place-items: center; flex: 0 0 auto; width: 38px; height: 38px; border-radius: 11px; background: rgba(139,92,246,.16); border: 1px solid rgba(139,92,246,.35); color: #c4b5fd; }
+.nmpa-cscore__domain-icon svg { width: 21px; height: 21px; }
+.nmpa-cscore__domain-copy { min-width: 0; }
+.nmpa-cscore__domain-head { display: flex; align-items: baseline; gap: 7px; flex-wrap: wrap; }
+.nmpa-cscore__domain-head strong { font-size: 15px; font-weight: 700; color: #fff; }
+.nmpa-cscore__domain-score { font-size: 16px; font-weight: 700; color: #2dd4bf; }
+.nmpa-cscore__domain-arrow { color: #2dd4bf; font-size: 12px; }
+.nmpa-cscore__domain-sub { margin: 2px 0 0; font-size: 12.5px; color: var(--landing-muted); }
+.nmpa-cscore__row-lower { position: relative; z-index: 1; display: flex; justify-content: center; gap: clamp(14px, 2.4vw, 28px); margin-top: 18px; flex-wrap: wrap; }
+.nmpa-cscore__row-lower .nmpa-cscore__domain { flex: 1 1 260px; max-width: 340px; }
+.nmpa-cscore__trend { position: relative; z-index: 1; margin-top: 26px; padding: 20px clamp(16px, 3vw, 26px) 16px; border: 1px solid rgba(139,92,246,.25); border-radius: 16px; background: rgba(10,20,50,.55); }
+.nmpa-cscore__trend-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.nmpa-cscore__trend-head h4 { margin: 0; font-size: 12.5px; letter-spacing: .1em; color: #fff; font-weight: 700; }
+.nmpa-cscore__trend-head p { margin: 4px 0 0; font-size: 13px; color: var(--landing-muted); }
+.nmpa-cscore__trend-delta { text-align: right; }
+.nmpa-cscore__trend-delta strong { display: block; font: 700 22px var(--nmpa-font-heading); color: #2dd4bf; }
+.nmpa-cscore__trend-delta span { font-size: 11px; color: var(--landing-muted); }
+.nmpa-cscore__trend-chart { margin-top: 14px; }
+.nmpa-cscore__trend-chart svg { width: 100%; height: 130px; display: block; overflow: visible; }
+.nmpa-cscore__trend-days { display: flex; justify-content: space-between; margin-top: 8px; font-size: 11px; color: var(--landing-muted); }
+.nmpa-cscore__banner { position: relative; z-index: 1; display: flex; align-items: center; gap: 14px; margin-top: 18px; padding: 15px 20px; border: 1px solid rgba(139,92,246,.25); border-radius: 14px; background: rgba(20,20,60,.4); }
+.nmpa-cscore__banner-icon { display: grid; place-items: center; flex: 0 0 auto; width: 36px; height: 36px; border-radius: 10px; background: rgba(139,92,246,.18); color: #c4b5fd; }
+.nmpa-cscore__banner-icon svg { width: 19px; height: 19px; }
+.nmpa-cscore__banner strong { display: block; font-size: 13.5px; color: #fff; }
+.nmpa-cscore__banner span { font-size: 12.5px; color: var(--landing-muted); }
+@media (max-width: 760px) {
+  .nmpa-cscore__grid { grid-template-columns: 1fr; grid-template-rows: auto; }
+  .nmpa-cscore__circle { grid-row: auto; grid-column: auto; order: -1; margin: 0 auto 8px; }
+  .nmpa-cscore__row-lower { flex-direction: column; }
+  .nmpa-cscore__trend-delta { text-align: left; }
+}
+
+/* Elder-friendly readability pass: preserve the visual hierarchy while
+   enlarging the smaller text users need to read or act on. */
+.nmpa-landing__links a, .nmpa-landing__text-cta, .nmpa-landing__footer a { font-size: 15px; }
+.nmpa-landing__nav-cta, .nmpa-landing__primary-cta { font-size: 16px; }
+.nmpa-landing__hero-lede { font-size: 19px; }
+
+/* Match the full cognitive-health representation used in the reference
+   artwork instead of compressing the score visualization into a card. */
+.nmpa-landing__workflow {
+  grid-template-columns: minmax(0, 1.35fr) minmax(300px, .65fr);
+  gap: clamp(36px, 5vw, 72px);
+}
+.nmpa-landing__workflow-visual {
+  min-height: 520px;
+  border-radius: 30px;
+}
+.nmpa-score-core {
+  width: 190px;
+  height: 190px;
+}
+.nmpa-score-orbit--outer { width: 430px; height: 245px; }
+.nmpa-score-orbit--inner { width: 310px; height: 178px; }
+.nmpa-score-trend {
+  left: 8%;
+  right: 8%;
+  bottom: 8%;
+  min-height: 104px;
+  padding: 18px 22px;
+  border-radius: 18px;
+}
+.nmpa-score-trend span { font-size: 13px; }
+.nmpa-score-trend b { font-size: 22px; }
+
+@media (max-width: 760px) {
+  .nmpa-landing__workflow-visual { min-height: 430px; }
+  .nmpa-score-core { width: 150px; height: 150px; }
+  .nmpa-score-orbit--outer { width: 330px; height: 188px; }
+  .nmpa-score-orbit--inner { width: 238px; height: 136px; }
+}
+.nmpa-landing__hero-note { font-size: 14px; }
+.nmpa-landing__feature-number { font-size: 13px; }
+.nmpa-landing__feature-card h3 { font-size: 20px; }
+.nmpa-landing__feature-card p { font-size: 16px; }
+.nmpa-landing__role-title { font-size: 18px; }
+.nmpa-landing__role-description { font-size: 15px; }
+.nmpa-auth__lede { font-size: 16px; }
+.nmpa-muted { font-size: 15px; }
+.nmpa-muted--sm { font-size: 13.5px; }
+.morphy-message__bubble { font-size: 16px; line-height: 1.5; }
+.morphy-panel__input { font-size: 16px; }
+
+/* Animated neural backdrop -- hidden by default (see .nmpa-auth-neural
+   above); styles kept intact for the underlying component. */
+.nmpa-auth-neural { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--nmpa-auth-brand-ink); z-index: -1; }
+.nmpa-auth-neural__edge { opacity: 0.22; }
+.nmpa-auth-neural__node { transform-box: fill-box; transform-origin: center; animation: nmpa-neural-pulse 3.2s ease-in-out infinite; }
+.nmpa-auth-neural__signal { opacity: 0.9; }
+.nmpa-auth-neural__sparkle { opacity: 0.25; animation: nmpa-sparkle-twinkle 4.5s ease-in-out infinite; }
+.nmpa-auth-neural__outline { fill: none; stroke: currentColor; stroke-width: 1.5; opacity: 0.4; }
+.nmpa-auth-neural__fissure { fill: none; stroke: currentColor; stroke-width: 1.2; opacity: 0.3; stroke-dasharray: 2 4; }
+.nmpa-auth-neural__label-line { stroke: currentColor; stroke-width: 1; opacity: 0.35; }
+.nmpa-auth-neural__anchor { fill: currentColor; opacity: 0.85; }
+.nmpa-auth-neural__label { font-family: var(--nmpa-font-heading); font-weight: 600; font-size: 12.5px; opacity: 0.8; }
+.nmpa-rolegate-brain__label-title { font-size: 13.5px; font-weight: 700; opacity: 0.95; }
+.nmpa-rolegate-brain__label-tagline { font-size: 10.5px; font-weight: 500; opacity: 0.65; letter-spacing: 0.02em; }
+@keyframes nmpa-neural-pulse { 0%, 100% { opacity: 0.4; transform: scale(0.85); } 50% { opacity: 1; transform: scale(1.2); } }
+@keyframes nmpa-sparkle-twinkle { 0%, 100% { opacity: 0.15; } 50% { opacity: 0.85; } }
+@media (prefers-reduced-motion: reduce) {
+  .nmpa-auth-neural__node { animation: none; opacity: 0.8; }
+  .nmpa-auth-neural__signal { display: none; }
+  .nmpa-auth-neural__sparkle { animation: none; opacity: 0.4; }
+}
+
+/* Keep each access card's icon, copy, and action aligned independently of text length. */
+.nmpa-landing__role {
+  display: grid;
+  grid-template-columns: 39px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 15px;
+}
+.nmpa-landing__role-icon { margin-right: 0; }
+.nmpa-landing__role-copy { min-width: 0; }
+.nmpa-landing__role-arrow { align-self: end; margin-left: 0; }
+
+/* ---------- Project Specialities chips (brand panel) ---------- */
+.nmpa-auth__specialities { margin-top: 22px; width: 100%; text-align: left; }
+.nmpa-auth__specialities-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+  opacity: 0.6; margin: 0 0 10px;
+}
+.nmpa-auth__speciality-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.nmpa-auth__speciality-chip {
+  font-size: 11.5px; font-weight: 500; padding: 6px 12px; border-radius: var(--nmpa-radius-pill);
+  background: transparent; border: 1px solid var(--nmpa-auth-brand-glass-border);
+  transition: border-color 160ms ease, transform 160ms ease;
+}
+.nmpa-auth__speciality-chip:hover { transform: translateY(-2px); border-color: var(--nmpa-accent-strong); }
+@media (prefers-reduced-motion: reduce) {
+  .nmpa-auth__speciality-chip { transition: none; }
+  .nmpa-auth__speciality-chip:hover { transform: none; }
+}
+
+/* ---------- Auth top bar: language switcher + About link ---------- */
+.nmpa-auth-topbar {
+  position: absolute; top: 20px; left: 24px; right: 24px; z-index: 5;
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;
+}
+.nmpa-auth-topbar__lang-wrap { position: relative; }
+.nmpa-auth-topbar__btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: transparent; border: 1px solid var(--nmpa-auth-brand-glass-border);
+  color: var(--nmpa-auth-brand-ink); border-radius: var(--nmpa-radius-pill);
+  padding: 7px 13px; font-size: 12.5px; font-weight: 600; cursor: pointer; text-decoration: none;
+  transition: border-color var(--nmpa-motion-fast), transform var(--nmpa-motion-fast);
+}
+.nmpa-auth-topbar__btn:hover:not(:disabled) { border-color: var(--nmpa-accent-strong); }
+.nmpa-auth-topbar__btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.nmpa-auth-topbar__menu {
+  position: absolute; top: calc(100% + 8px); left: 0; z-index: 10;
+  list-style: none; margin: 0; padding: 6px;
+  background: var(--nmpa-surface-elevated); border: 1px solid var(--nmpa-border);
+  border-radius: var(--nmpa-radius-md); box-shadow: var(--nmpa-shadow-lg);
+  min-width: 168px; max-height: 320px; overflow-y: auto;
+}
+.nmpa-auth-topbar__menu-item {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+  width: 100%; text-align: left; background: none; border: none; cursor: pointer;
+  padding: 9px 10px; border-radius: var(--nmpa-radius-sm); color: var(--nmpa-ink);
+}
+.nmpa-auth-topbar__menu-item:hover { background: var(--nmpa-surface-muted); }
+.nmpa-auth-topbar__menu-item.is-active { background: var(--nmpa-accent-soft); color: var(--nmpa-accent); }
+.nmpa-auth-topbar__menu-native { font-size: 13.5px; font-weight: 600; }
+.nmpa-auth-topbar__menu-en { font-size: 11px; color: var(--nmpa-ink-faint); }
+
+.nmpa-auth__panel--form { background: transparent; overflow: hidden; }
+.nmpa-auth__panel--form::before,
+.nmpa-auth__panel--form::after { display: none; }
+
+.nmpa-auth__card {
+  position: relative;
+  z-index: 1;
+  width: min(440px, 100%);
+  background: var(--nmpa-surface-elevated);
+  border: 1px solid var(--nmpa-border);
+  border-radius: var(--nmpa-radius-lg);
+  box-shadow: var(--nmpa-shadow-lg);
+  padding: 44px 40px;
+}
+.nmpa-auth__heading { margin: 0 0 6px; font-size: 26px; font-weight: 700; letter-spacing: -0.01em; color: var(--nmpa-ink); }
+.nmpa-auth__lede { color: var(--nmpa-ink-muted); margin: 0 0 26px; font-size: 14px; }
+.nmpa-auth__switch { margin-top: 22px; text-align: center; color: var(--nmpa-ink-muted); font-size: 13.5px; }
+.nmpa-auth__back-link { display: inline-block; margin-bottom: 16px; font-size: 13px; font-weight: 600; }
+.nmpa-auth__footnote { margin-top: 18px; text-align: center; line-height: 1.5; }
+
+.nmpa-social-row { display: flex; flex-direction: column; gap: 12px; margin-bottom: 22px; }
+.nmpa-google-button-slot { display: flex; justify-content: center; min-height: 44px; }
+.nmpa-google-button-slot > div { width: 100% !important; }
+
+.nmpa-social-button {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 46px; border-radius: var(--nmpa-radius-pill); font-size: 14px; font-weight: 600;
+  border: 1.5px solid var(--nmpa-border-strong); background: transparent; color: var(--nmpa-ink);
+  cursor: pointer; transition: border-color var(--nmpa-motion-fast), transform var(--nmpa-motion-fast);
+}
+.nmpa-social-button:hover:not(:disabled) { border-color: var(--nmpa-accent-strong); transform: translateY(-1px); }
+.nmpa-social-button:disabled { opacity: 0.55; cursor: not-allowed; }
+.nmpa-social-button--facebook { color: #1877f2; border-color: rgba(24, 119, 242, 0.35); }
+.nmpa-social-button--facebook:hover:not(:disabled) { border-color: #1877f2; }
+.nmpa-social-button__glyph { display: inline-flex; }
+.nmpa-social-button__glyph--google {
+  width: 18px; height: 18px; border-radius: 999px; background: var(--nmpa-surface-muted);
+  display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--nmpa-ink-faint);
+}
+.nmpa-social-button__hint { font-size: 11.5px; font-weight: 500; color: var(--nmpa-ink-faint); }
+
+.nmpa-auth-divider { display: flex; align-items: center; gap: 14px; margin: 4px 0 22px; }
+.nmpa-auth-divider span { flex: 1; height: 1px; background: var(--nmpa-border); }
+.nmpa-auth-divider p { margin: 0; font-size: 11.5px; font-weight: 600; letter-spacing: 0.04em; color: var(--nmpa-ink-faint); }
+
+.nmpa-form { display: flex; flex-direction: column; gap: 16px; }
+
+.nmpa-field2__control {
+  position: relative; display: flex; align-items: center;
+  border: 1.5px solid var(--nmpa-border-strong); border-radius: var(--nmpa-radius-md);
+  background: var(--nmpa-surface-muted); transition: border-color var(--nmpa-motion-fast), box-shadow var(--nmpa-motion-fast);
+}
+.nmpa-field2__control:focus-within { border-color: var(--nmpa-accent); box-shadow: var(--nmpa-focus-ring); }
+.nmpa-field2--error .nmpa-field2__control { border-color: var(--nmpa-reduced); }
+.nmpa-field2__icon { flex: none; padding-left: 16px; color: var(--nmpa-ink-faint); display: flex; }
+.nmpa-field2__control input {
+  flex: 1; min-width: 0; min-height: 54px; padding: 20px 16px 8px;
+  border: none; outline: none; background: transparent; color: var(--nmpa-ink);
+  font-size: 15px; font-family: inherit;
+}
+.nmpa-field2__control:has(.nmpa-field2__icon) input { padding-left: 10px; }
+.nmpa-field2__control label {
+  position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+  font-size: 15px; color: var(--nmpa-ink-faint); pointer-events: none;
+  transition: transform var(--nmpa-motion-fast), font-size var(--nmpa-motion-fast), color var(--nmpa-motion-fast), top var(--nmpa-motion-fast);
+}
+.nmpa-field2__control:has(.nmpa-field2__icon) label { left: 44px; }
+.nmpa-field2__control input:focus + label,
+.nmpa-field2__control input:not(:placeholder-shown) + label {
+  top: 14px; transform: translateY(0); font-size: 11px; font-weight: 600; color: var(--nmpa-accent);
+}
+.nmpa-field2--error .nmpa-field2__control input:focus + label,
+.nmpa-field2--error .nmpa-field2__control input:not(:placeholder-shown) + label { color: var(--nmpa-reduced); }
+.nmpa-field2__toggle {
+  flex: none; background: none; border: none; cursor: pointer; padding: 0 16px;
+  color: var(--nmpa-ink-faint); display: flex; align-items: center; min-height: 54px;
+}
+.nmpa-field2__toggle:hover { color: var(--nmpa-ink); }
+.nmpa-field2__error { display: block; margin-top: 6px; color: var(--nmpa-reduced); font-size: 12px; font-weight: 500; padding-left: 4px; }
+
+.nmpa-field { display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: 14px; }
+.nmpa-field input, .nmpa-field select {
+  min-height: 46px; padding: 8px 12px; border-radius: var(--nmpa-radius-sm);
+  border: 1px solid var(--nmpa-border); font-size: 15px; font-weight: 400;
+  font-family: inherit; background: var(--nmpa-surface); color: var(--nmpa-ink);
+}
+.nmpa-field input[aria-invalid="true"], .nmpa-field select[aria-invalid="true"] { border-color: var(--nmpa-reduced); }
+.nmpa-field__error { color: var(--nmpa-reduced); font-size: 12.5px; font-weight: 500; }
+
+.nmpa-place-autocomplete { display: block; width: 100%; min-height: 46px; }
+.nmpa-place-autocomplete gmp-place-autocomplete { display: block; width: 100%; }
+
+/* ---------- Onboarding ---------- */
+.nmpa-onboarding { max-width: 520px; margin: 0 auto; }
+.nmpa-onboarding__progress { height: 6px; border-radius: 999px; background: var(--nmpa-surface-muted); overflow: hidden; margin: 8px 0 16px; }
+.nmpa-onboarding__progress-fill { height: 100%; background: var(--nmpa-accent); border-radius: 999px; transition: width var(--nmpa-motion-med); }
+.nmpa-radio-group, .nmpa-checkbox-group { display: flex; flex-direction: column; gap: 8px; }
+.nmpa-radio-option, .nmpa-checkbox-option {
+  display: flex; align-items: center; gap: 10px; font-weight: 400; font-size: 14.5px;
+  padding: 8px 10px; border: 1px solid var(--nmpa-border); border-radius: var(--nmpa-radius-sm); cursor: pointer;
+  transition: border-color var(--nmpa-motion-fast);
+}
+.nmpa-radio-option:hover, .nmpa-checkbox-option:hover { border-color: var(--nmpa-accent); }
+.nmpa-radio-option input, .nmpa-checkbox-option input { min-height: auto; width: 16px; height: 16px; }
+.nmpa-onboarding__actions { display: flex; align-items: center; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+.nmpa-onboarding__skip { margin-left: auto; font-size: 13.5px; font-weight: 600; }
+
+.nmpa-link { background: none; border: none; color: var(--nmpa-accent); font-weight: 600; cursor: pointer; padding: 0; }
+
+.nmpa-consent-checkbox {
+  display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.4;
+  color: var(--nmpa-ink-muted); cursor: pointer;
+}
+.nmpa-consent-checkbox input { min-height: auto; width: 16px; height: 16px; margin-top: 2px; flex-shrink: 0; }
+
+/* ---------- Buttons: solid accent primary, outline secondary ---------- */
+.nmpa-button {
+  min-height: 48px; font-size: 15px; font-weight: 600; border-radius: var(--nmpa-radius-pill);
+  border: 1.5px solid transparent; padding: 10px 22px; cursor: pointer;
+  transition: background-color var(--nmpa-motion-fast), border-color var(--nmpa-motion-fast), transform var(--nmpa-motion-fast), box-shadow var(--nmpa-motion-fast);
+}
+.nmpa-button--primary { background: var(--nmpa-button-bg); color: var(--nmpa-accent-ink); box-shadow: var(--nmpa-button-glow); }
+.nmpa-button--primary:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); box-shadow: var(--nmpa-button-glow), var(--nmpa-shadow-md); }
+.nmpa-button--secondary {
+  background: transparent; border-color: var(--nmpa-border-strong); color: var(--nmpa-ink);
+}
+.nmpa-button--secondary:hover:not(:disabled) { border-color: var(--nmpa-accent); }
+.nmpa-button:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+.nmpa-button--block { width: 100%; }
+
+/* ---------- Theme toggle ---------- */
+.nmpa-theme-toggle {
+  position: relative; width: 54px; height: 30px; border-radius: var(--nmpa-radius-pill);
+  border: 1px solid var(--nmpa-border-strong); background: var(--nmpa-surface);
+  cursor: pointer; display: flex; align-items: center; padding: 0 6px; justify-content: space-between;
+  transition: background-color var(--nmpa-motion-med);
+}
+.nmpa-theme-toggle--sm { width: 44px; height: 26px; }
+.nmpa-theme-toggle__icon { color: var(--nmpa-ink-faint); display: flex; z-index: 1; }
+.nmpa-theme-toggle__thumb {
+  position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 999px;
+  background: var(--nmpa-accent); transition: transform var(--nmpa-motion-med);
+}
+.nmpa-theme-toggle--sm .nmpa-theme-toggle__thumb { width: 18px; height: 18px; }
+.nmpa-theme-toggle[aria-checked='true'] .nmpa-theme-toggle__thumb { transform: translateX(24px); }
+.nmpa-theme-toggle--sm[aria-checked='true'] .nmpa-theme-toggle__thumb { transform: translateX(18px); }
+
+@media (max-width: 900px) {
+  .nmpa-auth { grid-template-columns: 1fr; }
+  .nmpa-auth__panel--brand { padding: 44px 28px 56px; }
+  .nmpa-auth__panel--brand-split { padding: 0; }
+  .nmpa-auth__brand-top { padding: 44px 28px 22px; min-height: 180px; }
+  .nmpa-auth__brand-bottom { padding: 20px 28px 32px; }
+  .nmpa-auth__trust-list { display: none; }
+  .nmpa-auth__specialities { display: none; }
+  .nmpa-auth__card { padding: 32px 24px; }
+}
+
+/* ---------- Shell / navigation: solid, bordered, no glass blur ---------- */
+.nmpa-shell { min-height: 100vh; display: flex; flex-direction: column; }
+.nmpa-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 32px; background: var(--nmpa-bg-elevated); border-bottom: 1px solid var(--nmpa-border);
+  position: sticky; top: 0; z-index: 20;
+}
+.nmpa-topbar__user { display: flex; align-items: center; gap: 14px; font-size: 13.5px; }
+.nmpa-topbar__language.nmpa-auth-topbar {
+  position: relative; inset: auto; z-index: 30; display: block;
+}
+.nmpa-topbar__language .nmpa-auth-topbar__btn {
+  border-color: var(--nmpa-border); color: var(--nmpa-ink); background: var(--nmpa-surface-muted);
+}
+.nmpa-topbar__language .nmpa-auth-topbar__menu { left: auto; right: 0; }
+.nmpa-avatar {
+  width: 32px; height: 32px; border-radius: 999px; background: var(--nmpa-accent); color: var(--nmpa-accent-ink);
+  display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;
+}
+
+.nmpa-shell__body { flex: 1; display: flex; }
+.nmpa-sidenav {
+  width: 232px; flex: none; background: var(--nmpa-bg-elevated); border-right: 1px solid var(--nmpa-border);
+  display: flex; flex-direction: column; padding: 16px 12px; gap: 2px;
+}
+.nmpa-sidenav__item {
+  display: flex; align-items: center; gap: 12px; text-align: left;
+  padding: 10px 12px; border-radius: var(--nmpa-radius-sm); border: none; background: none; cursor: pointer;
+  font-size: 13.5px; font-weight: 500; color: var(--nmpa-ink-muted);
+  transition: background-color var(--nmpa-motion-fast), color var(--nmpa-motion-fast);
+}
+.nmpa-sidenav__item:hover { color: var(--nmpa-ink); }
+.nmpa-sidenav__item.is-active { background: var(--nmpa-accent-soft); color: var(--nmpa-accent); font-weight: 600; }
+.nmpa-sidenav__icon { width: 18px; text-align: center; color: currentColor; opacity: 0.85; }
+
+.nmpa-shell__main { flex: 1; padding: 36px 40px; max-width: 1080px; margin: 0 auto; width: 100%; }
+
+/* ---------- Cards / shared: solid surface, subtle border ---------- */
+.nmpa-card {
+  background: var(--nmpa-surface-glass); border: 1px solid var(--nmpa-border);
+  border-radius: var(--nmpa-radius-md); box-shadow: var(--nmpa-shadow-sm);
+  padding: 24px; margin-bottom: 18px;
+  backdrop-filter: var(--nmpa-glass-blur); -webkit-backdrop-filter: var(--nmpa-glass-blur);
+  transition: border-color var(--nmpa-motion-med), box-shadow var(--nmpa-motion-med);
+}
+.nmpa-card:hover { border-color: var(--nmpa-border-strong); box-shadow: var(--nmpa-card-hover-shadow); }
+.nmpa-card__title { font-size: 16px; font-weight: 600; margin: 0 0 10px; }
+.nmpa-section { display: flex; flex-direction: column; }
+.nmpa-section__header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+
+.nmpa-eyebrow {
+  font-size: 12.5px; letter-spacing: 0.03em; color: var(--nmpa-accent-strong); margin: 0;
+  display: inline-flex; align-items: center; gap: 6px; font-weight: 600;
+}
+.nmpa-muted { color: var(--nmpa-ink-muted); font-size: 13.5px; }
+.nmpa-muted--sm { font-size: 12px; display: block; }
+
+.nmpa-assessment-intro__time-estimate {
+  display: inline-block; font-weight: 600; font-size: 13px; color: var(--nmpa-accent);
+  background: var(--nmpa-accent-soft); border-radius: var(--nmpa-radius-pill);
+  padding: 5px 12px; margin: 4px 0 2px;
+}
+
+.nmpa-assessment-page { gap: 4px; }
+.nmpa-assessment-hero { padding: 30px; overflow: hidden; }
+.nmpa-assessment-hero__heading, .nmpa-assessment-coverage__heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
+.nmpa-assessment-hero__heading .nmpa-card__title, .nmpa-assessment-coverage__heading .nmpa-card__title { margin: 4px 0 0; font-size: 20px; }
+.nmpa-assessment-hero__meta { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 24px 0; border: 1px solid var(--nmpa-border); border-radius: var(--nmpa-radius-sm); overflow: hidden; }
+.nmpa-assessment-hero__meta div { padding: 14px 16px; display: grid; gap: 4px; background: var(--nmpa-surface-muted); }
+.nmpa-assessment-hero__meta div + div { border-left: 1px solid var(--nmpa-border); }
+.nmpa-assessment-hero__meta span { color: var(--nmpa-ink-faint); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
+.nmpa-assessment-hero__meta strong { color: var(--nmpa-ink); font-size: 14px; }
+.nmpa-assessment-hero__content { max-width: 930px; }
+.nmpa-assessment-hero__content p { margin: 0 0 8px; line-height: 1.55; }
+.nmpa-assessment-hero__actions { display: flex; align-items: center; gap: 12px; margin-top: 20px; }
+.nmpa-assessment-hero__actions .nmpa-assessment-intro__time-estimate { margin: 0; }
+.nmpa-assessment-coverage { padding: 30px; }
+.nmpa-assessment-coverage__heading { margin-bottom: 20px; align-items: end; }
+.nmpa-lobe-card { padding: 20px 18px; }
+.nmpa-lobe-card__heading { display: flex; align-items: center; gap: 10px; }
+.nmpa-lobe-card__heading > span { color: var(--nmpa-accent); background: var(--nmpa-accent-soft); border-radius: 999px; font-size: 11px; font-weight: 700; padding: 4px 7px; }
+.nmpa-lobe-card__label { margin: 0; }
+@media (max-width: 620px) {
+  .nmpa-assessment-hero, .nmpa-assessment-coverage { padding: 20px; }
+  .nmpa-assessment-hero__meta { grid-template-columns: 1fr; }
+  .nmpa-assessment-hero__meta div + div { border-left: 0; border-top: 1px solid var(--nmpa-border); }
+  .nmpa-assessment-hero__heading, .nmpa-assessment-coverage__heading { align-items: flex-start; flex-direction: column; }
+}
+
+.nmpa-tag {
+  display: inline-block; background: transparent; border: 1px solid var(--nmpa-border);
+  border-radius: 999px; padding: 3px 11px; font-size: 12px; font-weight: 500; color: var(--nmpa-ink-muted);
+}
+.nmpa-tag--danger { background: var(--nmpa-danger-bg); border-color: var(--nmpa-danger-border); color: var(--nmpa-reduced); }
+.nmpa-tag--warn { background: var(--nmpa-warn-bg); border-color: var(--nmpa-warn-border); color: var(--nmpa-mild); }
+.nmpa-tag--info { background: var(--nmpa-info-bg); border-color: var(--nmpa-info-border); color: var(--nmpa-accent); }
+.nmpa-tag--neutral { background: transparent; color: var(--nmpa-neutral); }
+/* 2026-08-23: added for CareTeamSection.jsx's connection-status tags --
+   reuses the same green already used elsewhere for a "done/good" signal
+   (see .nmpa-checklist__mark) rather than inventing a new color. */
+.nmpa-tag--success { background: var(--nmpa-excellent-bg, transparent); border-color: var(--nmpa-excellent); color: var(--nmpa-excellent); }
+
+/* 2026-08-23: minimal, generic text-input + list styles for
+   CareTeamSection.jsx's doctor-search form and connection lists. Not the
+   full floating-label pattern .nmpa-field2 uses elsewhere -- this is a
+   plain, simple search box, not a form field with validation states. */
+.nmpa-input {
+  width: 100%; padding: 10px 14px; border-radius: var(--nmpa-radius-sm); border: 1px solid var(--nmpa-border);
+  background: var(--nmpa-surface); color: var(--nmpa-ink); font-size: 14px; font-family: inherit;
+}
+.nmpa-input:focus { outline: none; border-color: var(--nmpa-accent); box-shadow: var(--nmpa-focus-ring); }
+.nmpa-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.nmpa-list__item { padding: 10px 14px; border-radius: var(--nmpa-radius-sm); border: 1px solid var(--nmpa-border); background: var(--nmpa-surface); }
+.nmpa-card__subtitle { font-size: 14px; font-weight: 600; margin: 0 0 8px; color: var(--nmpa-ink-muted); }
+
+.nmpa-alert { border-radius: var(--nmpa-radius-sm); padding: 14px 16px; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+.nmpa-alert--danger { background: var(--nmpa-danger-bg); border: 1px solid var(--nmpa-danger-border); color: var(--nmpa-reduced); }
+.nmpa-alert--warn { background: var(--nmpa-warn-bg); border: 1px solid var(--nmpa-warn-border); color: var(--nmpa-mild); }
+.nmpa-alert--info { background: var(--nmpa-info-bg); border: 1px solid var(--nmpa-info-border); color: var(--nmpa-accent); }
+
+.nmpa-awareness {
+  background: var(--nmpa-info-bg); border: 1px solid var(--nmpa-info-border);
+  border-radius: var(--nmpa-radius-sm); padding: 14px 16px; margin: 14px 0;
+}
+.nmpa-awareness__title { font-weight: 600; color: var(--nmpa-accent); margin: 0 0 4px; font-size: 14px; }
+.nmpa-awareness__list { margin: 8px 0 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--nmpa-ink); }
+.nmpa-awareness__list li { line-height: 1.45; }
+
+.nmpa-tasklist { list-style: disc; padding-left: 18px; font-size: 13.5px; color: var(--nmpa-ink-muted); margin: 8px 0 0; }
+
+.nmpa-install-prompt {
+  position: fixed; left: 16px; right: 16px; bottom: 16px; z-index: 40;
+  max-width: 420px; margin: 0 auto;
+  background: var(--nmpa-surface-elevated); border: 1px solid var(--nmpa-border);
+  border-radius: var(--nmpa-radius-md); box-shadow: var(--nmpa-shadow-lg);
+  padding: 16px 18px; display: flex; flex-direction: column; gap: 12px;
+}
+.nmpa-install-prompt__title { font-family: var(--nmpa-font-heading); font-weight: 600; font-size: 15px; margin: 0; }
+.nmpa-install-prompt__blurb { font-size: 13px; color: var(--nmpa-ink-muted); margin: 4px 0 0; }
+.nmpa-install-prompt__actions { display: flex; gap: 10px; justify-content: flex-end; }
+@media (max-width: 480px) {
+  .nmpa-install-prompt { left: 10px; right: 10px; bottom: 10px; }
+  .nmpa-install-prompt__actions { justify-content: stretch; }
+  .nmpa-install-prompt__actions .nmpa-button { flex: 1; }
+}
+
+/* ============================================================
+   Home -- rebuilt as a bento grid (2026-08-23, matches the Figma
+   Dashboard Home spec exactly): a wide hero "Momentum Score" card next to
+   a narrower streak card, a wide "Today's Set" checklist card next to the
+   Detection Assessment status, and a full-width Invite banner. Replaces
+   the previous flat stack of equal-width cards -- the actual structural
+   fix for the "college project" flatness complaint, not just a color
+   change. HomeSection.jsx renders these classes directly. ============ */
+.nmpa-home__greeting { margin-bottom: 24px; }
+.nmpa-home__title { font-size: 26px; font-weight: 600; margin: 2px 0 0; }
+.nmpa-home__bento { display: flex; flex-direction: column; gap: 20px; }
+.nmpa-home__row { display: grid; grid-template-columns: 1fr; gap: 20px; }
+.nmpa-home__row--hero { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); }
+.nmpa-home__row--secondary { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); align-items: stretch; }
+@media (max-width: 860px) {
+  .nmpa-home__row--hero, .nmpa-home__row--secondary { grid-template-columns: 1fr; }
+}
+
+/* 2026-08-23 FIX (VR feedback: momentum card text/ring clipping off the
+   edges instead of staying contained). Root cause: the text block had no
+   min-width:0, so a flex child's own content (the "X of 5 tasks done
+   today." line) could force the whole card wider than its container
+   instead of wrapping, pushing the ring toward/past the right edge. The
+   ring is now pinned as a fixed, never-shrinking element in line with the
+   text ("slightly cornered" -- top-right of the card, not spread to the
+   far edge via space-between), and the card can never itself overflow its
+   parent. */
+.nmpa-home__hero {
+  display: flex; align-items: center; justify-content: space-between; gap: 28px; flex-wrap: wrap;
+  margin-bottom: 0; overflow: hidden;
+}
+.nmpa-home__hero-copy { flex: 1 1 220px; min-width: 0; }
+.nmpa-home__hero-copy p { overflow-wrap: break-word; }
+.nmpa-home__hero .nmpa-ring { flex: 0 0 auto; margin-left: auto; }
+.nmpa-home__score {
+  font-size: 40px; font-weight: 700; margin: 4px 0; color: var(--nmpa-ink);
+}
+.nmpa-home__score--hidden { color: var(--nmpa-ink-muted); letter-spacing: 4px; }
+
+.nmpa-home__streak-card {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  gap: 4px; margin-bottom: 0;
+}
+.nmpa-streak { text-align: center; }
+.nmpa-streak__count { font-size: 36px; font-weight: 700; margin: 0; color: var(--nmpa-ink); }
+.nmpa-milestone-badge { font-size: 13px; font-weight: 600; margin: 6px 0 0; color: var(--nmpa-accent); }
+
+.nmpa-home__set-card { margin-bottom: 0; }
+.nmpa-home__assessment-card {
+  margin-bottom: 0; background: var(--nmpa-accent-soft); border-color: var(--nmpa-border);
+  display: flex; flex-direction: column; gap: 14px;
+}
+.nmpa-home__invite-card {
+  margin-bottom: 0; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+}
+.nmpa-home__invite-text { flex: 1 1 320px; }
+
+/* ---------- Section icon badge: small accent-circle icon used on the
+   single-card chart/list sections (Activity, Domains, Insights, Reports)
+   for a touch of visual richness without restructuring a naturally
+   full-width chart card into an artificial grid. ---------------------- */
+.nmpa-section-icon-badge {
+  width: 40px; height: 40px; border-radius: var(--nmpa-radius-md);
+  background: var(--nmpa-accent-soft); color: var(--nmpa-accent);
+  display: flex; align-items: center; justify-content: center; flex: none; margin-bottom: 10px;
+}
+
+/* ---------- Assistant landing: compact, informative workspace --------- */
+.nmpa-assistant-page { gap: 4px; }
+.nmpa-assistant-hero { display: flex; align-items: center; justify-content: space-between; gap: 28px; padding: 30px; }
+.nmpa-assistant-hero__copy { max-width: 670px; }
+.nmpa-assistant-hero__copy .nmpa-card__title { font-size: 21px; margin: 5px 0 8px; }
+.nmpa-assistant-hero__copy p:last-child { margin: 0; line-height: 1.55; }
+.nmpa-assistant-hero__action { flex: none; display: grid; gap: 9px; justify-items: start; }
+.nmpa-assistant-hero__action span { max-width: 210px; color: var(--nmpa-ink-faint); font-size: 11.5px; line-height: 1.4; }
+.nmpa-assistant-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.nmpa-assistant-card { min-height: 205px; margin-bottom: 0; padding: 22px; display: flex; flex-direction: column; }
+.nmpa-assistant-card__number { color: var(--nmpa-accent); font-size: 11px; font-weight: 700; letter-spacing: .08em; }
+.nmpa-assistant-card h3 { color: var(--nmpa-ink); font-size: 15px; margin: 18px 0 8px; }
+.nmpa-assistant-card p { color: var(--nmpa-ink-muted); font-size: 13px; line-height: 1.5; margin: 0; }
+.nmpa-assistant-card__prompt { color: var(--nmpa-accent); font-size: 11.5px; font-weight: 600; margin-top: auto; padding-top: 18px; }
+.nmpa-assistant-note { color: var(--nmpa-ink-faint); font-size: 11.5px; line-height: 1.45; margin: 2px 0 0; }
+.nmpa-assistant-launch { position: fixed; inset: 0; pointer-events: none; z-index: 1100; overflow: hidden; }
+.nmpa-assistant-launch__morphy { position: absolute; left: 51%; top: 43%; width: 96px; height: 96px; filter: drop-shadow(0 14px 22px rgba(23, 105, 194, .42)); animation: nmpa-morphy-launch 1500ms cubic-bezier(.22, .61, .36, 1) forwards; }
+.nmpa-assistant-launch__morphy::before { content: ''; position: absolute; inset: 8px; z-index: -1; border-radius: 50%; background: radial-gradient(circle, rgba(23, 105, 194, .65), rgba(11, 145, 199, 0) 68%); animation: nmpa-morphy-aura 1500ms ease-out forwards; }
+.nmpa-assistant-launch__pulse { position: absolute; left: 51%; top: 43%; width: 70px; height: 70px; border: 2px solid rgba(23, 105, 194, .70); border-radius: 50%; animation: nmpa-morphy-pulse 1350ms ease-out forwards; }
+.nmpa-assistant-launch__particle { position: absolute; left: 51%; top: 43%; width: 8px; height: 8px; border-radius: 50%; background: #38bdf8; box-shadow: 0 0 14px #38bdf8; animation: nmpa-morphy-particle 1280ms ease-out forwards; }
+.nmpa-assistant-launch__particle--one { --nmpa-px: -96px; --nmpa-py: -42px; background: #60a5fa; }
+.nmpa-assistant-launch__particle--two { --nmpa-px: 82px; --nmpa-py: -76px; animation-delay: 45ms; }
+.nmpa-assistant-launch__particle--three { --nmpa-px: 52px; --nmpa-py: 64px; background: #93c5fd; animation-delay: 85ms; }
+@keyframes nmpa-morphy-launch {
+  0% { transform: translate(-50%, -50%) scale(.5) rotate(-12deg); opacity: 0; }
+  18% { transform: translate(-50%, -58%) scale(1.05) rotate(5deg); opacity: 1; }
+  44% { transform: translate(-18%, -120%) scale(.95) rotate(-3deg); opacity: 1; }
+  100% { transform: translate(calc(50vw - 132px), calc(56vh - 112px)) scale(.45) rotate(8deg); opacity: 0; }
+}
+@keyframes nmpa-morphy-aura { 0% { transform: scale(.5); opacity: .1; } 35% { transform: scale(1.7); opacity: .9; } 100% { transform: scale(3.1); opacity: 0; } }
+@keyframes nmpa-morphy-pulse { 0% { transform: translate(-50%, -50%) scale(.5); opacity: .9; } 100% { transform: translate(-50%, -50%) scale(3.3); opacity: 0; } }
+@keyframes nmpa-morphy-particle { 0% { transform: translate(-50%, -50%) scale(.4); opacity: 0; } 20% { opacity: 1; } 100% { transform: translate(var(--nmpa-px), var(--nmpa-py)) scale(0); opacity: 0; } }
+@media (max-width: 780px) {
+  .nmpa-assistant-hero { align-items: flex-start; flex-direction: column; padding: 24px; }
+  .nmpa-assistant-grid { grid-template-columns: 1fr; }
+  .nmpa-assistant-card { min-height: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nmpa-assistant-launch, .nmpa-assistant-launch * { animation-duration: 1ms !important; }
+}
+
+/* ---------- Progress: weekly + monthly trend cards side by side
+   (2026-08-23, matches the Figma "Dashboard - Progress" frame) --------- */
+.nmpa-progress__row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 18px; }
+.nmpa-progress__row > .nmpa-card { margin-bottom: 0; }
+@media (max-width: 860px) {
+  .nmpa-progress__row { grid-template-columns: 1fr; }
+}
+
+/* ---------- Ring + streak visuals ---------- */
+.nmpa-ring { position: relative; width: 132px; height: 132px; flex-shrink: 0; }
+.nmpa-ring__svg { transform: scale(1); }
+.nmpa-ring__track { stroke: var(--nmpa-surface-muted); }
+.nmpa-ring__fill {
+  stroke: url(#nmpa-ring-gradient);
+  filter: var(--nmpa-ring-glow);
+  transition: stroke-dashoffset 900ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: nmpa-electric-breathe 3.6s ease-in-out infinite;
+}
+.nmpa-ring.is-hidden .nmpa-ring__track { animation: nmpa-ring-pulse 2.4s ease-in-out infinite; }
+.nmpa-ring__center { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+.nmpa-ring__value { font-family: var(--nmpa-font-heading); font-size: 30px; font-weight: 700; line-height: 1; color: var(--nmpa-ink); font-variant-numeric: tabular-nums; }
+.nmpa-ring__value--hidden { color: var(--nmpa-ink-faint); letter-spacing: 2px; font-size: 24px; }
+@keyframes nmpa-ring-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+
+/* Electric glow pass (2026-08-23): a slow "breathing" glow on the ring's
+   progress arc -- brightness pulses while the underlying var(--nmpa-ring-glow)
+   drop-shadow stays applied throughout, composing safely since that token
+   is never the bare `none` keyword (see its definition comment). No-op in
+   light theme since --nmpa-ring-glow resolves to a zero-strength shadow
+   there and brightness(1.15) alone is a barely-perceptible flicker. */
+@keyframes nmpa-electric-breathe {
+  0%, 100% { filter: var(--nmpa-ring-glow); }
+  50% { filter: brightness(1.18) var(--nmpa-ring-glow); }
+}
+
+.nmpa-streak__flame { display: inline-block; font-size: 18px; margin-right: 4px; filter: grayscale(1); opacity: 0.4; }
+.nmpa-streak__flame.is-lit { filter: grayscale(0) var(--nmpa-flame-glow); opacity: 1; animation: nmpa-flame-flicker 1.8s ease-in-out infinite; }
+@keyframes nmpa-flame-flicker { 0%, 100% { transform: scale(1) translateY(0); } 50% { transform: scale(1.08) translateY(-1px); } }
+
+.nmpa-anim-fade-up { animation: nmpa-fade-up 420ms cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: var(--nmpa-anim-delay, 0ms); }
+@keyframes nmpa-fade-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .nmpa-ring__fill { transition: none; animation: none; }
+  .nmpa-ring.is-hidden .nmpa-ring__track { animation: none; }
+  .nmpa-streak__flame.is-lit { animation: none; }
+  .nmpa-anim-fade-up { animation: none; }
+  .nmpa-checklist__item.is-done .nmpa-checklist__mark { animation: none; }
+  .nmpa-linechart__path { animation: none; stroke-dashoffset: 0; }
+  .nmpa-linechart__point { animation: none; opacity: 1; transform: none; }
+  .nmpa-domain-bar__fill { animation: none; transform: none; }
+  .nmpa-auth__panel--brand::before, .nmpa-auth__panel--brand::after,
+  .nmpa-rolegate::before, .nmpa-rolegate::after,
+  .nmpa-button--primary, .nmpa-card { animation: none; }
+}
+
+.nmpa-button-row { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+
+.nmpa-scale { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.nmpa-scale__option {
+  width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--nmpa-border-strong);
+  background: var(--nmpa-surface); color: var(--nmpa-ink); font-weight: 600; cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.nmpa-scale__option:hover { border-color: var(--nmpa-accent); }
+.nmpa-scale__option.is-selected { background: var(--nmpa-accent); border-color: var(--nmpa-accent); color: var(--nmpa-accent-ink); }
+.nmpa-textarea {
+  width: 100%; min-height: 56px; border-radius: var(--nmpa-radius-sm); border: 1px solid var(--nmpa-border);
+  background: var(--nmpa-surface); color: var(--nmpa-ink); padding: 10px 12px; font: inherit; resize: vertical;
+}
+.nmpa-textarea:focus { outline: none; border-color: var(--nmpa-accent); box-shadow: var(--nmpa-focus-ring); }
+
+/* ---------- Checklist ("Today's Set") ---------- */
+.nmpa-checklist { list-style: none; margin: 12px 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.nmpa-checklist__item {
+  display: flex; gap: 12px; align-items: flex-start; padding: 12px; border: 1px solid var(--nmpa-border);
+  border-radius: var(--nmpa-radius-sm); transition: background-color var(--nmpa-motion-med), border-color var(--nmpa-motion-med);
+}
+.nmpa-checklist__item.is-done { background: var(--nmpa-surface-muted); border-color: transparent; }
+.nmpa-checklist__mark { font-size: 17px; color: var(--nmpa-excellent); flex: none; width: 22px; display: inline-block; }
+.nmpa-checklist__label { display: block; font-weight: 600; font-size: 14px; }
+
+.nmpa-checklist__item.is-done .nmpa-checklist__mark { animation: nmpa-check-pop 420ms cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+@keyframes nmpa-check-pop {
+  0% { transform: scale(0.4) rotate(-14deg); opacity: 0; }
+  60% { transform: scale(1.15) rotate(4deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* ---------- Assessment: individual task screens ---------- */
+.nmpa-task { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 8px 4px 4px; text-align: center; }
+.nmpa-task__instruction { margin: 0; font-size: 15px; color: var(--nmpa-ink); max-width: 52ch; }
+.nmpa-task__progress { margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.03em; color: var(--nmpa-ink-muted); }
+
+.nmpa-task__feedback { margin: 0; padding: 8px 16px; border-radius: var(--nmpa-radius-pill); font-weight: 600; font-size: 13.5px; }
+.nmpa-task__feedback.is-ok { background: color-mix(in srgb, var(--nmpa-excellent) 16%, transparent); color: var(--nmpa-excellent); }
+.nmpa-task__feedback.is-bad { background: var(--nmpa-danger-bg); color: var(--nmpa-reduced); }
+
+.nmpa-task__countdown { display: flex; align-items: center; justify-content: center; min-height: 220px; }
+.nmpa-task__countdown-num { font-size: 60px; font-weight: 700; color: var(--nmpa-accent); }
+.nmpa-task__countdown-num.is-go { color: var(--nmpa-excellent); font-size: 42px; letter-spacing: 0.02em; }
+
+.nmpa-task__stimulus { font-size: 46px; font-weight: 700; letter-spacing: 0.01em; margin: 6px 0; }
+.nmpa-task__choices { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 320px; }
+
+.nmpa-task__stage {
+  width: 100%; max-width: 320px; min-height: 160px; display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--nmpa-border); border-radius: var(--nmpa-radius-lg); background: var(--nmpa-surface-muted);
+}
+.nmpa-task__circle { width: 96px; height: 96px; border-radius: 50%; box-shadow: var(--nmpa-shadow-md); }
+.nmpa-task__circle.is-go { background: var(--nmpa-excellent); }
+.nmpa-task__circle.is-nogo { background: var(--nmpa-reduced); }
+.nmpa-task__fixation { font-size: 32px; color: var(--nmpa-ink-faint); }
+.nmpa-task__respond-btn { max-width: 280px; width: 100%; }
+
+.nmpa-task__speaking { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 24px 0; color: var(--nmpa-ink-muted); font-weight: 600; font-size: 13.5px; }
+.nmpa-task__speaking-dot { width: 44px; height: 44px; border-radius: 50%; background: var(--nmpa-accent); opacity: 0.9; }
+.nmpa-task__timerbar { width: 100%; max-width: 340px; height: 4px; border-radius: 4px; background: var(--nmpa-surface-muted); overflow: hidden; }
+.nmpa-task__timerbar-fill { height: 100%; background: var(--nmpa-accent); transition: width 0.1s linear; }
+.nmpa-task__token-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; width: 100%; }
+.nmpa-task__token {
+  aspect-ratio: 1 / 1; border-radius: var(--nmpa-radius-md); border: 1px solid var(--nmpa-border);
+  background: var(--nmpa-surface-muted); display: flex; align-items: center; justify-content: center; cursor: pointer;
+}
+.nmpa-task__token.is-selected { outline: 2px solid var(--nmpa-accent); outline-offset: -1px; }
+.nmpa-task__token:disabled { cursor: default; opacity: 0.85; }
+@media (max-width: 480px) { .nmpa-task__token-grid { grid-template-columns: repeat(4, 1fr); } }
+
+.nmpa-task__matrix-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%; max-width: 300px; }
+.nmpa-task__matrix-cell {
+  aspect-ratio: 1 / 1; border: 1px solid var(--nmpa-border); border-radius: var(--nmpa-radius-sm);
+  background: var(--nmpa-surface-muted); display: flex; align-items: center; justify-content: center;
+}
+.nmpa-task__matrix-cell--missing { font-size: 26px; font-weight: 700; color: var(--nmpa-ink-faint); }
+.nmpa-task__matrix-options-label { margin: 4px 0 0; font-size: 13px; color: var(--nmpa-ink-muted); }
+.nmpa-task__matrix-options { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 100%; max-width: 340px; }
+.nmpa-task__matrix-option {
+  aspect-ratio: 1 / 1; border: 1.5px solid var(--nmpa-border-strong); border-radius: var(--nmpa-radius-sm);
+  background: var(--nmpa-surface); cursor: pointer; padding: 4px;
+}
+.nmpa-task__matrix-option:hover:not(:disabled) { border-color: var(--nmpa-accent); }
+.nmpa-task__matrix-option:disabled { cursor: default; opacity: 0.7; }
+
+.nmpa-task__geometry-layout { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.nmpa-task__geometry-reference {
+  border: 1px dashed var(--nmpa-border-strong); border-radius: var(--nmpa-radius-sm);
+  background: var(--nmpa-surface-muted); padding: 8px;
+}
+.nmpa-task__geometry-canvas {
+  border: 1.5px solid var(--nmpa-border-strong); border-radius: var(--nmpa-radius-md);
+  background: var(--nmpa-surface); touch-action: none; cursor: crosshair; max-width: 100%;
+}
+.nmpa-task__geometry-actions { display: flex; gap: 12px; }
+
+.nmpa-task__object-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 10px; width: 100%; max-width: 420px; }
+.nmpa-task__object-icon { display: block; margin: 0 auto; }
+.nmpa-task__object-option {
+  border: 1.5px solid var(--nmpa-border-strong); border-radius: var(--nmpa-radius-sm);
+  background: var(--nmpa-surface); padding: 10px; cursor: pointer;
+}
+.nmpa-task__object-option.is-selected { outline: 2px solid var(--nmpa-accent); outline-offset: -1px; background: var(--nmpa-accent-soft); }
+
+.nmpa-task__video-preview {
+  width: 100%; max-width: 320px; aspect-ratio: 4 / 3; border-radius: var(--nmpa-radius-md);
+  border: 1.5px solid var(--nmpa-border-strong); background: var(--nmpa-surface-muted);
+  object-fit: cover; transform: scaleX(-1);
+}
+
+/* ---------- Assessment ---------- */
+.nmpa-lobe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; margin-top: 12px; }
+.nmpa-lobe-card { border: 1px solid var(--nmpa-border); border-radius: var(--nmpa-radius-sm); padding: 14px; background: var(--nmpa-surface-muted); }
+.nmpa-lobe-card__label { font-weight: 600; margin: 0 0 6px; }
+
+.nmpa-cognitive-score-result {
+  text-align: center; padding: 20px; margin: 14px 0; border-radius: var(--nmpa-radius-md);
+  background: var(--nmpa-surface-muted); border: 1px solid var(--nmpa-border);
+}
+.nmpa-cognitive-score-result__value { font-size: 38px; font-weight: 700; margin: 0; color: var(--nmpa-ink); }
+.nmpa-cognitive-score-result__band { margin: 2px 0 0; font-weight: 500; font-size: 13.5px; color: var(--nmpa-ink-muted); }
+.nmpa-cognitive-score-result--excellent .nmpa-cognitive-score-result__value { color: var(--nmpa-excellent); }
+.nmpa-cognitive-score-result--mild .nmpa-cognitive-score-result__value { color: var(--nmpa-mild); }
+.nmpa-cognitive-score-result--reduced .nmpa-cognitive-score-result__value { color: var(--nmpa-reduced); }
+
+/* ---------- Games ---------- */
+.nmpa-game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin-top: 12px; }
+.nmpa-game-card { border: 1px solid var(--nmpa-border); border-radius: var(--nmpa-radius-sm); padding: 14px; background: var(--nmpa-surface-muted); display: flex; flex-direction: column; gap: 6px; transition: border-color var(--nmpa-motion-fast); }
+.nmpa-game-card--ready { border-color: var(--nmpa-excellent); }
+.nmpa-game-card__label { font-weight: 600; font-size: 14.5px; margin: 0; }
+
+/* ---------- Charts ---------- */
+.nmpa-linechart__path {
+  stroke: var(--nmpa-accent); stroke-width: 2.5; fill: none;
+  stroke-dasharray: 1; stroke-dashoffset: 1;
+  filter: var(--nmpa-line-glow);
+  animation: nmpa-chart-draw 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes nmpa-chart-draw { to { stroke-dashoffset: 0; } }
+.nmpa-linechart__point {
+  fill: var(--nmpa-accent-2);
+  filter: var(--nmpa-point-glow);
+  animation: nmpa-chart-point-in 320ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: var(--nmpa-anim-delay, 0ms);
+  transform-origin: center;
+  transform-box: fill-box;
+}
+@keyframes nmpa-chart-point-in { from { opacity: 0; transform: scale(0.3); } to { opacity: 1; transform: scale(1); } }
+.nmpa-linechart__xlabel { font-size: 10px; fill: var(--nmpa-ink-muted); }
+.nmpa-chart-empty { padding: 20px; text-align: center; color: var(--nmpa-ink-muted); font-size: 13px; }
+
+/* ---------- Domain Breakdown (Progress screen) ---------- */
+.nmpa-domain-breakdown { display: flex; flex-direction: column; gap: 16px; }
+.nmpa-domain-row { display: flex; flex-direction: column; gap: 6px; }
+.nmpa-domain-row__label { display: flex; align-items: center; justify-content: space-between; font-size: 14px; font-weight: 600; }
+.nmpa-domain-band { font-size: 11px; font-weight: 600; letter-spacing: 0.02em; padding: 2px 9px; border-radius: 999px; }
+.nmpa-domain-band.is-excellent { color: var(--nmpa-excellent); background: color-mix(in srgb, var(--nmpa-excellent) 16%, transparent); }
+.nmpa-domain-band.is-normal { color: var(--nmpa-accent); background: var(--nmpa-accent-soft); }
+.nmpa-domain-band.is-mild { color: var(--nmpa-mild); background: var(--nmpa-warn-bg); }
+.nmpa-domain-band.is-reduced { color: var(--nmpa-reduced); background: var(--nmpa-danger-bg); }
+.nmpa-domain-bar { width: 100%; height: 8px; border-radius: 999px; background: var(--nmpa-surface-muted); overflow: hidden; }
+.nmpa-domain-bar__fill {
+  height: 100%; border-radius: 999px; transition: width var(--nmpa-motion-med);
+  transform-origin: left; animation: nmpa-bar-grow 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--nmpa-anim-delay, 0ms);
+}
+@keyframes nmpa-bar-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.nmpa-domain-bar__fill { box-shadow: var(--nmpa-bar-glow); }
+.nmpa-domain-bar__fill.is-excellent { background: var(--nmpa-excellent); }
+.nmpa-domain-bar__fill.is-normal { background: var(--nmpa-accent); }
+.nmpa-domain-bar__fill.is-mild { background: var(--nmpa-mild); }
+.nmpa-domain-bar__fill.is-reduced { background: var(--nmpa-reduced); }
+.nmpa-domain-row__meta { display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; color: var(--nmpa-ink-muted); }
+.nmpa-domain-score { font-weight: 600; color: var(--nmpa-ink); }
+.nmpa-domain-delta { font-weight: 600; font-size: 12.5px; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+.nmpa-domain-delta.is-up { color: var(--nmpa-excellent); background: color-mix(in srgb, var(--nmpa-excellent) 14%, transparent); }
+.nmpa-domain-delta.is-down { color: var(--nmpa-reduced); background: var(--nmpa-danger-bg); }
+.nmpa-domain-delta.is-flat { color: var(--nmpa-ink-faint); background: var(--nmpa-surface-muted); }
+.nmpa-domain-pending { margin-top: 4px; padding-top: 10px; border-top: 1px dashed var(--nmpa-border); }
+
+/* ---------- Clinical Insights (Progress screen) ---------- */
+.nmpa-insights { display: flex; flex-direction: column; gap: 10px; }
+.nmpa-insights__disclaimer { margin-top: 2px; }
+
+/* ---------- Activity Heatmap (Progress screen) ---------- */
+.nmpa-heatmap__grid { display: flex; gap: 3px; overflow-x: auto; padding-bottom: 4px; }
+.nmpa-heatmap__col { display: flex; flex-direction: column; gap: 3px; position: relative; padding-top: 16px; }
+.nmpa-heatmap__month-label { position: absolute; top: 0; left: 0; font-size: 9px; color: var(--nmpa-ink-faint); white-space: nowrap; }
+.nmpa-heatmap__cell { width: 12px; height: 12px; border-radius: 3px; background: var(--nmpa-surface-muted); border: 1px solid var(--nmpa-border); }
+.nmpa-heatmap__cell.is-empty { background: transparent; border-style: dashed; }
+.nmpa-heatmap__cell.is-level-0 { background: var(--nmpa-surface-muted); }
+.nmpa-heatmap__cell.is-level-1 { background: color-mix(in srgb, var(--nmpa-accent) 25%, var(--nmpa-surface-muted)); }
+.nmpa-heatmap__cell.is-level-2 { background: color-mix(in srgb, var(--nmpa-accent) 50%, var(--nmpa-surface-muted)); }
+.nmpa-heatmap__cell.is-level-3 { background: color-mix(in srgb, var(--nmpa-accent) 75%, var(--nmpa-surface-muted)); }
+.nmpa-heatmap__cell.is-level-3 { filter: var(--nmpa-heatmap-glow); }
+.nmpa-heatmap__cell.is-level-4 { background: var(--nmpa-accent); filter: var(--nmpa-heatmap-glow); }
+.nmpa-heatmap__cell--legend { display: inline-block; margin: 0 1px; }
+.nmpa-heatmap__footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; flex-wrap: wrap; gap: 8px; }
+.nmpa-heatmap__legend { display: flex; align-items: center; gap: 2px; }
+
+/* ---------- Activity: full-year calendar and practical summary -------- */
+.nmpa-activity-page { gap: 4px; }
+.nmpa-activity-overview { display: flex; justify-content: space-between; align-items: center; gap: 28px; padding: 28px 30px; }
+.nmpa-activity-overview__intro { display: flex; align-items: flex-start; gap: 16px; max-width: 550px; }
+.nmpa-activity-overview__intro .nmpa-section-icon-badge { margin: 0; }
+.nmpa-activity-overview__intro .nmpa-card__title { font-size: 20px; margin: 4px 0 8px; }
+.nmpa-activity-overview__intro .nmpa-muted { margin: 0; line-height: 1.5; }
+.nmpa-activity-stats { display: grid; grid-template-columns: repeat(4, minmax(88px, 1fr)); border: 1px solid var(--nmpa-border); border-radius: var(--nmpa-radius-sm); overflow: hidden; }
+.nmpa-activity-stats > div { display: grid; gap: 3px; padding: 12px 14px; background: var(--nmpa-surface-muted); }
+.nmpa-activity-stats > div + div { border-left: 1px solid var(--nmpa-border); }
+.nmpa-activity-stats span, .nmpa-activity-stats small { color: var(--nmpa-ink-faint); font-size: 10px; white-space: nowrap; }
+.nmpa-activity-stats strong { color: var(--nmpa-ink); font-size: 19px; line-height: 1.1; }
+.nmpa-activity-calendar { padding: 28px 30px; }
+.nmpa-activity-calendar .nmpa-heatmap__grid { justify-content: space-between; gap: 4px; }
+.nmpa-activity-calendar .nmpa-heatmap__col { gap: 4px; }
+.nmpa-activity-calendar .nmpa-heatmap__cell { width: 13px; height: 13px; }
+.nmpa-activity-next { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 22px 30px; }
+.nmpa-activity-next h3 { font-size: 15px; margin: 5px 0 6px; }
+.nmpa-activity-next .nmpa-muted { max-width: 760px; margin: 0; line-height: 1.5; }
+@media (max-width: 980px) {
+  .nmpa-activity-overview { align-items: stretch; flex-direction: column; }
+  .nmpa-activity-stats { width: 100%; }
+}
+@media (max-width: 620px) {
+  .nmpa-activity-overview, .nmpa-activity-calendar, .nmpa-activity-next { padding: 20px; }
+  .nmpa-activity-stats { grid-template-columns: 1fr 1fr; }
+  .nmpa-activity-stats > div:nth-child(3) { border-left: 0; border-top: 1px solid var(--nmpa-border); }
+  .nmpa-activity-stats > div:nth-child(4) { border-top: 1px solid var(--nmpa-border); }
+  .nmpa-activity-next { align-items: flex-start; flex-direction: column; }
+}
+
+/* ---------- Accessibility: keyboard focus ---------- */
+a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--nmpa-accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 800px) {
+  .nmpa-shell__body { flex-direction: column; }
+  .nmpa-sidenav { width: 100%; flex-direction: row; overflow-x: auto; border-right: none; border-bottom: 1px solid var(--nmpa-border); gap: 4px; }
+  .nmpa-sidenav__item { flex: none; }
+  .nmpa-shell__main { padding: 24px 20px; }
+}
+
+/* ================================================================
+   Morphy widget styles -- copied verbatim from AI_ChatBot's
+   src/styles/index.css per its README "Reusing Morphy" instructions,
+   with hardcoded colors swapped for nm- tokens so the widget also
+   re-themes with the rest of the app (the only change from the literal
+   copy -- class names are untouched).
+   ================================================================ */
+
+.morphy-button {
+  min-height: 50px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: var(--nmpa-radius-pill);
+  border: 1.5px solid transparent;
+  padding: 10px 22px;
+  cursor: pointer;
+}
+.morphy-button--primary { background: var(--nm-accent); color: var(--nm-accent-ink); }
+.morphy-button--secondary { background: var(--nm-surface); border-color: var(--nm-border); color: var(--nm-ink); }
+
+.morphy-widget { position: fixed; right: 20px; bottom: 20px; z-index: 1000; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
+
+.morphy-bubble-button {
+  width: 64px; height: 64px; border-radius: 999px;
+  background: var(--nm-accent); border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; position: relative;
+  box-shadow: var(--nmpa-shadow-lg);
+  transition: transform var(--nmpa-motion-fast);
+}
+.morphy-bubble-button:hover { transform: translateY(-2px); }
+.morphy-bubble-button__dot {
+  position: absolute; top: 4px; right: 4px;
+  width: 12px; height: 12px; border-radius: 999px;
+  background: var(--nm-reduced); border: 2px solid var(--nm-surface);
+}
+
+.morphy-panel {
+  width: min(360px, calc(100vw - 40px));
+  max-height: min(560px, calc(100vh - 120px));
+  display: flex;
+  flex-direction: column;
+  background: var(--nm-surface);
+  border: 1px solid var(--nm-border);
+  border-radius: var(--nmpa-radius-lg);
+  box-shadow: var(--nmpa-shadow-lg);
+  overflow: hidden;
+}
+.morphy-panel__header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px; border-bottom: 1px solid var(--nm-border);
+}
+.morphy-panel__title { font-weight: 700; }
+.morphy-panel__subtitle { font-size: 12px; color: var(--nmpa-ink-muted); }
+.morphy-panel__close {
+  margin-left: auto; background: none; border: none; font-size: 22px;
+  line-height: 1; cursor: pointer; color: var(--nmpa-ink-muted); padding: 4px 8px;
+}
+
+.morphy-panel__messages {
+  flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px;
+}
+
+.morphy-message { display: flex; gap: 8px; align-items: flex-start; }
+.morphy-message--user { justify-content: flex-end; }
+.morphy-message__body { display: flex; flex-direction: column; gap: 8px; max-width: 78%; }
+.morphy-message__bubble {
+  padding: 10px 13px; border-radius: 12px; font-size: 14px; line-height: 1.45;
+  background: var(--nmpa-surface-muted); color: var(--nm-ink);
+  white-space: pre-line;
+}
+.morphy-message--user .morphy-message__bubble { background: var(--nm-accent); color: var(--nm-accent-ink); }
+.morphy-message__bubble--thinking { font-style: italic; color: var(--nmpa-ink-muted); }
+
+.morphy-suggestions { display: flex; flex-direction: column; gap: 6px; }
+.morphy-suggestion-chip {
+  text-align: left; font-size: 13px; padding: 8px 10px;
+  border-radius: 8px; border: 1px solid var(--nm-border);
+  background: var(--nm-surface); cursor: pointer; color: var(--nm-ink);
+}
+.morphy-suggestion-chip:hover { border-color: var(--nmpa-accent); }
+
+.morphy-panel__input-row { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--nm-border); align-items: center; }
+.morphy-panel__input-row input[type="text"] {
+  flex: 1; min-height: 44px; padding: 8px 12px; border-radius: 10px;
+  border: 1px solid var(--nm-border); font-size: 14px; background: var(--nmpa-surface); color: var(--nmpa-ink);
+}
+.morphy-panel__file-input { display: none; }
+.morphy-panel__upload-button {
+  flex: none; min-height: 44px; width: 44px; padding: 0;
+  font-size: 22px; line-height: 1; font-weight: 700;
+}
+.morphy-panel__disclaimer { font-size: 11px; color: var(--nmpa-ink-faint); padding: 0 14px 12px; margin: 0; }
+
+.morphy-panel__mic-button {
+  flex: none; min-height: 44px; width: 44px; padding: 0;
+  font-size: 17px; line-height: 1;
+}
+.morphy-panel__mic-button.is-listening {
+  background: var(--nmpa-danger-bg); color: var(--nmpa-reduced); border-color: var(--nmpa-reduced);
+  animation: nmpa-mic-pulse 1.2s ease-in-out infinite;
+}
+@keyframes nmpa-mic-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+.morphy-panel__voice-error { font-size: 11.5px; color: var(--nmpa-reduced); padding: 0 14px 6px; margin: 0; }
+
+/* 2026-08-23: exit bar above an embedded external app -- the Full Doctor
+   Dashboard (FullDoctorDashboard.jsx) and the Cognitive Games suite
+   (OddballGamesLauncher.jsx) both use this. Sits outside that app's own
+   CSS scoping (.nmdd-root / .oddball-root), so it's styled with app_page's
+   own tokens, not the embedded app's. */
+.nmpa-embedded-exit-bar {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center;
+  padding: 10px 20px; background: var(--nmpa-surface);
+  border-bottom: 1px solid var(--nm-border);
+}
+
+/* Auth light theme: keep the role brand panel in the same blue-and-white
+   language as the rest of the light application, including its split bands. */
+:root[data-theme='light'] {
+  --nmpa-auth-brand-bg: radial-gradient(125% 135% at 15% 5%, #dbeeff 0%, #f7fbff 48%, #ffffff 100%);
+  --nmpa-auth-brand-ink: #123b68;
+  --nmpa-auth-brand-glass-bg: rgba(255, 255, 255, .58);
+  --nmpa-auth-brand-glass-bg-strong: rgba(255, 255, 255, .82);
+  --nmpa-auth-brand-glass-border: rgba(23, 105, 194, .24);
+  --nmpa-auth-blob-a: rgba(37, 99, 235, .18);
+  --nmpa-auth-blob-b: rgba(14, 165, 233, .16);
+  --nmpa-auth-brand-bottom-bg: rgba(255, 255, 255, .76);
+}
+:root[data-theme='light'] .nmpa-auth__panel--brand .nmpa-auth__trust-list li svg {
+  color: var(--nmpa-accent);
+}
+:root[data-theme='light'] .nmpa-auth__speciality-chip {
+  color: var(--nmpa-ink);
+  background: rgba(255, 255, 255, .5);
+}
+
+/* Cinematic opening: layered planes and orbital depth turn the branded brain
+   asset into a calm, dimensional cognitive signal. */
+.nmpa-landing__hero { min-height: min(900px, 100vh); perspective: 1200px; perspective-origin: 50% 45%; }
+.nmpa-landing__hero-copy { animation: nmpa-landing-copy-in 1100ms cubic-bezier(.16, 1, .3, 1) 180ms both; }
+.nmpa-landing__hero-art { transform-style: preserve-3d; animation: nmpa-landing-scene-in 1400ms cubic-bezier(.16, 1, .3, 1) both, nmpa-landing-scene-float 9s ease-in-out 1400ms infinite; }
+.nmpa-landing__hero-plane, .nmpa-landing__hero-orbit, .nmpa-landing__hero-core-glow, .nmpa-landing__hero-scan { position: absolute; pointer-events: none; transform-style: preserve-3d; }
+.nmpa-landing__hero-plane--back { inset: 11% 7%; border: 1px solid rgba(125,211,252,.2); background: linear-gradient(135deg,rgba(14,165,233,.08),transparent 42%),linear-gradient(rgba(125,211,252,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(125,211,252,.06) 1px,transparent 1px); background-size: auto,34px 34px,34px 34px; box-shadow: inset 0 0 80px rgba(37,99,235,.12),0 0 80px rgba(56,189,248,.08); transform: translateZ(-90px) rotateX(3deg) rotateY(-8deg); animation: nmpa-landing-plane-pulse 7s ease-in-out infinite; }
+.nmpa-landing__hero-orbit { left: 50%; top: 50%; width: 74%; height: 30%; border: 1px solid rgba(165,180,252,.5); border-radius: 50%; transform: translate(-50%,-50%) rotateX(68deg) rotateZ(-14deg) translateZ(20px); box-shadow: 0 0 18px rgba(96,165,250,.18); }
+.nmpa-landing__hero-orbit--one { animation: nmpa-landing-orbit-spin 12s linear infinite; }
+.nmpa-landing__hero-orbit--two { width: 55%; height: 22%; border-color: rgba(45,212,191,.5); transform: translate(-50%,-50%) rotateX(68deg) rotateZ(36deg) translateZ(40px); animation: nmpa-landing-orbit-spin-reverse 8s linear infinite; }
+.nmpa-landing__hero-core-glow { left: 27%; top: 25%; width: 46%; height: 50%; border-radius: 50%; background: radial-gradient(circle,rgba(56,189,248,.3),rgba(99,102,241,.14) 34%,transparent 70%); filter: blur(18px); transform: translateZ(-15px); animation: nmpa-landing-core-breathe 4.5s ease-in-out infinite; }
+/* 2026-08-24 (VR: "not like a square frame for the image") -- the image
+   itself still had a hard rectangular edge (border-radius:20px on a
+   background-image box), which reads as a framed photo no matter how much
+   3D depth surrounds it. A soft radial mask fades the image's own edges
+   into transparency well before its actual bounding box, so it blends
+   into the page's dark background instead of showing a boundary -- the
+   surrounding orbit/glow/scan layers above already sell the "floating in
+   space" read, this just stops the asset itself from fighting that. */
+.nmpa-landing__brain-image { transform: translateZ(50px); filter: drop-shadow(0 28px 30px rgba(0,0,0,.42)); animation: nmpa-landing-brain-reveal 1200ms cubic-bezier(.16,1,.3,1) 260ms both; mask-image: radial-gradient(ellipse 60% 58% at 50% 47%, #000 58%, transparent 100%); -webkit-mask-image: radial-gradient(ellipse 60% 58% at 50% 47%, #000 58%, transparent 100%); }
+.nmpa-landing__hero-scan { inset: 16% 9%; z-index: 2; background: linear-gradient(110deg,transparent 35%,rgba(224,242,254,.45) 49%,transparent 63%); filter: blur(8px); mix-blend-mode: screen; transform: translateZ(65px) rotate(-7deg); animation: nmpa-landing-scan 5.5s ease-in-out 1500ms infinite; }
+.nmpa-landing__hero-label { position: absolute; z-index: 4; color: rgba(186,230,253,.75); font-size: 10px; font-weight: 700; letter-spacing: .15em; white-space: nowrap; text-shadow: 0 0 15px rgba(56,189,248,.7); transform: translateZ(85px); animation: nmpa-landing-label-in 900ms ease 900ms both; }
+.nmpa-landing__hero-label--top { top: 16%; right: 3%; }.nmpa-landing__hero-label--bottom { bottom: 15%; left: 5%; color: rgba(196,181,253,.7); animation-delay: 1100ms; }
+@keyframes nmpa-landing-copy-in { from { opacity: 0; transform: translate3d(-30px,22px,-30px); } to { opacity: 1; transform: translate3d(0,0,0); } }
+@keyframes nmpa-landing-scene-in { from { opacity: 0; transform: translate3d(40px,34px,-180px) rotateY(-18deg) scale(.82); } to { opacity: 1; transform: translate3d(0,0,0) rotateY(0) scale(1); } }
+@keyframes nmpa-landing-scene-float { 0%,100% { transform: translate3d(0,0,0) rotateY(0); } 50% { transform: translate3d(0,-12px,18px) rotateY(3deg); } }
+@keyframes nmpa-landing-brain-reveal { from { opacity: 0; transform: translateZ(50px) scale(.88); filter: blur(12px) drop-shadow(0 28px 30px rgba(0,0,0,.42)); } to { opacity: 1; transform: translateZ(50px) scale(1); filter: drop-shadow(0 28px 30px rgba(0,0,0,.42)); } }
+@keyframes nmpa-landing-plane-pulse { 0%,100% { opacity: .45; transform: translateZ(-90px) rotateX(3deg) rotateY(-8deg) scale(.98); } 50% { opacity: .9; transform: translateZ(-90px) rotateX(3deg) rotateY(-8deg) scale(1.02); } }
+@keyframes nmpa-landing-orbit-spin { from { transform: translate(-50%,-50%) rotateX(68deg) rotateZ(-14deg) translateZ(20px) rotate(0); } to { transform: translate(-50%,-50%) rotateX(68deg) rotateZ(-14deg) translateZ(20px) rotate(360deg); } }
+@keyframes nmpa-landing-orbit-spin-reverse { from { transform: translate(-50%,-50%) rotateX(68deg) rotateZ(36deg) translateZ(40px) rotate(360deg); } to { transform: translate(-50%,-50%) rotateX(68deg) rotateZ(36deg) translateZ(40px) rotate(0); } }
+@keyframes nmpa-landing-core-breathe { 0%,100% { opacity: .5; transform: translateZ(-15px) scale(.86); } 50% { opacity: 1; transform: translateZ(-15px) scale(1.12); } }
+@keyframes nmpa-landing-scan { 0%,20% { opacity: 0; transform: translateZ(65px) rotate(-7deg) translateX(-35%); } 45% { opacity: .8; } 72%,100% { opacity: 0; transform: translateZ(65px) rotate(-7deg) translateX(35%); } }
+@keyframes nmpa-landing-label-in { from { opacity: 0; transform: translate3d(0,8px,20px); } to { opacity: 1; transform: translateZ(85px); } }
+@media (max-width: 760px) { .nmpa-landing__hero { min-height: 760px; }.nmpa-landing__hero-art { width: 330px; right: -74px; top: 110px; opacity: .78; }.nmpa-landing__hero-label { display: none; }.nmpa-landing__badge, .nmpa-landing__hero-nodes { display: none; } }
+@media (prefers-reduced-motion: reduce) { .nmpa-landing__hero-copy,.nmpa-landing__hero-art,.nmpa-landing__brain-image,.nmpa-landing__hero-plane--back,.nmpa-landing__hero-orbit,.nmpa-landing__hero-core-glow,.nmpa-landing__hero-scan,.nmpa-landing__hero-label,.nmpa-landing__badge,.nmpa-landing__hero-node { animation: none; } }
+
+/* Use the clean brain scene as the landing visual. Its small baked-in labels
+   are kept subtle, while the duplicate floating badge layer is removed so
+   nothing reads like a sticky note placed over the artwork. */
+.nmpa-landing__hero-art {
+  width: min(620px, 100%);
+  aspect-ratio: 774 / 692;
+}
+.nmpa-landing__brain-image {
+  inset: 0;
+  z-index: 4;
+  border-radius: 0;
+  background: url('/assets/brand/role-gate-cover.png') center / 118% auto no-repeat;
+  filter: drop-shadow(0 30px 34px rgba(0, 0, 0, .42));
+  mask-image: none;
+  -webkit-mask-image: none;
+  animation: nmpa-landing-brain-in 1200ms cubic-bezier(.16, 1, .3, 1) 260ms both;
+}
+.nmpa-landing__hero-scan,
+.nmpa-landing__badge,
+.nmpa-landing__hero-nodes,
+.nmpa-landing__signal,
+.nmpa-landing__hero-label { display: none; }
+@keyframes nmpa-landing-brain-in {
+  from { opacity: 0; transform: translateZ(50px) scale(.94); }
+  to { opacity: 1; transform: translateZ(50px) scale(1); }
+}
+@media (max-width: 760px) {
+  .nmpa-landing__hero-art { width: 330px; aspect-ratio: 774 / 692; right: -74px; top: 110px; opacity: .82; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nmpa-landing__brain-image { animation: none; }
+}
+
+/* 2026-08-24 ADDITION -- floating cognitive-domain badges (reference:
+   Memory/Language/Attention/Processing Speed/Executive Function/
+   Visuospatial/Insights hexagon labels orbiting a wireframe brain).
+   Positioned as percentages of .nmpa-landing__hero-art's own box so they
+   scale with it, each on translateZ() + a slightly different animation
+   delay for a gentle, non-synchronized float -- reusing the same
+   preserve-3d parent Codex's orbit/scan layers already set up above. */
+.nmpa-landing__badge { position: absolute; z-index: 5; display: flex; align-items: center; gap: 8px; max-width: 168px; padding: 8px 11px; border: 1px solid rgba(148,197,255,.28); border-radius: 12px; background: rgba(8,20,46,.72); backdrop-filter: blur(10px); box-shadow: 0 10px 26px rgba(3,9,24,.4); transform: translateZ(70px); animation: nmpa-landing-badge-in 900ms cubic-bezier(.16,1,.3,1) both, nmpa-landing-badge-float 6s ease-in-out infinite; animation-delay: calc(900ms + var(--nmpa-badge-delay, 0s)), calc(1400ms + var(--nmpa-badge-delay, 0s)); }
+.nmpa-landing__badge-icon { display: grid; place-items: center; flex: 0 0 auto; width: 26px; height: 26px; border-radius: 8px; background: rgba(96,165,250,.16); color: #93c5fd; }
+.nmpa-landing__badge-icon svg { width: 16px; height: 16px; }
+.nmpa-landing__badge-copy b { display: block; font-size: 10px; font-weight: 700; letter-spacing: .06em; color: #e0e7ff; }
+.nmpa-landing__badge-copy p { margin: 2px 0 0; font-size: 8.5px; font-weight: 600; letter-spacing: .04em; line-height: 1.35; color: rgba(174,195,219,.72); }
+.nmpa-landing__badge--memory { left: -8%; top: 6%; }
+.nmpa-landing__badge--language { right: -12%; top: 8%; }
+.nmpa-landing__badge--attention { left: -14%; top: 42%; }
+.nmpa-landing__badge--speed { right: -16%; top: 46%; }
+.nmpa-landing__badge--executive { left: -6%; bottom: 4%; }
+.nmpa-landing__badge--visuospatial { right: -13%; bottom: 20%; }
+.nmpa-landing__badge--insights { right: -6%; bottom: -2%; }
+.nmpa-landing__hero-nodes, .nmpa-landing__hero-node { position: absolute; pointer-events: none; }
+.nmpa-landing__hero-nodes { inset: 8%; z-index: 3; transform-style: preserve-3d; }
+.nmpa-landing__hero-node { width: 4px; height: 4px; border-radius: 50%; background: #67e8f9; box-shadow: 0 0 10px #38bdf8; opacity: .7; animation: nmpa-landing-node-pulse 3.6s ease-in-out infinite; }
+.nmpa-landing__hero-node:nth-child(3n) { background: #c4b5fd; box-shadow: 0 0 10px #8b5cf6; }
+.nmpa-landing__hero-node--0 { left: 18%; top: 14%; animation-delay: -.2s; }
+.nmpa-landing__hero-node--1 { left: 62%; top: 8%; animation-delay: -1.1s; }
+.nmpa-landing__hero-node--2 { left: 82%; top: 28%; animation-delay: -2s; }
+.nmpa-landing__hero-node--3 { left: 8%; top: 40%; animation-delay: -.6s; }
+.nmpa-landing__hero-node--4 { left: 48%; top: 22%; animation-delay: -1.6s; }
+.nmpa-landing__hero-node--5 { left: 30%; top: 62%; animation-delay: -2.6s; }
+.nmpa-landing__hero-node--6 { left: 70%; top: 58%; animation-delay: -.9s; }
+.nmpa-landing__hero-node--7 { left: 90%; top: 66%; animation-delay: -1.9s; }
+.nmpa-landing__hero-node--8 { left: 14%; top: 82%; animation-delay: -2.9s; }
+.nmpa-landing__hero-node--9 { left: 56%; top: 86%; animation-delay: -.4s; }
+.nmpa-landing__hero-node--10 { left: 76%; top: 88%; animation-delay: -1.4s; }
+.nmpa-landing__hero-node--11 { left: 40%; top: 6%; animation-delay: -2.3s; }
+@keyframes nmpa-landing-badge-in { from { opacity: 0; transform: translateZ(70px) translateY(14px) scale(.9); } to { opacity: 1; transform: translateZ(70px) translateY(0) scale(1); } }
+@keyframes nmpa-landing-badge-float { 0%,100% { transform: translateZ(70px) translateY(0); } 50% { transform: translateZ(70px) translateY(-8px); } }
+@keyframes nmpa-landing-node-pulse { 0%,100% { opacity: .3; transform: scale(.8); } 50% { opacity: 1; transform: scale(1.3); } }

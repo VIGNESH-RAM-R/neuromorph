@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--nm-ink, #1A2333)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Pen">
+  <title>Pen</title>
+  <path d="M4 20l1-4L15 6l3 3L8 19l-4 1Z"/>
+  <path d="M13 8l3 3"/>
+  <path d="M15.5 5.5l1 1"/>
+</svg>

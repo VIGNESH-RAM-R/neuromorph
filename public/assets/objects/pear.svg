@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--nm-ink, #1A2333)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Pear">
+  <title>Pear</title>
+  <path d="M12 9c-2.5 0-4.5 2.6-4.5 5.8S9.5 20 12 20s4.5-2 4.5-5.2S14.5 9 12 9Z"/>
+  <path d="M12 9c-.6-1.5-.2-2.8.8-3.6"/>
+  <path d="M12 5.4c.6-.2 1.2 0 1.5.5"/>
+</svg>

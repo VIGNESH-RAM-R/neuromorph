@@ -1,0 +1,17 @@
+{
+  "name": "neuromorph-morphy-functions",
+  "description": "Server-side proxy that calls the Google Gemini API on Morphy's behalf, so the API key never reaches the browser. See ../GEMINI_SETUP.md for deploy steps.",
+  "private": true,
+  "type": "commonjs",
+  "main": "index.js",
+  "engines": {
+    "node": "20"
+  },
+  "scripts": {
+    "deploy": "firebase deploy --only functions"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "firebase-functions": "^5.0.0"
+  }
+}

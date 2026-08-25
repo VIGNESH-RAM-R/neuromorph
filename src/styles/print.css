@@ -1,0 +1,45 @@
+/* Print-only report layout, same pattern as the Doctor Dashboard's
+   print.css. On screen .nmpa-print-only is hidden; printing flips that. */
+
+.nmpa-print-only { display: none; }
+
+@media print {
+  body { background: #fff; font-size: 12px; }
+
+  .nmpa-topbar, .nmpa-sidenav, .nmpa-screen-only, .morphy-widget {
+    display: none !important;
+  }
+
+  .nmpa-shell__main { padding: 0; max-width: none; }
+
+  .nmpa-print-only { display: block !important; }
+
+  @page { size: A4; margin: 15mm; }
+  .nmpa-print-report { color: #182033; font-family: Inter, Arial, sans-serif; max-width: 100%; }
+  .nmpa-print-report__header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #302e81; padding-bottom: 12px; }
+  .nmpa-print-kicker { color: #4f46e5; font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin: 0 0 4px; }
+  .nmpa-print-report h1 { font-size: 22px; line-height: 1.15; margin: 0; letter-spacing: -.02em; }
+  .nmpa-print-report__issued { color: #5c6475; font-size: 10px; text-align: right; line-height: 1.45; }
+  .nmpa-print-report h2 { font-size: 14px; margin: 24px 0 10px; border-bottom: 1px solid #b7bfd0; padding-bottom: 5px; color: #202a44; }
+  .nmpa-print-disclaimer { font-size: 10px; color: #4e5665; font-style: italic; line-height: 1.45; }
+  .nmpa-print-summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 16px 0 18px; }
+  .nmpa-print-summary-grid > div { background: #f3f5fb; border: 1px solid #dce1ee; padding: 10px; min-height: 58px; }
+  .nmpa-print-summary-grid span, .nmpa-print-summary-grid small { display: block; color: #596175; font-size: 9px; }
+  .nmpa-print-summary-grid strong { display: block; color: #222b56; font-size: 20px; margin: 3px 0; }
+
+  .nmpa-print-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+  .nmpa-print-table td, .nmpa-print-table th { border: 1px solid #cfd5e2; padding: 6px 8px; text-align: left; font-size: 10px; vertical-align: top; }
+  .nmpa-print-table th { background: #eaedf7; color: #313a57; font-weight: 700; }
+  .nmpa-print-table tbody tr:nth-child(even) { background: #f8f9fc; }
+  .nmpa-print-table td:first-child { font-weight: 600; width: 34%; color: #39435d; }
+  .nmpa-print-chart { margin: 10px 0 16px; border: 1px solid #d9deeb; padding: 10px 12px 4px; break-inside: avoid; }
+  .nmpa-print-chart figcaption { display: flex; justify-content: space-between; color: #25304a; font-size: 11px; font-weight: 700; margin-bottom: 4px; }
+  .nmpa-print-chart figcaption span { color: #687187; font-size: 9px; font-weight: 400; }
+  .nmpa-print-chart svg { width: 100%; height: auto; overflow: visible; }
+  .nmpa-print-chart text { fill: #697287; font-size: 9px; }
+  .nmpa-print-chart__grid { stroke: #e2e6ef; stroke-width: 1; }
+  .nmpa-print-chart__line { fill: none; stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+  .nmpa-print-empty { color: #5b6476; background: #f7f8fb; border: 1px dashed #cbd2df; padding: 10px; font-size: 10px; }
+  .nmpa-print-notes { margin: 0; padding-left: 18px; font-size: 10px; line-height: 1.5; }
+  .nmpa-print-report h2, .nmpa-print-table, .nmpa-print-notes { break-inside: avoid; }
+}
