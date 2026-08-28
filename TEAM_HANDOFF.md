@@ -7,6 +7,8 @@ Two people, one codebase, working at the same time without stepping on each othe
 **You (VR):** landing page, login/signup pages, themes, Detection Assessment, Doctor Dashboard.
 **Him:** Caregiver dashboard, improvisation/oddball games section.
 
+**2026-08-28 update:** a few caregiver-area files (`CaregiverHomeSection.jsx`, `CaregiverLinkPatientScreen.jsx`, `CaregiverLoginScreen.jsx`, `CaregiverSignupScreen.jsx`, `CaregiverRequestsPanel.jsx`, plus a new `CaregiverLinkPatientCard.jsx`) got touched during a parallel Claude session on VR's side, along with some new additions outside either person's original scope (a "Morphy companion" overlay, a UI/UX audit doc). All of it is committed to `main` already. Him: pull `main` first and skim those caregiver files before assuming they're untouched — the ownership split below is still the intended target, this is just a heads-up that it drifted once already.
+
 Concrete folders, based on the actual codebase today:
 
 | Area | Owner | Folders/files |
@@ -27,22 +29,13 @@ Concrete folders, based on the actual codebase today:
 
 If you both stay inside your own folders above, you'll almost never conflict. The shared files are the only real risk.
 
-## 2. Put the project on GitHub (you do this once)
+## 2. Put the project on GitHub (already done)
 
-You don't have a git repo yet, so start here:
+Done — the repo exists at `https://github.com/VIGNESH-RAM-R/neuromorph.git`, with `main` and a `feature/landing-doctor` branch already pushed. **2026-08-28: the repo was switched from private to public** (view access is now open to anyone with the link). Remaining step:
 
-1. Go to github.com, create a new **private** repository (e.g. `neuromorph`). Don't initialize it with a README — you already have files.
-2. On your computer, open a terminal in the `app_page` folder and run:
-   ```
-   git init
-   git add .
-   git commit -m "Initial commit"
-   git branch -M main
-   git remote add origin https://github.com/<your-username>/neuromorph.git
-   git push -u origin main
-   ```
-3. Your `.gitignore` already excludes `node_modules/`, `dist/`, and `.env` — so no secrets or bloat get pushed. Good as-is.
-4. On GitHub: **Settings → Collaborators → Add people** → invite your friend's GitHub account. He accepts the invite email.
+- On GitHub: **Settings → Collaborators → Add people** → invite your friend's GitHub account. Public visibility only lets people *view* the repo — he still needs to be added as a Collaborator to actually push a branch. He accepts the invite email.
+
+(Your `.gitignore` already excludes `node_modules/`, `dist/`, and `.env`, so no secrets or bloat are in the repo — worth double-checking now that it's public, since a public repo means anyone could browse the history if a secret ever did leak in.)
 
 ## 3. What to send your friend
 
@@ -77,7 +70,7 @@ Since `.env` is intentionally not in git (it has real Firebase/Google/Facebook k
    ```
 2. He copies the real `.env` values you sent him into `neuromorph/app_page/.env`.
 3. He opens Claude Cowork, and connects that cloned folder (the same way you connected yours).
-4. He tells Claude something like: *"I'm working on the caregiver dashboard and the games/improvisation section of this app. Here's TEAM_HANDOFF.md for context — my folders are src/components/caregiver, src/oddballGames, and the games config files. Don't touch src/components/auth, theme.css, assessment, or doctorDashboard, that's my teammate's area."* That one message gives Cowork the same scope boundaries this doc lays out.
+4. **2026-08-28: he doesn't need to type any git commands himself.** He can just tell his Claude Cowork session, in plain English, what to do (clone the repo, create his branch, pull latest main, commit, push, open a pull request) and it runs the actual git operations for him — same as this doc's git steps, just executed on his behalf. A ready-to-paste first message covering his scope (caregiver + games only, don't touch VR's folders, use branch `feature/caregiver-games`, pull main before each session, never push straight to main) was drafted in chat with VR — use that instead of writing scope instructions from scratch.
 5. He runs `npm install` once, then `npm run dev` to actually preview the app while working.
 
 ## 6. Verifying changes before pushing
