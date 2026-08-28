@@ -432,17 +432,15 @@ export default function RoleGateScreen({ onSelectRole, language = DEFAULT_LANGUA
           <div className="nmpa-landing__hero-actions"><a className="nmpa-landing__primary-cta" href="#access">Choose your access <span aria-hidden="true">→</span></a><a className="nmpa-landing__text-cta" href="#how-it-works">See how it works <span aria-hidden="true">↓</span></a></div>
           <p className="nmpa-landing__hero-note">Designed to support awareness and conversations with your care team — not to provide a diagnosis.</p>
         </div>
-        {/* 2026-08-28 (VR: "intha human brain+ octopus image ah antha blank
-           landing page top la vai, vera ethum illa" -- put this brain+
-           octopus image on the blank landing page, nothing else). A
-           previous pass in a parallel session tried a supplied photo and
-           an SVG brain+octopus here, then removed both per an earlier "don't
-           put anything" call -- this is a fresh image (the one actually
-           supplied this time), added back as just the image with no other
-           decoration. Uses its own class (.nmpa-landing__hero-photo)
-           instead of the old .nmpa-landing__hero-art/__brain-image names so
-           it doesn't collide with any of that earlier, now-unused CSS. */}
-        <div className="nmpa-landing__hero-photo" aria-hidden="true" />
+        {/* 2026-08-28 (VR: "nee itha remove pannidu, need not include
+           anything, apdiye vitru" -- remove the hero image, don't replace
+           it with anything). Tried the brain+octopus image here, VR's call
+           was to take it back out. Left empty on purpose: the hero is
+           text-only, just .nmpa-landing__orb's existing ambient glow behind
+           it. This is now the second time this exact image-vs-empty call
+           has flip-flopped in this hero slot (see the removed comment this
+           replaced) -- if it comes up again, check with VR before
+           re-adding anything here rather than guessing. */}
       </section>
 
       <section className="nmpa-landing__access" id="access"><div className="nmpa-landing__access-heading"><p className="nmpa-landing__eyebrow">Secure access</p><h2>{t(language, 'lede')}</h2><p>Choose the space built for the role you have in care.</p></div><div className="nmpa-landing__roles" role="group" aria-label="Choose your access type">
