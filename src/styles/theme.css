@@ -562,17 +562,10 @@ h1, h2, h3, h4,
 .nmpa-landing__hero h1 { max-width: 650px; margin: 0; font-family: var(--nmpa-font-heading); font-size: clamp(46px, 5.3vw, 76px); font-weight: 500; letter-spacing: -.055em; line-height: .99; }.nmpa-landing__hero h1 em { color: #a5b4fc; font-style: normal; }
 .nmpa-landing__hero-lede { max-width: 580px; margin: 25px 0 30px; color: var(--landing-muted); font-size: 18px; line-height: 1.65; }.nmpa-landing__hero-note { max-width: 500px; margin: 30px 0 0; color: rgba(174,195,219,.68); font-size: 12px; line-height: 1.5; }
 .nmpa-landing__orb { position: absolute; border-radius: 50%; filter: blur(10px); pointer-events: none; }.nmpa-landing__orb--one { top: 10%; right: -10%; width: 440px; height: 440px; background: rgba(99,102,241,.28); }.nmpa-landing__orb--two { right: 20%; bottom: 7%; width: 250px; height: 250px; background: rgba(14,165,233,.18); }
-/* 2026-08-28 (VR: "intha human brain+ octopus image ah antha blank landing
-   page top la vai, vera ethum illa") -- just the image, absolutely
-   positioned over the hero's right side (the hero itself is a single
-   text column now -- see .nmpa-landing__hero's grid-template-columns:1fr
-   above -- so this sits on top of it the same way the ambient orbs do,
-   rather than as a second grid column). No mask, no glow, no animation:
-   the image's own edges already fade to transparent (baked into the PNG's
-   alpha channel, same approach used for the earlier hero asset) so it
-   blends into the page background with no visible frame. */
-.nmpa-landing__hero-photo { position: absolute; z-index: 1; right: max(-40px, calc((100% - 1120px) / 2 - 60px)); top: 50%; transform: translateY(-50%); width: min(560px, 46vw); aspect-ratio: 881 / 904; background: url('/assets/brand/hero-brain-octopus.png') center / contain no-repeat; pointer-events: none; }
-@media (max-width: 900px) { .nmpa-landing__hero-photo { display: none; } }
+/* 2026-08-28 (VR: "nee itha remove pannidu, need not include anything") --
+   .nmpa-landing__hero-photo rule removed along with the JSX element that
+   used it. hero-brain-octopus.png is left in public/assets/brand/ (not
+   deleted) in case this is revisited. */
 /* 2026-08-23 SIMPLIFIED (VR feedback: "this is how i want the first
    representation in the landing page", referencing the raw
    role-gate-cover.png -- brain profile + hexagon domain badges -- with
