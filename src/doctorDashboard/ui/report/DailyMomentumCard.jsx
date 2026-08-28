@@ -1,5 +1,7 @@
 import SectionCard from '../shared/SectionCard.jsx';
 import EmptyState from '../shared/EmptyState.jsx';
+import { DEFAULT_LANGUAGE } from '../../config/i18nConfig.js';
+import { t } from '../../i18n/strings/report.js';
 
 // 2026-08-19: real daily engagement signal, separate from the weekly
 // Detection Assessment above (see ReportModel.js's own comment on
@@ -8,21 +10,21 @@ import EmptyState from '../shared/EmptyState.jsx';
 // recently" at a glance, distinct from the clinical weekly score. Renders
 // an honest empty state (never a fabricated 0/100) when the patient hasn't
 // completed a full Daily Set since this feature shipped.
-export default function DailyMomentumCard({ dailyMomentum }) {
+export default function DailyMomentumCard({ dailyMomentum, language = DEFAULT_LANGUAGE }) {
   if (!dailyMomentum || typeof dailyMomentum.score !== 'number') {
     return (
-      <SectionCard title="Daily Momentum" subtitle="Patient app's daily engagement check-in -- separate from the weekly Detection Assessment">
-        <EmptyState title="No daily check-in data yet" message="This patient hasn't completed a full Daily Set (Face, Speech, Memory, Reaction, Attention) since this feature shipped." />
+      <SectionCard title={t(language, 'dailyMomentumTitle')} subtitle={t(language, 'dailyMomentumSubtitle')}>
+        <EmptyState title={t(language, 'dailyMomentumEmptyTitle')} message={t(language, 'dailyMomentumEmptyMessage')} />
       </SectionCard>
     );
   }
   return (
-    <SectionCard title="Daily Momentum" subtitle="Patient app's daily engagement check-in -- separate from the weekly Detection Assessment">
+    <SectionCard title={t(language, 'dailyMomentumTitle')} subtitle={t(language, 'dailyMomentumSubtitle')}>
       <div className="nmdd-overview__grid">
-        <div><span className="nmdd-kv__label">Most Recent Score</span><span className="nmdd-kv__value">{dailyMomentum.score}/100</span></div>
-        <div><span className="nmdd-kv__label">Date</span><span className="nmdd-kv__value">{dailyMomentum.date}</span></div>
-        <div><span className="nmdd-kv__label">Daily Set Completion</span><span className="nmdd-kv__value">{typeof dailyMomentum.completionPct === 'number' ? `${dailyMomentum.completionPct}%` : '—'}</span></div>
-        <div><span className="nmdd-kv__label">Performance Average</span><span className="nmdd-kv__value">{typeof dailyMomentum.performanceAvg === 'number' ? dailyMomentum.performanceAvg : '—'}</span></div>
+        <div><span className="nmdd-kv__label">{t(language, 'labelMostRecentScore')}</span><span className="nmdd-kv__value">{dailyMomentum.score}/100</span></div>
+        <div><span className="nmdd-kv__label">{t(language, 'labelDate')}</span><span className="nmdd-kv__value">{dailyMomentum.date}</span></div>
+        <div><span className="nmdd-kv__label">{t(language, 'labelDailySetCompletion')}</span><span className="nmdd-kv__value">{typeof dailyMomentum.completionPct === 'number' ? `${dailyMomentum.completionPct}%` : '—'}</span></div>
+        <div><span className="nmdd-kv__label">{t(language, 'labelPerformanceAverage')}</span><span className="nmdd-kv__value">{typeof dailyMomentum.performanceAvg === 'number' ? dailyMomentum.performanceAvg : '—'}</span></div>
       </div>
     </SectionCard>
   );

@@ -58,16 +58,27 @@ function validRTs(records) {
 export function generateStroopTrial(id) {
   const congruent = Math.random() < STROOP_CONGRUENT_RATIO;
   const ink = STROOP_COLORS[Math.floor(Math.random() * STROOP_COLORS.length)];
-  let word;
+  let wordColor;
   if (congruent) {
-    word = ink.label;
+    wordColor = ink;
   } else {
     const others = STROOP_COLORS.filter((c) => c.id !== ink.id);
-    word = others[Math.floor(Math.random() * others.length)].label;
+    wordColor = others[Math.floor(Math.random() * others.length)];
   }
   return {
     id,
-    word: word.toUpperCase(),
+    // English word, kept for back-compat (nothing reads it for scoring --
+    // see StroopEngine.score() below, which never inspects `.word`).
+    word: wordColor.label.toUpperCase(),
+    // 2026-08-27: the id of whichever color's NAME is being displayed as
+    // the stimulus word (equal to ink.id for a congruent trial). The UI
+    // layer (StroopTask.jsx) uses this to render the stimulus word AND
+    // the four answer buttons from the same translated color-name lookup,
+    // so a non-English speaker sees a stimulus word they can actually
+    // read in their own language, matching the buttons they're asked to
+    // tap -- translating only the buttons without this would leave the
+    // stimulus word in English regardless of the selected language.
+    wordColorId: wordColor.id,
     inkId: ink.id,
     inkHex: ink.hex,
     trialType: congruent ? 'congruent' : 'incongruent',

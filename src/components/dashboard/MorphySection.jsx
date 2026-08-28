@@ -1,7 +1,13 @@
 import { useEffect, useState } from 'react';
-import MorphyAvatar from '../chat/MorphyAvatar.jsx';
+import MorphyLaunchOverlay from '../chat/MorphyLaunchOverlay.jsx';
+import { DEFAULT_LANGUAGE } from '../../config/i18nConfig.js';
+import { t } from '../../i18n/strings/dashboard.js';
 
-export default function MorphySection({ onOpenChat }) {
+// 2026-08-26: full i18n pass (see src/i18n/strings/dashboard.js). The
+// "Try: ..." example prompts stay as illustrative English-style quoted
+// phrases translated in full -- Morphy itself (the chat backend) is not
+// changed by this pass, only this launcher screen's own copy.
+export default function MorphySection({ onOpenChat, language = DEFAULT_LANGUAGE }) {
   const [isLaunching, setIsLaunching] = useState(false);
 
   useEffect(() => {
@@ -21,48 +27,42 @@ export default function MorphySection({ onOpenChat }) {
   return (
     <div className="nmpa-section nmpa-assistant-page">
       {isLaunching && (
-        <div className="nmpa-assistant-launch" aria-hidden="true">
-          <span className="nmpa-assistant-launch__pulse" />
-          <span className="nmpa-assistant-launch__particle nmpa-assistant-launch__particle--one" />
-          <span className="nmpa-assistant-launch__particle nmpa-assistant-launch__particle--two" />
-          <span className="nmpa-assistant-launch__particle nmpa-assistant-launch__particle--three" />
-          <div className="nmpa-assistant-launch__morphy"><MorphyAvatar size={96} label="" /></div>
-        </div>
+        <MorphyLaunchOverlay />
       )}
       <section className="nmpa-card nmpa-assistant-hero">
         <div className="nmpa-assistant-hero__copy">
-          <p className="nmpa-eyebrow">NEUROMORPH assistant</p>
-          <h2 className="nmpa-card__title">Help, guidance, and report explanations</h2>
-          <p className="nmpa-muted">Get clear help with your assessment, daily activities, and progress reports whenever you need it.</p>
+          <p className="nmpa-eyebrow">{t(language, 'assistantEyebrow')}</p>
+          <h2 className="nmpa-card__title">{t(language, 'assistantHeroTitle')}</h2>
+          <p className="nmpa-muted">{t(language, 'assistantHeroBody')}</p>
         </div>
         <div className="nmpa-assistant-hero__action">
-          <button type="button" className="nmpa-button nmpa-button--primary" onClick={launchAssistant} disabled={isLaunching}>Open Assistant</button>
-          <span>Also available from the chat button in the bottom-right corner.</span>
+          <button type="button" className="nmpa-button nmpa-button--primary" onClick={launchAssistant} disabled={isLaunching}>{t(language, 'openAssistantButton')}</button>
+          <span>{t(language, 'alsoAvailableCaption')}</span>
         </div>
       </section>
 
       <div className="nmpa-assistant-grid">
         <article className="nmpa-card nmpa-assistant-card">
           <span className="nmpa-assistant-card__number">01</span>
-          <h3>Understand your progress</h3>
-          <p>Ask for a plain-language explanation of your cognitive scores, trends, and monthly report.</p>
-          <span className="nmpa-assistant-card__prompt">Try: “Explain my latest report”</span>
+          <h3>{t(language, 'card1Title')}</h3>
+          <p>{t(language, 'card1Body')}</p>
+          <span className="nmpa-assistant-card__prompt">{t(language, 'card1Prompt')}</span>
         </article>
         <article className="nmpa-card nmpa-assistant-card">
           <span className="nmpa-assistant-card__number">02</span>
-          <h3>Get activity support</h3>
-          <p>Receive step-by-step guidance for games, assessments, and features anywhere in the app.</p>
-          <span className="nmpa-assistant-card__prompt">Try: “How does this assessment work?”</span>
+          <h3>{t(language, 'card2Title')}</h3>
+          <p>{t(language, 'card2Body')}</p>
+          <span className="nmpa-assistant-card__prompt">{t(language, 'card2Prompt')}</span>
         </article>
         <article className="nmpa-card nmpa-assistant-card">
           <span className="nmpa-assistant-card__number">03</span>
-          <h3>Review a PDF</h3>
-          <p>Upload a NEUROMORPH report in the chat to have its contents explained in simpler language.</p>
-          <span className="nmpa-assistant-card__prompt">Use the + button in chat to upload</span>
+          <h3>{t(language, 'card3Title')}</h3>
+          <p>{t(language, 'card3Body')}</p>
+          <span className="nmpa-assistant-card__prompt">{t(language, 'card3Prompt')}</span>
         </article>
       </div>
 
-      <p className="nmpa-assistant-note">The assistant can explain app information, but it does not provide medical diagnoses. Discuss health concerns with a qualified clinician.</p>
+      <p className="nmpa-assistant-note">{t(language, 'assistantDisclaimer')}</p>
     </div>
   );
 }

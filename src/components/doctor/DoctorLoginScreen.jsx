@@ -7,6 +7,7 @@ import SocialAuthRow from '../auth/SocialAuthRow.jsx';
 import AuthDivider from '../auth/AuthDivider.jsx';
 import ThemeToggle from '../common/ThemeToggle.jsx';
 import { MailIcon } from '../icons/FormIcons.jsx';
+import { t } from '../../i18n/strings/doctorAuth.js';
 
 // 2026-08-17: the doctor counterpart to LoginScreen.jsx -- same theme
 // (AuthBrandPanel's animated backdrop, same Google/Facebook/email form),
@@ -18,11 +19,12 @@ import { MailIcon } from '../icons/FormIcons.jsx';
 // same shared useLanguage() state) -- it was previously hardcoded to
 // `language="en"` with no onChangeLanguage handler at all, which meant
 // clicking a language in the dropdown threw (calling an undefined
-// function) instead of switching. The FORM itself (heading, field labels,
-// buttons) stays English-only for now -- that's a separate, larger
-// translation task (see doctorFaqConfig.js's header for the same scope
-// note applied to the doctor chatbot), not a bug.
-export default function DoctorLoginScreen({ onLogin, onSwitchToSignup, onSocialAuth, onBackToRoleGate, errors, isSubmitting, theme, onToggleTheme, language, onChangeLanguage }) {
+// function) instead of switching.
+// 2026-08-27: the FORM itself (heading, field labels, buttons, trust list)
+// is now translated too (src/i18n/strings/doctorAuth.js), across all 7
+// languages -- previously stayed English-only on purpose ("a separate,
+// larger translation task... not a bug"); that task is this.
+export default function DoctorLoginScreen({ onLogin, onSwitchToSignup, onSocialAuth, onBackToRoleGate, errors, isSubmitting, theme, onToggleTheme, language = 'en', onChangeLanguage }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [touched, setTouched] = useState({});
@@ -51,15 +53,24 @@ export default function DoctorLoginScreen({ onLogin, onSwitchToSignup, onSocialA
       <AuthBrandPanel
         language={language}
         onChangeLanguage={onChangeLanguage}
-        roleBadge="Doctor Portal"
-        subledeOverride="Review patient assessments, track cognitive trends, and get instant answers from the clinical assistant."
+        roleBadge={t(language, 'roleBadge')}
+        subledeOverride={t(language, 'loginSublede')}
+        instructionsTitle={t(language, 'instructionsTitle')}
+        trustItems={[
+          t(language, 'trustItem1'),
+          t(language, 'trustItem2'),
+          t(language, 'trustItem3'),
+          t(language, 'trustItem4'),
+          t(language, 'trustItem5'),
+          t(language, 'trustItem6'),
+        ]}
       />
 
       <div className="nmpa-auth__panel nmpa-auth__panel--form">
         <div className="nmpa-auth__card">
-          <button type="button" className="nmpa-link nmpa-auth__back-link" onClick={onBackToRoleGate}>&larr; Not a doctor?</button>
-          <h1 className="nmpa-auth__heading">Welcome back, Doctor</h1>
-          <p className="nmpa-auth__lede">Sign in to review your patients' assessments.</p>
+          <button type="button" className="nmpa-link nmpa-auth__back-link" onClick={onBackToRoleGate}>{t(language, 'backLink')}</button>
+          <h1 className="nmpa-auth__heading">{t(language, 'loginHeading')}</h1>
+          <p className="nmpa-auth__lede">{t(language, 'loginLede')}</p>
 
           <SocialAuthRow
             mode="in"
@@ -67,12 +78,12 @@ export default function DoctorLoginScreen({ onLogin, onSwitchToSignup, onSocialA
             onGoogleClick={() => onSocialAuth('google')}
             onFacebookClick={() => onSocialAuth('facebook')}
           />
-          <AuthDivider label="or log in with email" />
+          <AuthDivider label={t(language, 'loginDivider')} />
 
           <form onSubmit={handleSubmit} className="nmpa-form" noValidate autoComplete="off">
             <AuthTextField
               icon={<MailIcon />}
-              label="Email address"
+              label={t(language, 'emailLabel')}
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -83,7 +94,7 @@ export default function DoctorLoginScreen({ onLogin, onSwitchToSignup, onSocialA
             />
 
             <PasswordField
-              label="Password"
+              label={t(language, 'passwordLabel')}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onBlur={() => handleBlur('password')}
@@ -92,17 +103,17 @@ export default function DoctorLoginScreen({ onLogin, onSwitchToSignup, onSocialA
             />
 
             <button type="submit" className="nmpa-button nmpa-button--primary nmpa-button--block" disabled={isSubmitting}>
-              {isSubmitting ? 'Logging in…' : 'Log In'}
+              {isSubmitting ? t(language, 'loggingInButton') : t(language, 'logInButton')}
             </button>
           </form>
 
           <p className="nmpa-auth__switch">
-            New here?{' '}
-            <button type="button" className="nmpa-link" onClick={onSwitchToSignup}>Create a clinician account</button>
+            {t(language, 'newHereText')}{' '}
+            <button type="button" className="nmpa-link" onClick={onSwitchToSignup}>{t(language, 'createAccountLink')}</button>
           </p>
 
           <p className="nmpa-muted nmpa-muted--sm nmpa-auth__footnote">
-            Signing in doesn't automatically grant patient data access -- an administrator must add your account first.
+            {t(language, 'footnote')}
           </p>
         </div>
       </div>

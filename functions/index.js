@@ -42,7 +42,22 @@ const GEMINI_URL = (key) =>
 
 const MAX_QUESTION_LENGTH = 4000;
 const MAX_HISTORY_TURNS = 8;
-const REQUEST_TIMEOUT_MS = 15000;
+// 2026-08-28 BUGFIX (VR: "Morphy currently fails to answer general
+// questions well ... even hi, hello kuda solla maatran"). This was 15000.
+// Google Search grounding (enabled below) adds real round-trip latency on
+// top of generation -- a grounded call regularly needs more than 15s,
+// especially for a general-knowledge question. Worse, the CLIENT side
+// (AiFallbackService.js's AI_FALLBACK_CONFIG.timeoutMs, in
+// aiFallbackConfig.js) was set to 12000 -- SHORTER than this server-side
+// timeout -- so the browser was giving up and showing "I tried reaching
+// my extended AI brain but couldn't connect" a few seconds BEFORE this
+// function's own timeout even fired, on any request that took longer than
+// 12s but would have succeeded by 15-20s. Raised here to 25000, with
+// aiFallbackConfig.js's client timeout raised to 28000 (must stay LARGER
+// than this value, with margin, or the same bug returns) and this
+// function's own onRequest timeoutSeconds raised to 40 (must stay larger
+// than this value too, with margin for CORS/response overhead).
+const REQUEST_TIMEOUT_MS = 25000;
 
 // AiFallbackService.js sends { role: 'user' | 'assistant', content }.
 // Gemini's API wants { role: 'user' | 'model', parts: [{ text }] }.
@@ -87,7 +102,7 @@ function toGeminiContents(recentMessages, question, reportData, mode) {
 const ENFORCE_APP_CHECK = false;
 
 exports.askMorphy = onRequest(
-  { secrets: [GEMINI_API_KEY], cors: true, timeoutSeconds: 30, memory: '256MiB', enforceAppCheck: ENFORCE_APP_CHECK },
+  { secrets: [GEMINI_API_KEY], cors: true, timeoutSeconds: 40, memory: '256MiB', enforceAppCheck: ENFORCE_APP_CHECK },
   (req, res) => {
     cors(req, res, async () => {
       if (req.method !== 'POST') {
@@ -135,7 +150,31 @@ exports.askMorphy = onRequest(
             // Same flag serves patient, doctor, and caregiver Morphy alike --
             // this function has no idea which one is calling.
             tools: [{ googleSearch: {} }],
-            generationConfig: { temperature: 0.4, maxOutputTokens: 512 },
+            // 2026-08-28 TUNING (VR: "Morphy currently fails to answer
+            // general questions well"). maxOutputTokens was 512 -- fine for
+            // the "80-150 words default" the system prompt asks for, but
+            // too tight once a grounded search result gets folded in, or
+            // the user genuinely asks for more detail ("explain", a report
+            // walkthrough), silently truncating the answer mid-sentence.
+            // Raised to 1024. temperature nudged 0.4 -> 0.55: still
+            // reliable/on-brief (nowhere near the 0.9+ range that gets
+            // rambly or inconsistent), just enough to stop replies reading
+            // stiff/robotic for a "warm, patient, simple" persona. Explicit
+            // safetySettings added: the Gemini API's un-set default
+            // (BLOCK_MEDIUM_AND_ABOVE on every category) was blocking some
+            // perfectly ordinary questions outright for this app's actual
+            // subject matter -- cognitive decline, memory loss, safety
+            // concerns, aging, mortality all come up naturally and
+            // legitimately here. Loosened one notch to BLOCK_ONLY_HIGH
+            // (still blocks genuinely high-severity content) rather than
+            // disabling safety filtering altogether.
+            generationConfig: { temperature: 0.55, maxOutputTokens: 1024 },
+            safetySettings: [
+              { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_ONLY_HIGH' },
+              { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_ONLY_HIGH' },
+              { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_ONLY_HIGH' },
+              { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_ONLY_HIGH' },
+            ],
           }),
         });
 
@@ -150,9 +189,19 @@ exports.askMorphy = onRequest(
         }
 
         const data = await response.json();
-        const answer = data?.candidates?.[0]?.content?.parts?.map((p) => p.text).join('') || '';
-
+        const candidate = data?.candidates?.[0];
+        const answer = candidate?.content?.parts?.map((p) => p.text).join('') || '';
+        // 2026-08-28 ADDITION -- a candidate can come back with NO usable
+        // text for a reason worth telling the difference between server-
+        // side, even though the frontend still just shows one honest
+        // message either way (AiFallbackService.js's NETWORK_ERROR_MESSAGE):
+        // finishReason 'SAFETY' (the question tripped a safety category
+        // even at the loosened threshold above) vs. 'MAX_TOKENS' (genuinely
+        // ran out of room) vs. anything else (a real backend problem).
+        // Logged so this is diagnosable instead of a silent generic
+        // failure every time.
         if (!answer.trim()) {
+          console.error('Gemini returned no usable text', { finishReason: candidate?.finishReason });
           res.status(502).json({ error: 'The AI service returned an empty answer.' });
           return;
         }

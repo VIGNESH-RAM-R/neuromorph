@@ -1,5 +1,8 @@
 import { formatCaregiverAnswer, DEEP_STATUS_LABEL, buildCaregiverEntries } from '../../engines/CaregiverResponsesFormat.js';
 import { CAREGIVER_MICRO_QUESTIONS } from '../../../config/caregiverMicroCheckinConfig.js';
+import { DEFAULT_LANGUAGE } from '../../config/i18nConfig.js';
+import { t, format } from '../../i18n/strings/report.js';
+import { t as tPatients } from '../../i18n/strings/patients.js';
 
 // Print-only, single-column layout used for the "Download PDF Report"
 // workflow. Rendered alongside the interactive screen but hidden on-screen
@@ -13,107 +16,171 @@ import { CAREGIVER_MICRO_QUESTIONS } from '../../../config/caregiverMicroCheckin
 // skips the caregiver section entirely rather than showing an error inside
 // an exported PDF -- the on-screen panel is still the place a doctor sees a
 // real error message.
-export default function PrintableReport({ report, caregiver }) {
+//
+// 2026-08-26 i18n: this print view mirrors the on-screen report, so it
+// reuses the exact same translation keys/lookups those components already
+// established (band/status/pattern labels, section titles, field labels)
+// rather than duplicating a second English copy of each string. Per the
+// same 2026-08-26 scope note as CaregiverResponsesPanel.jsx, the caregiver
+// QUESTION content (q.label / formatCaregiverAnswer / DEEP_STATUS_LABEL) is
+// left untranslated -- that's caregiver-config content, out of scope for
+// this pass.
+const BAND_LABEL_KEY = {
+  Excellent: 'bandExcellent',
+  Normal: 'bandNormal',
+  'Mildly Reduced': 'bandMildlyReduced',
+  Reduced: 'bandReduced',
+  'Slightly Reduced': 'bandSlightlyReduced',
+  'Not Measured': 'bandNotMeasured',
+};
+
+const BAND_INTERPRETATION_KEY = {
+  Excellent: 'bandInterpretationExcellent',
+  Normal: 'bandInterpretationNormal',
+  'Mildly Reduced': 'bandInterpretationMildlyReduced',
+  Reduced: 'bandInterpretationReduced',
+  'Not Measured': 'measureNotMeasuredInterpretation',
+};
+
+const SESSION_STATUS_KEY = { completed: 'sessionStatusCompleted', partial: 'sessionStatusPartial' };
+
+const TRAJECTORY_LABEL_KEY = {
+  improving: 'trendImproving',
+  declining: 'trendDeclining',
+  stable: 'trendStable',
+  volatile: 'trendVolatile',
+  'insufficient-data': 'trendInsufficientData',
+};
+
+const PATTERN_LABEL_KEY = {
+  distributed: 'patternDistributed',
+  'multi-domain-independent': 'patternMultiDomainIndependent',
+  isolated: 'patternIsolated',
+  'no-decline': 'patternNoDecline',
+  'insufficient-data': 'patternInsufficientData',
+};
+
+const RECOMMENDATION_TEXT_KEY = {
+  REPEAT_SIX_MONTHS: 'recommendationRepeatSixMonths',
+  REPEAT_THREE_MONTHS: 'recommendationRepeatThreeMonths',
+  FORMAL_NEUROPSYCH: 'recommendationFormalNeuropsych',
+  NEUROLOGY_CONSULT: 'recommendationNeurologyConsult',
+  LIFESTYLE: 'recommendationLifestyle',
+  GATHER_COLLATERAL: 'recommendationGatherCollateral',
+  CONTINUE_ROUTINE: 'recommendationContinueRoutine',
+  CONSISTENCY_MONITORING: 'recommendationConsistencyMonitoring',
+};
+
+function bandLabel(language, band) {
+  return BAND_LABEL_KEY[band] ? tPatients(language, BAND_LABEL_KEY[band]) : band;
+}
+
+function bandInterpretation(language, band, fallback) {
+  return BAND_INTERPRETATION_KEY[band] ? t(language, BAND_INTERPRETATION_KEY[band]) : fallback;
+}
+
+export default function PrintableReport({ report, caregiver, language = DEFAULT_LANGUAGE }) {
   const { patient, session, overallCognitive, domains, lobes, visualMemory, speech, questionnaire, caregiverConcordance, clinicalNotes, recommendations, adherence, trendIntelligence, networkCoherence } = report;
   const { weeklyEntries, microDays } = buildCaregiverEntries(caregiver);
+  const statusLabel = SESSION_STATUS_KEY[session.status] ? t(language, SESSION_STATUS_KEY[session.status]) : session.status;
 
   return (
     <div className="nmdd-print-report nmdd-print-only">
-      <h1>NEUROMORPH Cognitive Screening Report</h1>
+      <h1>NEUROMORPH {t(language, 'cognitiveScreeningReportTitle')}</h1>
       <p className="nmdd-print-disclaimer">
-        Early cognitive screening summary. Not a diagnostic report. Findings require clinical correlation.
+        {t(language, 'printTopDisclaimer')}
       </p>
 
-      <h2>Patient Information</h2>
+      <h2>{t(language, 'patientInformationHeading')}</h2>
       <table className="nmdd-print-table">
         <tbody>
-          <tr><td>Name</td><td>{patient.name}</td></tr>
-          <tr><td>Age</td><td>{patient.age}</td></tr>
-          <tr><td>Gender</td><td>{patient.gender}</td></tr>
-          <tr><td>Patient ID</td><td>{patient.patientId}</td></tr>
-          <tr><td>Risk Factors</td><td>{patient.riskFactors?.join(', ') || 'None recorded'}</td></tr>
+          <tr><td>{t(language, 'labelName')}</td><td>{patient.name}</td></tr>
+          <tr><td>{t(language, 'labelAge')}</td><td>{patient.age}</td></tr>
+          <tr><td>{t(language, 'labelGender')}</td><td>{patient.gender}</td></tr>
+          <tr><td>{t(language, 'labelPatientId')}</td><td>{patient.patientId}</td></tr>
+          <tr><td>{t(language, 'labelRiskFactors')}</td><td>{patient.riskFactors?.join(', ') || t(language, 'noneRecorded')}</td></tr>
         </tbody>
       </table>
 
-      <h2>Assessment Summary</h2>
+      <h2>{t(language, 'assessmentSummaryHeading')}</h2>
       <table className="nmdd-print-table">
         <tbody>
-          <tr><td>Assessment Date</td><td>{session.date}</td></tr>
-          <tr><td>Status</td><td>{session.status}</td></tr>
-          <tr><td>Overall Cognitive Score</td><td>{overallCognitive.score}</td></tr>
-          <tr><td>Performance Category</td><td>{overallCognitive.band}</td></tr>
-          <tr><td>Interpretation</td><td>{overallCognitive.interpretation}</td></tr>
-          <tr><td>Adherence</td><td>{adherence.overdue ? `Overdue (${adherence.daysSinceLast} days since last)` : `This week's cognitive test: Completed, next due ${adherence.nextDueDate}`}</td></tr>
+          <tr><td>{t(language, 'labelAssessmentDate')}</td><td>{session.date}</td></tr>
+          <tr><td>{t(language, 'labelStatus')}</td><td>{statusLabel}</td></tr>
+          <tr><td>{t(language, 'overallCognitiveScoreLabel')}</td><td>{overallCognitive.score}</td></tr>
+          <tr><td>{t(language, 'performanceCategoryLabel')}</td><td>{bandLabel(language, overallCognitive.band)}</td></tr>
+          <tr><td>{t(language, 'interpretationLabel')}</td><td>{bandInterpretation(language, overallCognitive.band, overallCognitive.interpretation)}</td></tr>
+          <tr><td>{t(language, 'labelAdherence')}</td><td>{adherence.overdue ? format(t(language, 'adherenceOverdue'), { days: adherence.daysSinceLast }) : format(t(language, 'adherenceOnTrack'), { date: adherence.nextDueDate })}</td></tr>
         </tbody>
       </table>
 
-      <h2>Cognitive Domain Analysis</h2>
+      <h2>{t(language, 'domainAnalysisTitle')}</h2>
       <table className="nmdd-print-table">
-        <thead><tr><th>Domain</th><th>Score</th><th>Status</th><th>Interpretation</th></tr></thead>
+        <thead><tr><th>{t(language, 'domainTableHeader')}</th><th>{t(language, 'scoreTableHeader')}</th><th>{t(language, 'statusTableHeader')}</th><th>{t(language, 'interpretationLabel')}</th></tr></thead>
         <tbody>
           {domains.map((d) => (
-            <tr key={d.key}><td>{d.label}</td><td>{d.score}</td><td>{d.band}</td><td>{d.interpretation}</td></tr>
+            <tr key={d.key}><td>{d.label}</td><td>{d.score}</td><td>{bandLabel(language, d.band)}</td><td>{d.band === 'Not Measured' ? t(language, 'domainNotMeasuredInterpretation') : bandInterpretation(language, d.band, d.interpretation)}</td></tr>
           ))}
         </tbody>
       </table>
 
-      <h2>Lobar Function Analysis</h2>
+      <h2>{t(language, 'lobarAnalysisTitle')}</h2>
       {lobes.map((lobe) => (
         <div key={lobe.key} className="nmdd-print-lobe">
-          <h3>{lobe.label} -- {lobe.band} ({lobe.score ?? '—'})</h3>
-          <p><strong>Primary Functions:</strong> {lobe.primaryFunctions.join(', ')}</p>
-          <p><strong>Contributing Tasks:</strong> {lobe.contributingTasks.join(', ') || 'None administered this session'}</p>
-          <p>{lobe.explanation}</p>
+          <h3>{lobe.label} -- {bandLabel(language, lobe.band)} ({lobe.score ?? '—'})</h3>
+          <p><strong>{t(language, 'primaryFunctionsLabel')}:</strong> {lobe.primaryFunctions.join(', ')}</p>
+          <p><strong>{t(language, 'contributingTasksLabel')}:</strong> {lobe.contributingTasks.join(', ') || t(language, 'lobeNoTasksAdministered')}</p>
+          <p>{bandInterpretation(language, lobe.band, lobe.explanation)}</p>
         </div>
       ))}
 
-      <h2>Visual Memory Summary</h2>
+      <h2>{t(language, 'visualMemorySummaryHeading')}</h2>
       <table className="nmdd-print-table">
-        <thead><tr><th>Subscore</th><th>Score</th><th>Status</th></tr></thead>
+        <thead><tr><th>{t(language, 'subscoreTableHeader')}</th><th>{t(language, 'scoreTableHeader')}</th><th>{t(language, 'statusTableHeader')}</th></tr></thead>
         <tbody>
           {visualMemory.subscores.map((s) => (
-            <tr key={s.key}><td>{s.label}</td><td>{s.score}</td><td>{s.band}</td></tr>
+            <tr key={s.key}><td>{s.label}</td><td>{s.score}</td><td>{bandLabel(language, s.band)}</td></tr>
           ))}
-          <tr><td><strong>Overall Visual Memory Score</strong></td><td><strong>{visualMemory.overallScore}</strong></td><td><strong>{visualMemory.band}</strong></td></tr>
+          <tr><td><strong>{t(language, 'overallVisualMemoryScoreLabel')}</strong></td><td><strong>{visualMemory.overallScore}</strong></td><td><strong>{bandLabel(language, visualMemory.band)}</strong></td></tr>
         </tbody>
       </table>
 
-      <h2>Speech Summary</h2>
+      <h2>{t(language, 'speechSummaryHeading')}</h2>
       <table className="nmdd-print-table">
-        <thead><tr><th>Metric</th><th>Status</th></tr></thead>
+        <thead><tr><th>{t(language, 'metricTableHeader')}</th><th>{t(language, 'statusTableHeader')}</th></tr></thead>
         <tbody>
           {speech.metrics.map((m) => (
-            <tr key={m.key}><td>{m.label}</td><td>{m.band}</td></tr>
+            <tr key={m.key}><td>{m.label}</td><td>{bandLabel(language, m.band)}</td></tr>
           ))}
         </tbody>
       </table>
 
-      <h2>Questionnaire Summary</h2>
+      <h2>{t(language, 'questionnaireSummaryTitle')}</h2>
       <table className="nmdd-print-table">
         <tbody>
-          <tr><td>Memory Complaints</td><td>{questionnaire?.memoryComplaints}</td></tr>
-          <tr><td>Orientation</td><td>{questionnaire?.orientation}</td></tr>
-          <tr><td>Daily Activities</td><td>{questionnaire?.dailyActivities}</td></tr>
-          <tr><td>Behaviour</td><td>{questionnaire?.behaviour}</td></tr>
-          <tr><td>Functional Independence</td><td>{questionnaire?.functionalIndependence}</td></tr>
-          <tr><td>Caregiver Concern</td><td>{caregiverConcordance?.caregiverConcern || '—'}</td></tr>
+          <tr><td>{t(language, 'fieldMemoryComplaints')}</td><td>{questionnaire?.memoryComplaints}</td></tr>
+          <tr><td>{t(language, 'fieldOrientation')}</td><td>{questionnaire?.orientation}</td></tr>
+          <tr><td>{t(language, 'fieldDailyActivities')}</td><td>{questionnaire?.dailyActivities}</td></tr>
+          <tr><td>{t(language, 'fieldBehaviour')}</td><td>{questionnaire?.behaviour}</td></tr>
+          <tr><td>{t(language, 'fieldFunctionalIndependence')}</td><td>{questionnaire?.functionalIndependence}</td></tr>
+          <tr><td>{t(language, 'fieldCaregiverConcern')}</td><td>{caregiverConcordance?.caregiverConcern || '—'}</td></tr>
         </tbody>
       </table>
 
-      <h2>Caregiver Responses</h2>
+      <h2>{t(language, 'caregiverResponsesTitle')}</h2>
       {!caregiver ? (
-        <p>No linked caregiver account, or caregiver data was not available when this report was generated.</p>
+        <p>{t(language, 'noCaregiverAccountMessage')}</p>
       ) : (
         <>
-          <p><strong>Caregiver:</strong> {caregiver.name || 'Unnamed caregiver'}</p>
+          <p><strong>{t(language, 'caregiverLabelPrint')}</strong> {caregiver.name || t(language, 'unnamedCaregiver')}</p>
 
-          <h3>Weekly Check-In ({weeklyEntries.length})</h3>
-          {weeklyEntries.length === 0 ? <p>No weekly check-ins yet.</p> : weeklyEntries.map((entry) => (
+          <h3>{format(t(language, 'weeklyCheckinHeading'), { count: weeklyEntries.length })}</h3>
+          {weeklyEntries.length === 0 ? <p>{t(language, 'noWeeklyCheckinsTitle')}.</p> : weeklyEntries.map((entry) => (
             <table className="nmdd-print-table" key={entry.unlockedForDate} style={{ marginBottom: 10 }}>
               <thead>
                 <tr>
                   <th colSpan={2}>
-                    Assessment on {entry.unlockedForDate} -- {DEEP_STATUS_LABEL[entry.status] || entry.status}
+                    {format(t(language, 'assessmentOnDate'), { date: entry.unlockedForDate })} -- {DEEP_STATUS_LABEL[entry.status] || entry.status}
                   </th>
                 </tr>
               </thead>
@@ -125,8 +192,8 @@ export default function PrintableReport({ report, caregiver }) {
             </table>
           ))}
 
-          <h3>Quick Daily Check-In ({microDays.length})</h3>
-          {microDays.length === 0 ? <p>No daily check-ins yet.</p> : microDays.map((day) => (
+          <h3>{format(t(language, 'quickDailyCheckinHeading'), { count: microDays.length })}</h3>
+          {microDays.length === 0 ? <p>{t(language, 'noDailyCheckinsTitle')}.</p> : microDays.map((day) => (
             <table className="nmdd-print-table" key={day.date} style={{ marginBottom: 10 }}>
               <thead><tr><th colSpan={2}>{day.date}</th></tr></thead>
               <tbody>
@@ -139,34 +206,34 @@ export default function PrintableReport({ report, caregiver }) {
         </>
       )}
 
-      <h2>Trend Intelligence</h2>
+      <h2>{t(language, 'trendIntelligenceTitle')}</h2>
       <table className="nmdd-print-table">
         <tbody>
-          <tr><td>Overall Trajectory</td><td>{trendIntelligence?.overallTrajectory ?? 'insufficient-data'}</td></tr>
+          <tr><td>{t(language, 'overallTrajectoryLabel')}</td><td>{t(language, TRAJECTORY_LABEL_KEY[trendIntelligence?.overallTrajectory] || TRAJECTORY_LABEL_KEY['insufficient-data'])}</td></tr>
         </tbody>
       </table>
       <p>{trendIntelligence?.narrativeSummary}</p>
       {trendIntelligence?.domainsToWatch?.length > 0 && (
         <>
-          <p><strong>Domains to watch:</strong></p>
+          <p><strong>{t(language, 'domainsToWatchHeading')}:</strong></p>
           <ul>
             {trendIntelligence.domainsToWatch.map((d) => (
-              <li key={d.key}>{d.label} -- declining about {Math.abs(d.weeklyRate)} points/week across {d.n} sessions.</li>
+              <li key={d.key}>{d.label} -- {format(t(language, 'domainDecliningSentence'), { rate: Math.abs(d.weeklyRate), n: d.n })}</li>
             ))}
           </ul>
         </>
       )}
 
-      <h2>Network Coherence (Research Preview -- not real connectivity data)</h2>
+      <h2>{t(language, 'networkCoherenceHeadingPrint')}</h2>
       <table className="nmdd-print-table">
         <tbody>
-          <tr><td>Pattern</td><td>{networkCoherence?.pattern ?? 'insufficient-data'}</td></tr>
+          <tr><td>{t(language, 'patternLabel')}</td><td>{t(language, PATTERN_LABEL_KEY[networkCoherence?.pattern] || PATTERN_LABEL_KEY['insufficient-data'])}</td></tr>
         </tbody>
       </table>
       <p>{networkCoherence?.narrative}</p>
 
-      <h2>Clinical Notes</h2>
-      {clinicalNotes.length === 0 ? <p>No clinical notes recorded.</p> : (
+      <h2>{t(language, 'clinicalNotesHeadingPrint')}</h2>
+      {clinicalNotes.length === 0 ? <p>{t(language, 'noClinicalNotesRecordedPrint')}</p> : (
         <ul>
           {clinicalNotes.map((n) => (
             <li key={n.id}>{new Date(n.timestamp).toLocaleDateString()} -- {n.author}: {n.text}</li>
@@ -174,23 +241,22 @@ export default function PrintableReport({ report, caregiver }) {
         </ul>
       )}
 
-      <h2>Clinical Recommendations</h2>
+      <h2>{t(language, 'clinicalRecommendationsTitle')}</h2>
       <ul>
-        {recommendations.map((r) => <li key={r.key}>{r.text}</li>)}
+        {recommendations.map((r) => <li key={r.key}>{RECOMMENDATION_TEXT_KEY[r.key] ? t(language, RECOMMENDATION_TEXT_KEY[r.key]) : r.text}</li>)}
       </ul>
 
-      <h2>Assessment Metadata</h2>
+      <h2>{t(language, 'assessmentMetadataHeading')}</h2>
       <table className="nmdd-print-table">
         <tbody>
-          <tr><td>Report generated</td><td>{new Date().toLocaleString()}</td></tr>
-          <tr><td>Sessions on record</td><td>{session.sessionCount}</td></tr>
-          <tr><td>Platform</td><td>NEUROMORPH Doctor Dashboard</td></tr>
+          <tr><td>{t(language, 'reportGeneratedLabel')}</td><td>{new Date().toLocaleString()}</td></tr>
+          <tr><td>{t(language, 'sessionsOnRecordLabel')}</td><td>{session.sessionCount}</td></tr>
+          <tr><td>{t(language, 'platformLabel')}</td><td>NEUROMORPH Doctor Dashboard</td></tr>
         </tbody>
       </table>
 
       <p className="nmdd-print-disclaimer">
-        NEUROMORPH is an early cognitive screening tool, not a diagnostic instrument. This report summarizes task performance
-        only and does not constitute a diagnosis of dementia or any other condition.
+        {t(language, 'printBottomDisclaimer')}
       </p>
     </div>
   );

@@ -1,3 +1,6 @@
+import { DEFAULT_LANGUAGE } from '../../config/i18nConfig.js';
+import { t, format } from '../../i18n/strings/dashboard.js';
+
 const BAND_CLASS = {
   Excellent: 'is-excellent',
   Normal: 'is-normal',
@@ -5,9 +8,19 @@ const BAND_CLASS = {
   Reduced: 'is-reduced',
 };
 
-function DeltaPill({ percentChange, direction }) {
+// The English `band` value stays untouched -- it's what BAND_CLASS keys
+// off. Only the on-screen label is translated, via this local map, same
+// precedent as StatusBadge.jsx (Doctor Dashboard) and AssessmentComplete.jsx.
+const BAND_LABEL_KEY = {
+  Excellent: 'insightBandExcellent',
+  Normal: 'insightBandNormal',
+  'Mildly Reduced': 'insightBandMildlyReduced',
+  Reduced: 'insightBandReduced',
+};
+
+function DeltaPill({ percentChange, direction, language }) {
   if (typeof percentChange !== 'number') {
-    return <span className="nmpa-domain-delta is-flat">First reading</span>;
+    return <span className="nmpa-domain-delta is-flat">{t(language, 'firstReadingTag')}</span>;
   }
   const sign = percentChange > 0 ? '+' : '';
   return (
@@ -28,7 +41,13 @@ function DeltaPill({ percentChange, direction }) {
 // gets its bar-fill grow in sync (same --nmpa-anim-delay value passed to
 // both, via theme.css's nmpa-bar-grow keyframe) -- the row and its bar
 // land together rather than the bar looking like an afterthought.
-export default function DomainBreakdownChart({ domains = [], pendingDomains = [] }) {
+//
+// 2026-08-26: full i18n pass. d.label and d.band (a domain's proper name
+// and its English band value, from scoringBands.js/domainInsightConfig.js)
+// stay untouched -- d.band is what BAND_CLASS keys off, and d.label is a
+// domain proper name (same "don't translate domain/task names" precedent
+// as the Doctor Dashboard). Only the surrounding chrome is translated.
+export default function DomainBreakdownChart({ domains = [], pendingDomains = [], language = DEFAULT_LANGUAGE }) {
   return (
     <div className="nmpa-domain-breakdown">
       {domains.map((d, i) => {
@@ -37,7 +56,7 @@ export default function DomainBreakdownChart({ domains = [], pendingDomains = []
         <div key={d.domain} className="nmpa-domain-row nmpa-anim-fade-up" style={{ '--nmpa-anim-delay': delay }}>
           <div className="nmpa-domain-row__label">
             <span>{d.label}</span>
-            {d.hasData && <span className={`nmpa-domain-band ${BAND_CLASS[d.band] || ''}`}>{d.band}</span>}
+            {d.hasData && <span className={`nmpa-domain-band ${BAND_CLASS[d.band] || ''}`}>{BAND_LABEL_KEY[d.band] ? t(language, BAND_LABEL_KEY[d.band]) : d.band}</span>}
           </div>
           {d.hasData ? (
             <>
@@ -49,11 +68,11 @@ export default function DomainBreakdownChart({ domains = [], pendingDomains = []
               </div>
               <div className="nmpa-domain-row__meta">
                 <span className="nmpa-domain-score">{d.latestScore}/100</span>
-                <DeltaPill percentChange={d.percentChange} direction={d.direction} />
+                <DeltaPill percentChange={d.percentChange} direction={d.direction} language={language} />
               </div>
             </>
           ) : (
-            <p className="nmpa-muted nmpa-muted--sm">No data yet.</p>
+            <p className="nmpa-muted nmpa-muted--sm">{t(language, 'noDataYetDomain')}</p>
           )}
         </div>
         );
@@ -62,7 +81,7 @@ export default function DomainBreakdownChart({ domains = [], pendingDomains = []
       {pendingDomains.length > 0 && (
         <div className="nmpa-domain-pending">
           <p className="nmpa-muted nmpa-muted--sm">
-            Not measured yet (no active task feeds these domains): {pendingDomains.map((d) => d.label).join(', ')}.
+            {format(t(language, 'notMeasuredYetPrefix'), { domains: pendingDomains.map((d) => d.label).join(', ') })}
           </p>
         </div>
       )}

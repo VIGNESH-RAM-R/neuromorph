@@ -18,9 +18,20 @@ import BrandLogo from '../common/BrandLogo.jsx';
 //   'declined' -- the patient said no; explain that plainly and let them
 //                 try a different code right away.
 export default function CaregiverLinkPatientScreen({
-  onLink, onLogout, errors, isSubmitting, linkRequestStatus = 'none', pendingPatientName, onRefreshStatus,
+  onLink, onLinkByUsername, onLogout, errors, isSubmitting, linkRequestStatus = 'none', pendingPatientName, onRefreshStatus,
 }) {
   const [code, setCode] = useState('');
+  // 2026-08-27 ADDITION (VR: "antha caregiver patient username potu
+  // request kudukanum") -- a second, independent way onto this same
+  // pending-request flow: instead of waiting for the patient to generate
+  // and share an invite code, a caregiver who already knows the patient's
+  // username can search for them directly and send the request themselves.
+  // Both paths end up calling the exact same
+  // sendCaregiverRequestAsCaregiver (see useCaregiverAuth.js), so the
+  // 'pending'/'declined' states above behave identically no matter which
+  // form was used.
+  const [mode, setMode] = useState('code'); // 'code' | 'username'
+  const [username, setUsername] = useState('');
 
   // Poll every 8s while a request is pending, so the caregiver sees the
   // moment the patient accepts without needing to refresh anything
@@ -36,6 +47,11 @@ export default function CaregiverLinkPatientScreen({
   function handleSubmit(e) {
     e.preventDefault();
     onLink(code);
+  }
+
+  function handleUsernameSubmit(e) {
+    e.preventDefault();
+    onLinkByUsername(username);
   }
 
   if (linkRequestStatus === 'pending') {
@@ -67,27 +83,71 @@ export default function CaregiverLinkPatientScreen({
             can try a different code below.
           </p>
         )}
-        <p className="nmpa-muted">
-          Your account isn't linked to a patient yet. Ask the person you're caring for to open their NeuroMorph app,
-          generate an invite code from their home screen, and share it with you. Entering it sends them a request --
-          they'll need to approve it from their own account before you're linked.
-        </p>
-        <form onSubmit={handleSubmit} className="nmpa-form" noValidate>
-          <AuthTextField
-            icon={<UserIcon />}
-            label="Invite code"
-            type="text"
-            value={code}
-            onChange={(e) => setCode(e.target.value.toUpperCase())}
-            autoComplete="off"
-            autoFocus
-            error={errors?.inviteCode}
-          />
-          <button type="submit" className="nmpa-button nmpa-button--primary nmpa-button--block" disabled={isSubmitting}>
-            {isSubmitting ? 'Sending request…' : 'Send Request'}
-          </button>
-        </form>
-        <button type="button" className="nmpa-button nmpa-button--secondary" onClick={onLogout} style={{ marginTop: 12 }}>
+        {mode === 'code' ? (
+          <>
+            <p className="nmpa-muted">
+              Ask the person you're caring for to open their NeuroMorph app, generate an invite code from their home
+              screen, and share it with you. Entering it sends them a request -- they'll need to approve it from
+              their own account before you're linked.
+            </p>
+            <form onSubmit={handleSubmit} className="nmpa-form" noValidate>
+              <AuthTextField
+                icon={<UserIcon />}
+                label="Invite code"
+                type="text"
+                value={code}
+                onChange={(e) => setCode(e.target.value.toUpperCase())}
+                autoComplete="off"
+                autoFocus
+                error={errors?.inviteCode}
+              />
+              <button type="submit" className="nmpa-button nmpa-button--primary nmpa-button--block" disabled={isSubmitting}>
+                {isSubmitting ? 'Sending request…' : 'Send Request'}
+              </button>
+            </form>
+            {onLinkByUsername && (
+              <button
+                type="button"
+                className="nmpa-link"
+                style={{ marginTop: 14, display: 'inline-block' }}
+                onClick={() => setMode('username')}
+              >
+                Or search for them by username instead
+              </button>
+            )}
+          </>
+        ) : (
+          <>
+            <p className="nmpa-muted">
+              If you already know the patient's NeuroMorph username, search for them directly -- no code needed.
+              Sending a request still requires them to approve it from their own account before you're linked.
+            </p>
+            <form onSubmit={handleUsernameSubmit} className="nmpa-form" noValidate>
+              <AuthTextField
+                icon={<UserIcon />}
+                label="Patient's username"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                autoComplete="off"
+                autoFocus
+                error={errors?.username}
+              />
+              <button type="submit" className="nmpa-button nmpa-button--primary nmpa-button--block" disabled={isSubmitting}>
+                {isSubmitting ? 'Sending request…' : 'Send Request'}
+              </button>
+            </form>
+            <button
+              type="button"
+              className="nmpa-link"
+              style={{ marginTop: 14, display: 'inline-block' }}
+              onClick={() => setMode('code')}
+            >
+              Or use an invite code instead
+            </button>
+          </>
+        )}
+        <button type="button" className="nmpa-button nmpa-button--secondary" onClick={onLogout} style={{ marginTop: 12, display: 'block' }}>
           Sign out
         </button>
       </div>

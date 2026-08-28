@@ -17,10 +17,47 @@ import { MomentumScoreEngine } from '../engines/MomentumScoreEngine.js';
 import { InviteCodeEngine } from '../engines/InviteCodeEngine.js';
 import { FirestoreUserService } from '../services/FirestoreUserService.js';
 import { FirestoreCaregiverService } from '../services/FirestoreCaregiverService.js';
+import { FirestorePatientDirectoryService } from '../services/FirestorePatientDirectoryService.js';
 import { MOCK_SELF } from '../data/mockSelf.js';
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-const toIsoDate = (date) => date.toISOString().slice(0, 10);
+// 2026-08-27 BUGFIX (found during the Detection Assessment date/time
+// audit, VR: "correct date, time, month, year - all time tracking la
+// irukanum, illana anga present panna mudiyathu"). This used to be
+// `date.toISOString().slice(0, 10)`, which converts to UTC before reading
+// the date -- WRONG for any patient not in the UTC timezone, which is
+// almost every real user of an India-focused app (IST is UTC+5:30). A
+// patient completing their weekly check-in between 12:00am-5:29am IST
+// would have it silently recorded under the PREVIOUS calendar day (still
+// "yesterday" in UTC at that hour), throwing off "last completed", the
+// +7-day due date calculation, weekend detection, and streaks by a day --
+// exactly around midnight, the one time a date bug is easiest to miss in
+// testing and hardest for a patient to explain to their doctor. This now
+// reads the LOCAL calendar date (the device's own timezone, i.e. the
+// patient's actual "today"), which is what every caller here actually
+// means by "today's date".
+const toIsoDate = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+// 2026-08-27 ADDITION -- a short, human-shareable handle a caregiver can
+// search for directly (VR request: "antha caregiver patient username potu
+// request kudukanum"), generated automatically at signup/self-heal so no
+// patient ever has to pick or type one just to be findable. Deterministic
+// from name + uid (not random -- see FirestorePatientDirectoryService.js's
+// own header on why this file stays a pure-ish, Firestore-import-free
+// helper) -- collision only if two accounts share both the same
+// name-prefix AND the same first 4 uid characters, astronomically
+// unlikely for a Firebase Auth uid. Falls back to 'patient' if name is
+// somehow empty rather than producing an unusable bare suffix.
+function buildUsername(name, uid) {
+  const base = (name || 'patient').toLowerCase().replace(/[^a-z0-9]+/g, '').slice(0, 16) || 'patient';
+  const suffix = (uid || '').replace(/[^a-zA-Z0-9]/g, '').slice(0, 4).toLowerCase();
+  return `${base}${suffix}`;
+}
 
 // Real authentication via Firebase Auth (see FIREBASE_SETUP.md). Google and
 // Facebook sign-in now go through Firebase's own signInWithPopup rather
@@ -81,13 +118,33 @@ export function useAuth() {
           // known, disclosed gap.
           const consentGiven = pendingConsentRef.current === true;
           pendingConsentRef.current = null;
+          const username = buildUsername(firebaseUser.displayName || 'there', firebaseUser.uid);
           profile = UserProfileEngine.buildNewProfileDoc({
             name: firebaseUser.displayName || 'there',
             email: firebaseUser.email,
             authProvider: firebaseUser.providerData?.[0]?.providerId || 'password',
             privacyConsentAcceptedAt: consentGiven ? new Date().toISOString() : null,
           });
+          profile = { ...profile, username, usernameLower: username.toLowerCase() };
           await FirestoreUserService.createUserProfile(firebaseUser.uid, profile);
+          // 2026-08-27: mirror the search-safe subset into /patientDirectory
+          // (see FirestorePatientDirectoryService.js) -- non-fatal if this
+          // fails, same posture as the doctor nameLower self-heal below;
+          // the account itself must never be blocked by this.
+          FirestorePatientDirectoryService.upsertEntry(firebaseUser.uid, {
+            username, usernameLower: username.toLowerCase(), name: firebaseUser.displayName || 'there',
+          }).catch((err) => console.error('Could not write patient directory entry:', err));
+        } else if (!profile.username) {
+          // 2026-08-27 self-heal -- same "backfill on next login, never a
+          // hard error" pattern as useDoctorAuth.js's nameLower backfill,
+          // for any account created before patient search existed.
+          const username = buildUsername(profile.name, firebaseUser.uid);
+          const usernameLower = username.toLowerCase();
+          FirestoreUserService.updateUserProfile(firebaseUser.uid, { username, usernameLower })
+            .catch((err) => console.error('Could not backfill username:', err));
+          FirestorePatientDirectoryService.upsertEntry(firebaseUser.uid, { username, usernameLower, name: profile.name })
+            .catch((err) => console.error('Could not write patient directory entry:', err));
+          profile = { ...profile, username, usernameLower };
         }
         setCurrentUser({ ...profile, uid: firebaseUser.uid });
         setIsAuthenticated(true);
@@ -148,13 +205,24 @@ export function useAuth() {
     try {
       const credential = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(credential.user, { displayName: name });
-      const profile = UserProfileEngine.buildNewProfileDoc({
-        name,
-        email,
-        authProvider: 'password',
-        privacyConsentAcceptedAt: consentGiven ? new Date().toISOString() : null,
-      });
+      const username = buildUsername(name, credential.user.uid);
+      const usernameLower = username.toLowerCase();
+      const profile = {
+        ...UserProfileEngine.buildNewProfileDoc({
+          name,
+          email,
+          authProvider: 'password',
+          privacyConsentAcceptedAt: consentGiven ? new Date().toISOString() : null,
+        }),
+        username,
+        usernameLower,
+      };
       await FirestoreUserService.createUserProfile(credential.user.uid, profile);
+      // 2026-08-27: mirror into /patientDirectory (see
+      // FirestorePatientDirectoryService.js) -- non-fatal, same posture as
+      // the onAuthStateChanged path above.
+      FirestorePatientDirectoryService.upsertEntry(credential.user.uid, { username, usernameLower, name })
+        .catch((err) => console.error('Could not write patient directory entry:', err));
       // onAuthStateChanged fires too, but it would read this profile back
       // from Firestore a beat later -- setting it directly here avoids a
       // flash of "profile not found yet" between signup and that listener.

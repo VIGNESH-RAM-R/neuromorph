@@ -16,5 +16,17 @@ export const AI_FALLBACK_CONFIG = {
   // as a secret). See GEMINI_SETUP.md for how this was set up.
   enabled: true,
   endpoint: 'https://us-central1-neuromorph-624c0.cloudfunctions.net/askMorphy',
-  timeoutMs: 12000,
+  // 2026-08-28 BUGFIX (VR: "even hi, hello kuda solla maatran", "'I tried
+  // extending my knowledge' ne solran" -- that phrase is NETWORK_ERROR_MESSAGE
+  // below, paraphrased). This was 12000ms -- SHORTER than
+  // functions/index.js's own internal Gemini-call timeout (was 15000ms,
+  // now 25000ms), which meant the browser was giving up and showing the
+  // "couldn't connect" message several seconds BEFORE the server's own
+  // timeout even fired, on any request slowed down even a little by
+  // Google Search grounding (enabled server-side for every Morphy call).
+  // Raised to 28000ms so the client always waits at least as long as the
+  // server is willing to try, with margin -- see functions/index.js's
+  // matching 2026-08-28 comment for the full chain (client 28000 > server
+  // internal 25000 > Cloud Function's own onRequest timeoutSeconds, 40).
+  timeoutMs: 28000,
 };

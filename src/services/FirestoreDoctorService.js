@@ -31,6 +31,43 @@ function doctorDocRef(uid) {
 // this prefix".
 const PREFIX_RANGE_CEILING = '';
 
+// 2026-08-27: tiny Levenshtein distance helper for the typo-tolerant
+// search fallback above -- no new dependency for one small function.
+// Iterative single-row DP (not recursive), fine for the short strings
+// (doctor names/IDs) this ever runs against.
+function levenshtein(a, b) {
+  if (a === b) return 0;
+  if (!a.length) return b.length;
+  if (!b.length) return a.length;
+  let prevRow = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i += 1) {
+    const currRow = [i];
+    for (let j = 1; j <= b.length; j += 1) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      currRow[j] = Math.min(currRow[j - 1] + 1, prevRow[j] + 1, prevRow[j - 1] + cost);
+    }
+    prevRow = currRow;
+  }
+  return prevRow[b.length];
+}
+
+// A typo'd search term is usually short relative to a full doctor name
+// ("dr sarah reyes") -- comparing it against the whole name would always
+// score a large distance even for a perfect match on the first word. This
+// slides the term across the name and keeps the best (smallest) distance
+// against any equal-length window, so "sarra" still scores close against
+// "...sarah..." wherever it appears in the full name.
+function closestSubstringDistance(term, fullText) {
+  if (fullText.length <= term.length) return levenshtein(term, fullText);
+  let best = Infinity;
+  for (let start = 0; start <= fullText.length - term.length; start += 1) {
+    const window = fullText.slice(start, start + term.length);
+    best = Math.min(best, levenshtein(term, window));
+    if (best === 0) break;
+  }
+  return best;
+}
+
 export const FirestoreDoctorService = {
   async getDoctorProfile(uid) {
     const snap = await getDoc(doctorDocRef(uid));
@@ -77,7 +114,12 @@ export const FirestoreDoctorService = {
     if (idMatch) {
       const q = query(collection(db, 'doctors'), where('doctorId', '==', raw.toUpperCase()), where('accessApproved', '==', true), limit(1));
       const snap = await getDocs(q);
-      return snap.docs.map((d) => this._toResult(d));
+      const exact = snap.docs.map((d) => this._toResult(d));
+      // 2026-08-27: even an ID-shaped query can be a typo (one wrong
+      // character in "NMD-XXXXXX") -- fall through to the same
+      // name-similarity fallback as a plain name search below rather
+      // than just returning empty.
+      return exact.length ? exact : this._fuzzyFallback(raw.toLowerCase());
     }
 
     const term = raw.toLowerCase();
@@ -90,7 +132,51 @@ export const FirestoreDoctorService = {
       limit(20),
     );
     const snap = await getDocs(q);
-    return snap.docs.map((d) => this._toResult(d));
+    const exact = snap.docs.map((d) => this._toResult(d));
+    if (exact.length) return exact;
+
+    // 2026-08-27 ADDITION (VR: "if not exist na - give me no search found,
+    // illa some typo mistakes iruntha - give similar profiles"). Firestore
+    // only supports prefix range queries, so a genuine typo (transposed
+    // letter, one character off) never matches startAt/endAt. When the
+    // exact prefix search comes back empty, fall back to a broader fetch
+    // + client-side similarity scoring so a near-miss spelling still
+    // surfaces the doctor the person almost certainly meant, instead of a
+    // dead end. Every result from this path is tagged `fuzzy: true` so the
+    // UI can label them "Similar profiles" rather than pretending they're
+    // an exact match.
+    return this._fuzzyFallback(term);
+  },
+
+  // Fetches a bounded page of approved doctors (cheap even as the roster
+  // grows into the hundreds -- one indexed query, capped at 150) and scores
+  // each by Levenshtein distance against the search term, on both the full
+  // name and the doctor ID. Only returns doctors within a distance close
+  // enough to plausibly be the same typo'd word, closest first, capped at 5
+  // -- this is a "did you mean" list, not a second search box.
+  async _fuzzyFallback(term) {
+    if (!term || term.length < 2) return [];
+    const q = query(
+      collection(db, 'doctors'),
+      where('accessApproved', '==', true),
+      orderBy('nameLower'),
+      limit(150),
+    );
+    const snap = await getDocs(q);
+    const maxDistance = term.length <= 4 ? 1 : 2;
+    const scored = snap.docs
+      .map((d) => {
+        const data = d.data();
+        const nameLower = data.nameLower || (data.name || '').toLowerCase();
+        const idLower = (data.doctorId || '').toLowerCase();
+        const nameDistance = closestSubstringDistance(term, nameLower);
+        const idDistance = idLower ? levenshtein(term, idLower) : Infinity;
+        return { doc: d, distance: Math.min(nameDistance, idDistance) };
+      })
+      .filter((entry) => entry.distance <= maxDistance)
+      .sort((a, b) => a.distance - b.distance)
+      .slice(0, 5);
+    return scored.map((entry) => ({ ...this._toResult(entry.doc), fuzzy: true }));
   },
 
   // 2026-08-25 ADDITION -- the real platform-wide access gate replacing the

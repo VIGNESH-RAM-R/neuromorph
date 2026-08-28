@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { LOBAR_TASK_ORDER } from '../config/lobarTaskRegistryConfig.js';
 import { AssessmentSessionModel } from '../engines/AssessmentSessionModel.js';
+import { StudyItemRegistry } from '../engines/StudyItemRegistry.js';
 
 // The Question Bank block runs as one final step after the 12 lobar tasks
 // -- "the Lobar Function Test, plus 10 questions from the QB" is one
@@ -27,6 +28,26 @@ export function useDetectionAssessment() {
   const currentTaskId = RUN_ORDER[currentIndex];
 
   const start = useCallback(() => {
+    // 2026-08-27 BUGFIX (found during the full Detection Assessment audit):
+    // StudyItemRegistry.clear() was NEVER called anywhere in the app --
+    // VisualMemoryTask/FaceRecognitionTask only ever REGISTER items,
+    // nothing ever resets the sessionStorage-backed list between attempts.
+    // Since sessionStorage survives page reloads/re-navigations within the
+    // same browser tab (it only clears when the tab/window actually
+    // closes), a patient retaking the assessment in the same tab -- or a
+    // second patient using the same shared device without closing the
+    // browser -- would have Delayed Recognition Memory tested against a
+    // MIX of this attempt's items plus every earlier attempt's leftover
+    // items still sitting in storage. That's a real, silent scoring
+    // contamination bug: the "delayed recognition" trial could ask about
+    // something studied last week (or by someone else entirely), not what
+    // was actually just shown -- exactly the "scores should be genuinely
+    // individual, no bugs" requirement this audit was checking for.
+    // Clearing here, at the moment a fresh attempt actually starts (not at
+    // completion -- a patient can always look back at what they registered
+    // mid-run without this firing early), guarantees every attempt begins
+    // from a real, clean slate.
+    StudyItemRegistry.clear();
     setPhase('running');
     setCurrentIndex(0);
     setResults([]);

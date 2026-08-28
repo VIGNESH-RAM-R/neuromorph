@@ -5960,3 +5960,38 @@
   width: 18px;
   height: 18px;
 }
+
+
+/* =========================================================================
+   Dark-mode boundary fix (2026-08-27 UI/UX audit)
+   ========================================================================= 
+   This whole stylesheet is light-only -- it has no [data-theme='dark']
+   variant, and rewriting ~400 hardcoded hex colors across the games'
+   component CSS blind (no visual verification available this session)
+   is a real redesign, not a safe patch -- flagged in the audit as
+   follow-up work needing eyes on the rendered result.
+
+   What IS safe to fix now: the app shell's "Back to Games" exit bar
+   (.nmpa-embedded-exit-bar, from app_page's own theme.css) sits directly
+   on top of this always-light games canvas, but it renders using the
+   PARENT app's dark-aware tokens (--nmpa-surface/--nmpa-accent). In dark
+   mode that means a dark bar sitting flush against a stark light canvas --
+   a jarring seam on every single visit to games while in dark mode, not a
+   hypothetical. Since the content below it can't honestly be called
+   dark-mode-ready yet, the bar is pinned to the same fixed light values
+   used by the rest of this always-light suite, so the whole embedded
+   surface presents as one consistent light unit instead of a dark bar
+   glued to a light canvas. Uses literal hex matching this app's own
+   light-theme token values (src/styles/theme.css :root block) rather than
+   guessed colors, and only changes the wrapper — none of the games'
+   internal component CSS below (which shows real prior craft, but is
+   equally too large to touch blind). When the games suite gets a real
+   dark-mode pass, delete this override along with it. */
+.oddball-root .nmpa-embedded-exit-bar {
+  background: #ffffff;
+  border-bottom: 1px solid #dce7f3;
+  color: #13233a;
+}
+.oddball-root .nmpa-embedded-exit-bar .nmpa-link {
+  color: #1769c2;
+}

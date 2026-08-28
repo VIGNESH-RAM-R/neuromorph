@@ -1,5 +1,7 @@
 import OddballGamesApp from '../../oddballGames/App.jsx';
 import '../../oddballGames/theme.css';
+import { DEFAULT_LANGUAGE } from '../../config/i18nConfig.js';
+import { t } from '../../i18n/strings/dashboard.js';
 
 // 2026-08-23: the ODD BALL cognitive games suite (Visual Oddball, Sequence
 // Memory, Point & Click, Image Pairs, Whack the Mole, Spot the Difference)
@@ -17,11 +19,22 @@ import '../../oddballGames/theme.css';
 // can't bleed into the rest of app_page. onExit renders a small fixed
 // "back" bar above the suite's own dashboard header -- the suite itself
 // has no concept of a parent app to return to.
-export default function OddballGamesLauncher({ onExit, userName, initialDomain, initialGame }) {
+//
+// 2026-08-26 (VR): label changed from "Back to NEUROMORPH" -- onExit
+// actually returns to GamesSection (the patient dashboard's own
+// "Improvisation Games" tab -- see GamesSection.jsx), not out to the
+// NEUROMORPH landing page. Naming the real destination makes it read as
+// one integrated app instead of two apps stitched together.
+//
+// 2026-08-26: this "Back to Games" wrapper string is translated (see
+// src/i18n/strings/dashboard.js). The embedded OddballGamesApp suite
+// itself is a separate, self-contained project with its own internal
+// dashboard/copy -- out of scope for this pass, flagged as follow-up work.
+export default function OddballGamesLauncher({ onExit, userName, initialDomain, initialGame, language = DEFAULT_LANGUAGE }) {
   return (
     <div className="oddball-root">
       <div className="nmpa-embedded-exit-bar nmpa-screen-only">
-        <button type="button" className="nmpa-link" onClick={onExit}>&larr; Back to NEUROMORPH</button>
+        <button type="button" className="nmpa-link" onClick={onExit}>&larr; {t(language, 'backToGames')}</button>
       </div>
       <OddballGamesApp user={userName ? { name: userName } : undefined} initialDomain={initialDomain} initialGame={initialGame} />
     </div>

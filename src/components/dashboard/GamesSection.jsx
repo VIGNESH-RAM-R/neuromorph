@@ -35,7 +35,7 @@ export default function GamesSection({ self, onCompleteTask, onGoToAssessment, l
   const [showGameSuite, setShowGameSuite] = useState(false);
 
   if (showGameSuite) {
-    return <OddballGamesLauncher onExit={() => setShowGameSuite(false)} userName={self?.name} initialDomain={gameSuiteDomain} initialGame={gameSuiteGame} />;
+    return <OddballGamesLauncher onExit={() => setShowGameSuite(false)} userName={self?.name} initialDomain={gameSuiteDomain} initialGame={gameSuiteGame} language={language} />;
   }
 
   if (activeTaskId) {

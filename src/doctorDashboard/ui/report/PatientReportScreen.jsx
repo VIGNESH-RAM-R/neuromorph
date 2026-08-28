@@ -19,8 +19,10 @@ import DownloadReportButton from './DownloadReportButton.jsx';
 import AdvancedAnalyticsPanel from './AdvancedAnalyticsPanel.jsx';
 import PrintableReport from './PrintableReport.jsx';
 import EmptyState from '../shared/EmptyState.jsx';
+import { DEFAULT_LANGUAGE } from '../../config/i18nConfig.js';
+import { t } from '../../i18n/strings/report.js';
 
-export default function PatientReportScreen({ patientId, onBack, patients, currentUser }) {
+export default function PatientReportScreen({ patientId, onBack, patients, currentUser, language = DEFAULT_LANGUAGE }) {
   const { report, addClinicalNote, isSavingNote, noteError, exportPdf, isPrinting } = usePatientReport(patientId, patients, currentUser);
   // 2026-08-25 ADDITION -- same read CaregiverResponsesPanel below uses,
   // fetched once here too so PrintableReport (the actual PDF/print output)
@@ -30,51 +32,52 @@ export default function PatientReportScreen({ patientId, onBack, patients, curre
   const caregiverState = useCaregiverResponses(patientId);
 
   if (!patientId) {
-    return <EmptyState title="No patient selected" message="Choose a patient from the list to view their report." />;
+    return <EmptyState title={t(language, 'noPatientSelectedTitle')} message={t(language, 'noPatientSelectedMessage')} />;
   }
   if (!report || !report.hasData) {
-    return <EmptyState title="No assessment data yet" message="This patient has not completed an assessment session." />;
+    return <EmptyState title={t(language, 'noAssessmentDataTitle')} message={t(language, 'noAssessmentDataMessage')} />;
   }
 
   return (
     <>
       <div className="nmdd-report nmdd-screen-only">
         <div className="nmdd-report__topbar">
-          <button type="button" className="nmdd-link" onClick={onBack}>&larr; Back to patient list</button>
-          <DownloadReportButton onExport={exportPdf} isPrinting={isPrinting} />
+          <button type="button" className="nmdd-link" onClick={onBack}>&larr; {t(language, 'backToPatientList')}</button>
+          <DownloadReportButton onExport={exportPdf} isPrinting={isPrinting} language={language} />
         </div>
 
-        <PatientOverviewCard report={report} />
-        <DailyMomentumCard dailyMomentum={report.dailyMomentum} />
-        <OverallCognitiveSummaryCard report={report} />
-        <CognitiveDomainAnalysis domains={report.domains} />
-        <LobarFunctionAnalysis lobes={report.lobes} />
+        <PatientOverviewCard report={report} language={language} />
+        <DailyMomentumCard dailyMomentum={report.dailyMomentum} language={language} />
+        <OverallCognitiveSummaryCard report={report} language={language} />
+        <CognitiveDomainAnalysis domains={report.domains} language={language} />
+        <LobarFunctionAnalysis lobes={report.lobes} language={language} />
 
         <div className="nmdd-report__row">
-          <VisualMemoryReportCard visualMemory={report.visualMemory} />
-          <SpeechAssessmentCard speech={report.speech} />
+          <VisualMemoryReportCard visualMemory={report.visualMemory} language={language} />
+          <SpeechAssessmentCard speech={report.speech} language={language} />
         </div>
 
-        <QuestionnaireSummaryCard questionnaire={report.questionnaire} caregiverConcordance={report.caregiverConcordance} />
-        <CaregiverConcordancePanel caregiverConcordance={report.caregiverConcordance} />
-        <CaregiverResponsesPanel patientId={patientId} />
-        <LongitudinalProgressSection report={report} />
-        <TrendIntelligencePanel trendIntelligence={report.trendIntelligence} />
-        <NetworkCoherencePanel networkCoherence={report.networkCoherence} />
+        <QuestionnaireSummaryCard questionnaire={report.questionnaire} caregiverConcordance={report.caregiverConcordance} language={language} />
+        <CaregiverConcordancePanel caregiverConcordance={report.caregiverConcordance} language={language} />
+        <CaregiverResponsesPanel patientId={patientId} language={language} />
+        <LongitudinalProgressSection report={report} language={language} />
+        <TrendIntelligencePanel trendIntelligence={report.trendIntelligence} language={language} />
+        <NetworkCoherencePanel networkCoherence={report.networkCoherence} language={language} />
         <ClinicalObservationsPanel
           notes={report.clinicalNotes}
           onAddNote={addClinicalNote}
           notesLoadError={report.notesError}
           isSaving={isSavingNote}
           saveError={noteError}
+          language={language}
         />
-        <ClinicalRecommendationsCard recommendations={report.recommendations} />
-        <AdvancedAnalyticsPanel hiddenAnalytics={report.hiddenAnalytics} />
+        <ClinicalRecommendationsCard recommendations={report.recommendations} language={language} />
+        <AdvancedAnalyticsPanel hiddenAnalytics={report.hiddenAnalytics} language={language} />
       </div>
 
       {/* Rendered as a sibling, not a child, of the screen-only wrapper so
           print.css can hide .nmdd-screen-only and still show this. */}
-      <PrintableReport report={report} caregiver={caregiverState.status === 'ready' ? caregiverState.caregiver : null} />
+      <PrintableReport report={report} caregiver={caregiverState.status === 'ready' ? caregiverState.caregiver : null} language={language} />
     </>
   );
 }

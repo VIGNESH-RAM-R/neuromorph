@@ -1,3 +1,6 @@
+import { DEFAULT_LANGUAGE } from '../../config/i18nConfig.js';
+import { t } from '../../i18n/strings/dashboard.js';
+
 // Dependency-free inline SVG line chart, same pattern used across every
 // other NEUROMORPH module -- no chart library.
 //
@@ -9,10 +12,14 @@
 // path's length to exactly 1 for stroke-dash* purposes, regardless of its
 // real on-screen length) so the CSS animation works identically for a
 // short 3-point series and a long 30-point one with zero JS measurement.
-export default function LineChart({ series = [], height = 160, label }) {
+//
+// 2026-08-26: full i18n pass -- `label` is already passed in translated by
+// every caller (see src/i18n/strings/dashboard.js); only the empty-state
+// message and the untranslated-caller fallback need `language` here.
+export default function LineChart({ series = [], height = 160, label, language = DEFAULT_LANGUAGE }) {
   const valid = series.filter((p) => typeof p.score === 'number');
   if (valid.length < 2) {
-    return <div className="nmpa-chart-empty">Not enough history yet to plot a trend.</div>;
+    return <div className="nmpa-chart-empty">{t(language, 'notEnoughHistoryTrend')}</div>;
   }
   const width = 480;
   const padding = 32;
@@ -27,10 +34,11 @@ export default function LineChart({ series = [], height = 160, label }) {
   // are many small elements in one chart rather than a few big cards --
   // capped so a long history doesn't push the last point in absurdly late.
   const pointDelay = (i) => 700 + Math.min(i * 40, 400);
+  const resolvedLabel = label || t(language, 'trendChartDefaultLabel');
 
   return (
-    <svg viewBox={`0 0 ${width} ${height}`} className="nmpa-linechart" role="img" aria-label={label || 'Trend chart'}>
-      <title>{label || 'Trend chart'}</title>
+    <svg viewBox={`0 0 ${width} ${height}`} className="nmpa-linechart" role="img" aria-label={resolvedLabel}>
+      <title>{resolvedLabel}</title>
       <path d={pathD} pathLength={1} className="nmpa-linechart__path" fill="none" />
       {points.map((p, i) => (
         <g key={i}>

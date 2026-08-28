@@ -8,18 +8,29 @@ import { BAND_RANK } from '../config/scoringBands.js';
 //      (first session vs. latest), which catches a slow decline that never
 //      exceeds the session-over-session threshold at any single step --
 //      a gap identified in this project's own self-review (see README).
+//
+// 2026-08-26: alongside the raw English `reasons` (kept for any other
+// consumer/export path), each reason now also gets a structured
+// `reasonEntries` counterpart -- { key, values } -- so the UI can render a
+// translated sentence via report.js's translation-key + `format()` instead
+// of the hardcoded English template literal. `reasons` and `reasonEntries`
+// are always the same length and in the same order.
 export const RiskAlertEngine = {
   evaluate(previousSession, latestSession, previousOverallBand, latestOverallBand, config = RISK_ALERT_CONFIG, allSessions = undefined) {
     const reasons = [];
+    const reasonEntries = [];
 
     if (previousSession && latestSession) {
       const overallDelta = (latestSession.overallRawScore ?? 0) - (previousSession.overallRawScore ?? 0);
       if (overallDelta <= -config.scoreDropThreshold) {
-        reasons.push(`Overall cognitive score dropped ${Math.abs(overallDelta)} points since the previous session.`);
+        const points = Math.abs(overallDelta);
+        reasons.push(`Overall cognitive score dropped ${points} points since the previous session.`);
+        reasonEntries.push({ key: 'riskReasonScoreDropped', values: { points } });
       }
 
       if (previousOverallBand && latestOverallBand && BAND_RANK[latestOverallBand] < BAND_RANK[previousOverallBand]) {
         reasons.push(`Overall performance band moved from ${previousOverallBand} to ${latestOverallBand}.`);
+        reasonEntries.push({ key: 'riskReasonBandDowngraded', values: { previousBand: previousOverallBand, latestBand: latestOverallBand } });
       }
 
       const prevDomains = previousSession.domainScoresRaw || {};
@@ -30,7 +41,9 @@ export const RiskAlertEngine = {
         if (typeof prevVal === 'number' && typeof latestVal === 'number') {
           const domainDelta = latestVal - prevVal;
           if (domainDelta <= -config.domainDropThreshold) {
-            reasons.push(`${key} domain dropped ${Math.abs(domainDelta)} points since the previous session.`);
+            const points = Math.abs(domainDelta);
+            reasons.push(`${key} domain dropped ${points} points since the previous session.`);
+            reasonEntries.push({ key: 'riskReasonDomainDropped', values: { domain: key, points } });
           }
         }
       }
@@ -43,11 +56,13 @@ export const RiskAlertEngine = {
         const cumulativeDelta = latest.overallRawScore - first.overallRawScore;
         const alreadyCaughtByStepCheck = reasons.some((r) => r.startsWith('Overall cognitive score dropped'));
         if (cumulativeDelta <= -config.cumulativeDropThreshold && !alreadyCaughtByStepCheck) {
-          reasons.push(`Overall cognitive score has declined ${Math.abs(cumulativeDelta)} points across ${allSessions.length} sessions on record (${first.date} to ${latest.date}), a gradual pattern not visible in the most recent step alone.`);
+          const points = Math.abs(cumulativeDelta);
+          reasons.push(`Overall cognitive score has declined ${points} points across ${allSessions.length} sessions on record (${first.date} to ${latest.date}), a gradual pattern not visible in the most recent step alone.`);
+          reasonEntries.push({ key: 'riskReasonCumulativeDecline', values: { points, sessionCount: allSessions.length, fromDate: first.date, toDate: latest.date } });
         }
       }
     }
 
-    return { flagged: reasons.length > 0, reasons };
+    return { flagged: reasons.length > 0, reasons, reasonEntries };
   },
 };

@@ -10,7 +10,7 @@ import { MailIcon, UserIcon } from '../icons/FormIcons.jsx';
 import { authString } from '../../i18n/authStrings.js';
 import PrivacyPolicyScreen from './PrivacyPolicyScreen.jsx';
 
-export default function SignupScreen({ onSignup, onSwitchToLogin, onSocialAuth, errors, isSubmitting, theme, onToggleTheme, language, onChangeLanguage }) {
+export default function SignupScreen({ onSignup, onSwitchToLogin, onSocialAuth, onBackToRoleGate, errors, isSubmitting, theme, onToggleTheme, language, onChangeLanguage }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -60,6 +60,9 @@ export default function SignupScreen({ onSignup, onSwitchToLogin, onSocialAuth, 
 
       <div className="nmpa-auth__panel nmpa-auth__panel--form">
         <div className="nmpa-auth__card">
+          {onBackToRoleGate && (
+            <button type="button" className="nmpa-link nmpa-auth__back-link" onClick={onBackToRoleGate}>&larr; {t('backLink')}</button>
+          )}
           <h1 className="nmpa-auth__heading">{t('createYourAccount')}</h1>
           <p className="nmpa-auth__lede">{t('signupLede')}</p>
 

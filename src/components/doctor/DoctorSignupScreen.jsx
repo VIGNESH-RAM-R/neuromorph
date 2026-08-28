@@ -8,10 +8,13 @@ import AuthDivider from '../auth/AuthDivider.jsx';
 import ThemeToggle from '../common/ThemeToggle.jsx';
 import { MailIcon, UserIcon } from '../icons/FormIcons.jsx';
 import PrivacyPolicyScreen from '../auth/PrivacyPolicyScreen.jsx';
+import { t } from '../../i18n/strings/doctorAuth.js';
 
 // 2026-08-18: same language-switcher fix as DoctorLoginScreen.jsx -- see
 // that file's header comment for the full story.
-export default function DoctorSignupScreen({ onSignup, onSwitchToLogin, onSocialAuth, onBackToRoleGate, errors, isSubmitting, theme, onToggleTheme, language, onChangeLanguage }) {
+// 2026-08-27: form copy now translated too (src/i18n/strings/doctorAuth.js),
+// same file/pass as DoctorLoginScreen.jsx's 2026-08-27 note -- see there.
+export default function DoctorSignupScreen({ onSignup, onSwitchToLogin, onSocialAuth, onBackToRoleGate, errors, isSubmitting, theme, onToggleTheme, language = 'en', onChangeLanguage }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,10 +27,8 @@ export default function DoctorSignupScreen({ onSignup, onSwitchToLogin, onSocial
   const [accessKey, setAccessKey] = useState('');
   const [touched, setTouched] = useState({});
   // 2026-08-21: required consent -- see useDoctorAuth.js's consentGiven
-  // plumbing. English-only here, same as the rest of this screen -- the
-  // Doctor portal hasn't been ported to the 7-language i18n system yet
-  // (see PROGRESS.md / task #12), so this doesn't force-translate just
-  // this one piece.
+  // plumbing. Now translated along with the rest of this screen (2026-08-27,
+  // see the header comment above).
   const [consentGiven, setConsentGiven] = useState(false);
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
 
@@ -64,15 +65,24 @@ export default function DoctorSignupScreen({ onSignup, onSwitchToLogin, onSocial
       <AuthBrandPanel
         language={language}
         onChangeLanguage={onChangeLanguage}
-        roleBadge="Doctor Portal"
-        subledeOverride="Create your clinician account -- a short professional questionnaire and the clinical assistant come next."
+        roleBadge={t(language, 'roleBadge')}
+        subledeOverride={t(language, 'signupSublede')}
+        instructionsTitle={t(language, 'instructionsTitle')}
+        trustItems={[
+          t(language, 'trustItem1'),
+          t(language, 'trustItem2'),
+          t(language, 'trustItem3'),
+          t(language, 'trustItem4'),
+          t(language, 'trustItem5'),
+          t(language, 'trustItem6'),
+        ]}
       />
 
       <div className="nmpa-auth__panel nmpa-auth__panel--form">
         <div className="nmpa-auth__card">
-          <button type="button" className="nmpa-link nmpa-auth__back-link" onClick={onBackToRoleGate}>&larr; Not a doctor?</button>
-          <h1 className="nmpa-auth__heading">Create a clinician account</h1>
-          <p className="nmpa-auth__lede">A few professional questions come right after -- helps us tailor what you see.</p>
+          <button type="button" className="nmpa-link nmpa-auth__back-link" onClick={onBackToRoleGate}>{t(language, 'backLink')}</button>
+          <h1 className="nmpa-auth__heading">{t(language, 'signupHeading')}</h1>
+          <p className="nmpa-auth__lede">{t(language, 'signupLede')}</p>
 
           <SocialAuthRow
             mode="up"
@@ -80,12 +90,12 @@ export default function DoctorSignupScreen({ onSignup, onSwitchToLogin, onSocial
             onGoogleClick={() => consentGiven && onSocialAuth('google', consentGiven)}
             onFacebookClick={() => consentGiven && onSocialAuth('facebook', consentGiven)}
           />
-          <AuthDivider label="or sign up with email" />
+          <AuthDivider label={t(language, 'signupDivider')} />
 
           <form onSubmit={handleSubmit} className="nmpa-form" noValidate>
             <AuthTextField
               icon={<UserIcon />}
-              label="Full name"
+              label={t(language, 'fullNameLabel')}
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -97,7 +107,7 @@ export default function DoctorSignupScreen({ onSignup, onSwitchToLogin, onSocial
 
             <AuthTextField
               icon={<MailIcon />}
-              label="Email address"
+              label={t(language, 'emailLabel')}
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -107,7 +117,7 @@ export default function DoctorSignupScreen({ onSignup, onSwitchToLogin, onSocial
             />
 
             <PasswordField
-              label="Password"
+              label={t(language, 'passwordLabel')}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onBlur={() => handleBlur('password')}
@@ -116,7 +126,7 @@ export default function DoctorSignupScreen({ onSignup, onSwitchToLogin, onSocial
             />
 
             <PasswordField
-              label="Confirm password"
+              label={t(language, 'confirmPasswordLabel')}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               onBlur={() => handleBlur('confirmPassword')}
@@ -125,7 +135,7 @@ export default function DoctorSignupScreen({ onSignup, onSwitchToLogin, onSocial
             />
 
             <AuthTextField
-              label="Access key (optional -- ask your administrator)"
+              label={t(language, 'accessKeyLabel')}
               type="text"
               value={accessKey}
               onChange={(e) => setAccessKey(e.target.value)}
@@ -140,19 +150,19 @@ export default function DoctorSignupScreen({ onSignup, onSwitchToLogin, onSocial
                 onChange={(e) => setConsentGiven(e.target.checked)}
               />
               <span>
-                I have read and agree to the{' '}
-                <button type="button" className="nmpa-link" onClick={() => setShowPrivacyPolicy(true)}>Privacy Policy</button>
+                {t(language, 'consentPrefix')}{' '}
+                <button type="button" className="nmpa-link" onClick={() => setShowPrivacyPolicy(true)}>{t(language, 'privacyPolicyLink')}</button>
               </span>
             </label>
 
             <button type="submit" className="nmpa-button nmpa-button--primary nmpa-button--block" disabled={isSubmitting || !consentGiven}>
-              {isSubmitting ? 'Creating account…' : 'Create Account'}
+              {isSubmitting ? t(language, 'creatingAccountButton') : t(language, 'createAccountButton')}
             </button>
           </form>
 
           <p className="nmpa-auth__switch">
-            Already have an account?{' '}
-            <button type="button" className="nmpa-link" onClick={onSwitchToLogin}>Log in</button>
+            {t(language, 'haveAccountText')}{' '}
+            <button type="button" className="nmpa-link" onClick={onSwitchToLogin}>{t(language, 'logInLink')}</button>
           </p>
         </div>
       </div>

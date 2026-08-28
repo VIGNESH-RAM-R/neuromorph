@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import AuthTextField from '../auth/AuthTextField.jsx';
 import BrandLogo from '../common/BrandLogo.jsx';
+import { DEFAULT_LANGUAGE } from '../../config/i18nConfig.js';
+import { t } from '../../i18n/strings/doctorAuth.js';
 
 // The app_page counterpart to Doctor_Dashboard's AccessPendingScreen.jsx.
 //
@@ -14,7 +16,7 @@ import BrandLogo from '../common/BrandLogo.jsx';
 // sign-in round trip needed, the screen swaps away the moment it succeeds
 // since currentDoctor.accessApproved flips in local state immediately.
 // Same "invite code" form shape as CaregiverLinkPatientScreen.jsx.
-export default function DoctorAccessPendingScreen({ doctor, onLogout, onRedeemAccessKey, errors = {}, isSubmitting = false }) {
+export default function DoctorAccessPendingScreen({ doctor, onLogout, onRedeemAccessKey, errors = {}, isSubmitting = false, language = DEFAULT_LANGUAGE }) {
   const [key, setKey] = useState('');
 
   const handleSubmit = async (e) => {
@@ -26,18 +28,19 @@ export default function DoctorAccessPendingScreen({ doctor, onLogout, onRedeemAc
     <div className="nmpa-session-loading" role="status">
       <BrandLogo size="lg" />
       <div className="nmpa-card" style={{ maxWidth: 480, textAlign: 'left' }}>
-        <h1 className="nmpa-card__title">Access not set up yet</h1>
+        <h1 className="nmpa-card__title">{t(language, 'accessPendingHeading')}</h1>
         <p className="nmpa-muted">
-          You're signed in as <strong>{doctor?.email}</strong>, but this account isn't yet approved to view patient
-          data.
+          {(() => {
+            const [before, after] = t(language, 'accessPendingBody').split('{email}');
+            return <>{before}<strong>{doctor?.email}</strong>{after}</>;
+          })()}
         </p>
         <p className="nmpa-muted nmpa-muted--sm">
-          If your administrator gave you a platform access key, enter it below to unlock your account immediately.
-          Otherwise, ask them for one -- signing in alone doesn't grant patient data access.
+          {t(language, 'accessPendingNote')}
         </p>
         <form onSubmit={handleSubmit} className="nmpa-form" noValidate>
           <AuthTextField
-            label="Access key"
+            label={t(language, 'accessKeyOnlyLabel')}
             type="text"
             value={key}
             onChange={(e) => setKey(e.target.value)}
@@ -46,11 +49,11 @@ export default function DoctorAccessPendingScreen({ doctor, onLogout, onRedeemAc
             error={errors?.accessKey}
           />
           <button type="submit" className="nmpa-button nmpa-button--primary nmpa-button--block" disabled={isSubmitting}>
-            {isSubmitting ? 'Verifying…' : 'Unlock access'}
+            {isSubmitting ? t(language, 'verifyingButton') : t(language, 'unlockButton')}
           </button>
         </form>
         <button type="button" className="nmpa-button nmpa-button--secondary" onClick={onLogout} style={{ marginTop: 12 }}>
-          Sign out
+          {t(language, 'signOutButton')}
         </button>
       </div>
     </div>

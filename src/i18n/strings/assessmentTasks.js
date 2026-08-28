@@ -56,6 +56,10 @@ export const ASSESSMENT_TASKS_STRINGS = {
     delayHoldOnInstruction: 'Hold on -- recognition begins shortly.',
 
     stroopInstruction: 'Tap the button matching the INK COLOR of the word below -- not the word itself.',
+    stroopColorRed: 'Red',
+    stroopColorBlue: 'Blue',
+    stroopColorGreen: 'Green',
+    stroopColorYellow: 'Yellow',
 
     goNoGoInstruction: 'Tap the button (or press Spacebar) for GREEN. Do not respond for RED.',
     goNoGoRespondBtn: 'Response (Spacebar)',
@@ -109,6 +113,10 @@ export const ASSESSMENT_TASKS_STRINGS = {
     delayHoldOnInstruction: 'रुकिए -- पहचान थोड़ी देर में शुरू होगी।',
 
     stroopInstruction: 'नीचे दिए गए शब्द के अक्षरों के रंग (INK COLOR) से मेल खाता बटन दबाएँ -- शब्द को नहीं।',
+    stroopColorRed: 'लाल',
+    stroopColorBlue: 'नीला',
+    stroopColorGreen: 'हरा',
+    stroopColorYellow: 'पीला',
 
     goNoGoInstruction: 'हरे रंग के लिए बटन दबाएँ (या स्पेसबार दबाएँ)। लाल रंग पर कोई प्रतिक्रिया न दें।',
     goNoGoRespondBtn: 'प्रतिक्रिया (स्पेसबार)',
@@ -162,6 +170,10 @@ export const ASSESSMENT_TASKS_STRINGS = {
     delayHoldOnInstruction: 'சற்று காத்திருங்கள் -- அடையாளம் காணுதல் விரைவில் தொடங்கும்.',
 
     stroopInstruction: 'கீழே உள்ள சொல்லின் மை நிறத்திற்கு (INK COLOR) பொருந்தும் பொத்தானைத் தட்டவும் -- சொல்லைப் பொருட்படுத்த வேண்டாம்.',
+    stroopColorRed: 'சிவப்பு',
+    stroopColorBlue: 'நீலம்',
+    stroopColorGreen: 'பச்சை',
+    stroopColorYellow: 'மஞ்சள்',
 
     goNoGoInstruction: 'பச்சை நிறத்திற்கு பொத்தானைத் தட்டவும் (அல்லது ஸ்பேஸ்பாரை அழுத்தவும்). சிவப்பு நிறத்திற்கு பதிலளிக்க வேண்டாம்.',
     goNoGoRespondBtn: 'பதில் (ஸ்பேஸ்பார்)',
@@ -215,6 +227,10 @@ export const ASSESSMENT_TASKS_STRINGS = {
     delayHoldOnInstruction: 'Patientez -- la reconnaissance commence bientôt.',
 
     stroopInstruction: "Appuyez sur le bouton correspondant à la COULEUR D'ENCRE du mot ci-dessous -- pas au mot lui-même.",
+    stroopColorRed: 'Rouge',
+    stroopColorBlue: 'Bleu',
+    stroopColorGreen: 'Vert',
+    stroopColorYellow: 'Jaune',
 
     goNoGoInstruction: 'Appuyez sur le bouton (ou la barre d\'espace) pour VERT. Ne répondez pas pour ROUGE.',
     goNoGoRespondBtn: 'Réponse (barre d\'espace)',
@@ -268,6 +284,10 @@ export const ASSESSMENT_TASKS_STRINGS = {
     delayHoldOnInstruction: 'కొద్దిసేపు వేచి ఉండండి -- గుర్తింపు త్వరలో మొదలవుతుంది.',
 
     stroopInstruction: 'కింద ఉన్న పదం యొక్క ఇంక్ కలర్ (INK COLOR)కి సరిపోలే బటన్‌ని నొక్కండి -- పదాన్ని కాదు.',
+    stroopColorRed: 'ఎరుపు',
+    stroopColorBlue: 'నీలం',
+    stroopColorGreen: 'ఆకుపచ్చ',
+    stroopColorYellow: 'పసుపు',
 
     goNoGoInstruction: 'ఆకుపచ్చ రంగుకు బటన్ నొక్కండి (లేదా స్పేస్‌బార్ నొక్కండి). ఎరుపు రంగుకు స్పందించవద్దు.',
     goNoGoRespondBtn: 'స్పందన (స్పేస్‌బార్)',
@@ -321,6 +341,10 @@ export const ASSESSMENT_TASKS_STRINGS = {
     delayHoldOnInstruction: 'رکیے -- شناخت جلد شروع ہوگی۔',
 
     stroopInstruction: 'نیچے دیے گئے لفظ کے سیاہی کے رنگ (INK COLOR) سے مماثل بٹن دبائیں -- لفظ کو نہیں۔',
+    stroopColorRed: 'سرخ',
+    stroopColorBlue: 'نیلا',
+    stroopColorGreen: 'سبز',
+    stroopColorYellow: 'پیلا',
 
     goNoGoInstruction: 'سبز کے لیے بٹن دبائیں (یا اسپیس بار دبائیں)۔ سرخ پر کوئی جواب نہ دیں۔',
     goNoGoRespondBtn: 'جواب (اسپیس بار)',
@@ -374,6 +398,10 @@ export const ASSESSMENT_TASKS_STRINGS = {
     delayHoldOnInstruction: 'Espera -- el reconocimiento comienza en breve.',
 
     stroopInstruction: 'Toca el botón que coincida con el COLOR DE TINTA de la palabra de abajo -- no con la palabra en sí.',
+    stroopColorRed: 'Rojo',
+    stroopColorBlue: 'Azul',
+    stroopColorGreen: 'Verde',
+    stroopColorYellow: 'Amarillo',
 
     goNoGoInstruction: 'Toca el botón (o presiona la barra espaciadora) para VERDE. No respondas para ROJO.',
     goNoGoRespondBtn: 'Responder (barra espaciadora)',

@@ -15,6 +15,7 @@ import { MOCK_CAREGIVER } from '../data/mockCaregiver.js';
 import { auth, googleProvider, facebookProvider, isFirebaseConfigured } from '../config/firebaseConfig.js';
 import { FirestoreCaregiverService } from '../services/FirestoreCaregiverService.js';
 import { FirestoreCareRelationshipService } from '../services/FirestoreCareRelationshipService.js';
+import { FirestorePatientDirectoryService } from '../services/FirestorePatientDirectoryService.js';
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -286,6 +287,80 @@ export function useCaregiverAuth() {
     }
   }, [currentCaregiver]);
 
+  // 2026-08-27 ADDITION (VR: "antha caregiver patient username potu request
+  // kudukanum" -- a caregiver-initiated alternative to the invite-code
+  // flow above). Same shape as linkToPatient end-to-end (resolve an
+  // identifier to a patient uid/name, send the SAME pending
+  // sendCaregiverRequestAsCaregiver request, same applyPendingPatientLink
+  // local-state update) -- only the resolution step differs: a username
+  // lookup via FirestorePatientDirectoryService instead of an invite-code
+  // redemption. Deliberately reuses the exact same request/accept
+  // relationship record, so CaregiverLinkPatientScreen's existing
+  // pending/declined polling (onRefreshStatus) works unchanged for
+  // requests sent this way too.
+  const linkToPatientByUsername = useCallback(async (rawUsername) => {
+    const username = (rawUsername || '').trim();
+    if (!username) {
+      setErrors({ username: "Enter the patient's username." });
+      return false;
+    }
+    setIsSubmitting(true);
+    setErrors({});
+    try {
+      if (!isFirebaseConfigured) {
+        await wait(400);
+        setCurrentCaregiver((prev) => (prev ? CaregiverProfileEngine.applyPatientLink(prev, 'MOCK-PATIENT-UID', 'Robert Hayes') : prev));
+        return true;
+      }
+      const matches = await FirestorePatientDirectoryService.searchPatients(username);
+      if (!matches.length) {
+        setErrors({ username: `No patient found for '${username}'. Double check the spelling with them.` });
+        return false;
+      }
+      // 2026-08-27: a connection REQUEST is a real action (the patient
+      // will see it and has to decide whether to accept a stranger), so
+      // this only ever auto-sends on an EXACT username match. A fuzzy/typo
+      // result (no exact hit -- see FirestorePatientDirectoryService.
+      // searchPatients) is surfaced back as a suggestion instead of being
+      // silently treated as "close enough" and requested automatically --
+      // auto-connecting to a guessed patient on a typo would be sending a
+      // real request to the wrong person, not a harmless search miss.
+      if (matches[0].fuzzy) {
+        setErrors({
+          username: matches.length === 1
+            ? `No exact match for '${username}'. Did you mean '${matches[0].username}' (${matches[0].name})? Type that exact username to send the request.`
+            : `No exact match for '${username}'. Similar usernames: ${matches.map((m) => `'${m.username}'`).join(', ')} -- type the exact one to send the request.`,
+        });
+        return false;
+      }
+      const resolved = matches[0];
+      let requestFailed = false;
+      try {
+        await FirestoreCareRelationshipService.sendCaregiverRequestAsCaregiver(
+          resolved.uid, resolved.name, currentCaregiver?.uid, currentCaregiver?.name,
+        );
+      } catch (relErr) {
+        requestFailed = true;
+        console.error('Could not send caregiver request:', relErr);
+        setErrors({ username: 'Could not send the request right now. Please try again.' });
+      }
+      if (requestFailed) return false;
+      setCurrentCaregiver((prev) => {
+        if (!prev) return prev;
+        const updated = CaregiverProfileEngine.applyPendingPatientLink(prev, resolved.uid, resolved.name);
+        FirestoreCaregiverService.updateCaregiverProfile(prev.uid, {
+          pendingPatientUid: updated.pendingPatientUid,
+          pendingPatientName: updated.pendingPatientName,
+          linkRequestStatus: updated.linkRequestStatus,
+        });
+        return updated;
+      });
+      return true;
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [currentCaregiver]);
+
   // 2026-08-23 ADDITION: onAuthStateChanged's self-heal check only runs
   // once, at sign-in -- a caregiver sitting on CaregiverLinkPatientScreen.jsx
   // waiting for the patient to respond would otherwise never find out
@@ -421,6 +496,7 @@ export function useCaregiverAuth() {
     loginWithProvider,
     logout,
     linkToPatient,
+    linkToPatientByUsername,
     refreshLinkStatus,
     completeOnboarding,
     recordMicroCheckinAnswer,

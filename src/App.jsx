@@ -28,7 +28,7 @@ import InsightsSection from './components/dashboard/InsightsSection.jsx';
 import ReportsSection from './components/dashboard/ReportsSection.jsx';
 import MorphySection from './components/dashboard/MorphySection.jsx';
 import PrintableSelfReport from './components/reports/PrintableSelfReport.jsx';
-import ChatBubbleButton from './components/chat/ChatBubbleButton.jsx';
+import MorphyCompanion from './components/companion/MorphyCompanion.jsx';
 import ChatPanel from './components/chat/ChatPanel.jsx';
 import RoleGateScreen from './components/auth/RoleGateScreen.jsx';
 import DoctorLoginScreen from './components/doctor/DoctorLoginScreen.jsx';
@@ -41,7 +41,6 @@ import DoctorChatBubbleButton from './components/doctor/DoctorChatBubbleButton.j
 import DoctorChatPanel from './components/doctor/DoctorChatPanel.jsx';
 import CaregiverLoginScreen from './components/caregiver/CaregiverLoginScreen.jsx';
 import CaregiverSignupScreen from './components/caregiver/CaregiverSignupScreen.jsx';
-import CaregiverLinkPatientScreen from './components/caregiver/CaregiverLinkPatientScreen.jsx';
 import CaregiverHomeSection from './components/caregiver/CaregiverHomeSection.jsx';
 import CaregiverChatBubbleButton from './components/caregiver/CaregiverChatBubbleButton.jsx';
 import CaregiverChatPanel from './components/caregiver/CaregiverChatPanel.jsx';
@@ -182,7 +181,7 @@ export default function App() {
 
   // Role picker is the very first screen -- before either login form.
   if (role === null) {
-    return <RoleGateScreen onSelectRole={setRole} theme={theme} onToggleTheme={toggleTheme} language={language} />;
+    return <RoleGateScreen onSelectRole={setRole} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} />;
   }
 
   if (role === 'doctor') {
@@ -263,12 +262,13 @@ export default function App() {
           onRedeemAccessKey={doctorAuth.redeemAccessKey}
           errors={doctorAuth.errors}
           isSubmitting={doctorAuth.isSubmitting}
+          language={language}
         />
       );
     }
 
     if (doctorView === 'dashboard') {
-      return <FullDoctorDashboard onExit={() => setDoctorView('home')} />;
+      return <FullDoctorDashboard onExit={() => setDoctorView('home')} language={language} />;
     }
 
     return (
@@ -300,7 +300,7 @@ export default function App() {
               language={language}
             />
           )}
-          <DoctorChatBubbleButton isOpen={doctorChat.isOpen} onToggle={doctorChat.toggle} />
+          <DoctorChatBubbleButton isOpen={doctorChat.isOpen} onToggle={doctorChat.toggle} language={language} />
         </div>
 
         <InstallAppPrompt language={language} />
@@ -375,23 +375,20 @@ export default function App() {
       );
     }
 
-    // Active retry gate -- a caregiver isn't useful until linked to a real
-    // patient (see useCaregiverAuth.js's LINKING NOTE and
-    // CaregiverLinkPatientScreen.jsx).
-    if (!caregiverAuth.currentCaregiver?.linkedPatientUid) {
-      return (
-        <CaregiverLinkPatientScreen
-          onLink={caregiverAuth.linkToPatient}
-          onLogout={handleCaregiverLogout}
-          errors={caregiverAuth.errors}
-          isSubmitting={caregiverAuth.isSubmitting}
-          linkRequestStatus={caregiverAuth.currentCaregiver?.linkRequestStatus}
-          pendingPatientName={caregiverAuth.currentCaregiver?.pendingPatientName}
-          onRefreshStatus={caregiverAuth.refreshLinkStatus}
-        />
-      );
-    }
-
+    // 2026-08-28 REDESIGN (VR: "login laam panni dashboard kula vacha
+    // better ah irukum -- until that oru guest id maari irukatum -- only
+    // after selecting the patient ... activities ellam enable aaganum").
+    // This used to be a hard gate: an unlinked caregiver saw ONLY
+    // CaregiverLinkPatientScreen, full-page, nothing else -- no Morphy, no
+    // dashboard, nothing -- until a patient accepted their request. Now
+    // the caregiver lands in the real dashboard immediately after login
+    // (a "guest" view), and the exact same link form lives as a card
+    // inside CaregiverHomeSection (see CaregiverLinkPatientCard.jsx) --
+    // Ask Morphy works right away, and the two check-in cards stay locked
+    // (with an explicit "link to a patient first" message) until
+    // linkedPatientUid actually becomes non-null. See
+    // useCaregiverAuth.js's LINKING NOTE for the request/accept flow
+    // itself, which is unchanged.
     return (
       <>
         <div className="nmpa-screen-only">
@@ -407,6 +404,13 @@ export default function App() {
             onToggleTheme={toggleTheme}
             language={language}
             onChangeLanguage={setLanguage}
+            onLink={caregiverAuth.linkToPatient}
+            onLinkByUsername={caregiverAuth.linkToPatientByUsername}
+            linkErrors={caregiverAuth.errors}
+            isLinkSubmitting={caregiverAuth.isSubmitting}
+            linkRequestStatus={caregiverAuth.currentCaregiver?.linkRequestStatus}
+            pendingPatientName={caregiverAuth.currentCaregiver?.pendingPatientName}
+            onRefreshStatus={caregiverAuth.refreshLinkStatus}
           />
         </div>
 
@@ -437,6 +441,7 @@ export default function App() {
         onSignup={auth.signup}
         onSwitchToLogin={() => auth.setView('login')}
         onSocialAuth={auth.loginWithProvider}
+        onBackToRoleGate={() => setRole(null)}
         errors={auth.errors}
         isSubmitting={auth.isSubmitting}
         theme={theme}
@@ -449,6 +454,7 @@ export default function App() {
         onLogin={auth.login}
         onSwitchToSignup={() => auth.setView('signup')}
         onSocialAuth={auth.loginWithProvider}
+        onBackToRoleGate={() => setRole(null)}
         errors={auth.errors}
         isSubmitting={auth.isSubmitting}
         theme={theme}
@@ -514,16 +520,30 @@ export default function App() {
               language={language}
             />
           )}
-          {activeSection === 'progress' && <ProgressSection self={self} />}
-          {activeSection === 'insights' && <InsightsSection self={self} />}
+          {activeSection === 'progress' && <ProgressSection self={self} language={language} />}
+          {activeSection === 'insights' && <InsightsSection self={self} language={language} />}
           {activeSection === 'reports' && (
-            <ReportsSection self={self} onDownloadReport={handlePrint} currentUser={auth.currentUser} />
+            <ReportsSection self={self} onDownloadReport={handlePrint} currentUser={auth.currentUser} language={language} />
           )}
-          {activeSection === 'morphy' && <MorphySection onOpenChat={chat.open} />}
+          {activeSection === 'morphy' && <MorphySection onOpenChat={chat.open} language={language} />}
         </DashboardShell>
       </div>
 
-      <div className="morphy-widget">
+      {/* 2026-08-28 REPLACEMENT (VR, this session: "isn't this just a
+         chatbot with a mascot skin" -- Goal 2). ChatBubbleButton (a plain
+         floating icon) is no longer rendered for the patient shell --
+         MorphyCompanion.jsx is the one persistent presence in this corner
+         now: it still opens/toggles this exact same ChatPanel
+         (onOpenChat={chat.toggle}, same call ChatBubbleButton used to
+         make), but also idles, transitions between dashboard sections, and
+         reacts to real app events (streak milestones, Daily Set
+         completion, momentum improvement, a newly-due weekly assessment --
+         see MorphyCompanionEngine.js) without ever being tapped. See
+         theme.css's .nmpa-morphy-panel-slot for why the panel now has its
+         own fixed slot instead of stacking above ChatBubbleButton via
+         flex. ChatBubbleButton itself is untouched and still used as-is by
+         the doctor and caregiver shells above. */}
+      <div className="nmpa-morphy-panel-slot">
         {chat.isOpen && (
           <ChatPanel
             messages={chat.messages}
@@ -537,8 +557,14 @@ export default function App() {
             language={language}
           />
         )}
-        <ChatBubbleButton isOpen={chat.isOpen} onToggle={chat.toggle} />
       </div>
+      <MorphyCompanion
+        self={self}
+        assessmentPhase={assessment.phase}
+        activeSection={activeSection}
+        onOpenChat={chat.toggle}
+        language={language}
+      />
 
       <InstallAppPrompt language={language} />
 

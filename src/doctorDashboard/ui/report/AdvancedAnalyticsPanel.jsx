@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import SectionCard from '../shared/SectionCard.jsx';
+import { DEFAULT_LANGUAGE } from '../../config/i18nConfig.js';
+import { t } from '../../i18n/strings/report.js';
 
 // Self-review finding (hackathon-judge read): the platform spec says raw
 // per-trial metrics (hit rate, reaction time variability, click history,
@@ -9,17 +11,17 @@ import SectionCard from '../shared/SectionCard.jsx';
 // actually exists. This panel surfaces it truthfully: present, collapsed by
 // default, clearly labeled as research/non-clinical, never competing with
 // the clinical summary above it.
-export default function AdvancedAnalyticsPanel({ hiddenAnalytics }) {
+export default function AdvancedAnalyticsPanel({ hiddenAnalytics, language = DEFAULT_LANGUAGE }) {
   const [open, setOpen] = useState(false);
   if (!hiddenAnalytics) return null;
 
   return (
     <SectionCard
-      title="Research / Hidden Analytics"
-      subtitle="Not used for clinical interpretation -- retained for future AI models and research"
+      title={t(language, 'researchHiddenAnalyticsTitle')}
+      subtitle={t(language, 'researchHiddenAnalyticsSubtitle')}
       actions={
         <button type="button" className="nmdd-button nmdd-button--secondary" onClick={() => setOpen((o) => !o)}>
-          {open ? 'Hide' : 'Show'} raw metrics
+          {t(language, open ? 'hideRawMetrics' : 'showRawMetrics')}
         </button>
       }
     >

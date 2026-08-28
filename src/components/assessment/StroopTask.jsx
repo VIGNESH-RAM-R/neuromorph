@@ -11,6 +11,19 @@ import TaskCountdown from './shared/TaskCountdown.jsx';
 import { t, format } from '../../i18n/strings/assessmentTasks.js';
 import { DEFAULT_LANGUAGE } from '../../config/i18nConfig.js';
 
+// Maps a STROOP_COLORS id to its translated-label string-table key, so the
+// stimulus word (the color NAME shown in ink) and the four answer buttons
+// both come from the same lookup -- keeps them in the same language, which
+// keeping only the buttons translated would break (see StroopEngine.js's
+// generateStroopTrial for why `wordColorId`, not the English `.word`
+// field, is what gets translated here).
+const STROOP_COLOR_LABEL_KEY = {
+  red: 'stroopColorRed',
+  blue: 'stroopColorBlue',
+  green: 'stroopColorGreen',
+  yellow: 'stroopColorYellow',
+};
+
 // Teammate's richer Stroop Test (2026-08-11 integration), restyled to this
 // app's own nmpa- theme instead of its original standalone CSS bundle, and
 // trimmed to fit this app's one-task-at-a-time shell: practice (with
@@ -94,7 +107,7 @@ function StroopTrialScreen({ phase, trialCount, onComplete, language = DEFAULT_L
         {phase === 'practice' ? t(language, 'practiceTrialLabel') : format(t(language, 'trialProgress'), { current: index + 1, total: trials.length })}
       </p>
 
-      <div className="nmpa-task__stimulus" style={{ color: inkColor.hex }}>{trial.word}</div>
+      <div className="nmpa-task__stimulus" style={{ color: inkColor.hex }}>{t(language, STROOP_COLOR_LABEL_KEY[trial.wordColorId]).toUpperCase()}</div>
 
       {feedback && (
         <p className={`nmpa-task__feedback ${feedback.ok ? 'is-ok' : 'is-bad'}`}>
@@ -103,14 +116,11 @@ function StroopTrialScreen({ phase, trialCount, onComplete, language = DEFAULT_L
       )}
 
       <div className="nmpa-task__choices">
-        {trial.buttonOrder.map((colorId) => {
-          const c = STROOP_COLORS.find((x) => x.id === colorId);
-          return (
-            <button key={colorId} type="button" className="nmpa-button nmpa-button--secondary" disabled={locked} onClick={() => handleAnswer(colorId, false)}>
-              {c.label}
-            </button>
-          );
-        })}
+        {trial.buttonOrder.map((colorId) => (
+          <button key={colorId} type="button" className="nmpa-button nmpa-button--secondary" disabled={locked} onClick={() => handleAnswer(colorId, false)}>
+            {t(language, STROOP_COLOR_LABEL_KEY[colorId])}
+          </button>
+        ))}
       </div>
     </div>
   );

@@ -2,56 +2,72 @@
    Clean clinical cards, high readability, subtle color, no animation.
    Light theme is default; [data-theme="dark"] on <html> switches variables. */
 
-:root {
-  --nmdd-bg: #f4f6f9;
+/* 2026-08-26 (VR): re-tokenized to match app_page's own light/dark palette
+   (src/styles/theme.css's --nmpa-* tokens) instead of a separate plain
+   blue/gray scheme -- the doctor dashboard is one integrated app now, not
+   a separately branded product, so its colors (and dark mode specifically)
+   should read as the same app as the patient/caregiver chrome around it.
+   Variable NAMES are unchanged (every .nmdd-* rule below still reads
+   --nmdd-*), only the color VALUES were remapped -- so this is a palette
+   swap, not a rewrite. */
+:root,
+:root[data-theme='light'] {
+  --nmdd-bg: #f4f8ff;
   --nmdd-surface: #ffffff;
-  --nmdd-surface-muted: #f0f2f6;
-  --nmdd-border: #dde2ea;
-  --nmdd-ink: #16202e;
-  --nmdd-ink-muted: #5a6576;
-  --nmdd-accent: #2f5aa8;
+  --nmdd-surface-muted: #eaf2ff;
+  --nmdd-border: #cddff4;
+  --nmdd-ink: #102a4c;
+  --nmdd-ink-muted: #4d6685;
+  --nmdd-accent: #1769c2;
   --nmdd-accent-ink: #ffffff;
 
-  --nmdd-excellent: #1f8a5f;
-  --nmdd-normal: #2f5aa8;
-  --nmdd-mild: #b8791a;
-  --nmdd-reduced: #b23b3b;
-  --nmdd-neutral: #8a94a6;
+  --nmdd-excellent: #047857;
+  --nmdd-normal: #1769c2;
+  --nmdd-mild: #b45309;
+  --nmdd-reduced: #be123c;
+  --nmdd-neutral: #6b7280;
 
   --nmdd-danger-bg: #fdecec;
   --nmdd-danger-border: #e6b3b3;
   --nmdd-warn-bg: #fdf4e3;
   --nmdd-warn-border: #e8cf9c;
-  --nmdd-info-bg: #eaf1fb;
-  --nmdd-info-border: #bcd2ef;
+  --nmdd-info-bg: #e8f2fc;
+  --nmdd-info-border: #bfdaef;
+  color-scheme: light;
 
   --nmdd-radius: 10px;
-  --nmdd-shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.08);
+  --nmdd-shadow: 0 1px 2px rgba(21, 57, 91, 0.05), 0 1px 3px rgba(21, 57, 91, 0.06);
   --nmdd-font: 'Inter', 'Segoe UI', sans-serif;
+  /* Same heading face app_page uses for titles/scores/brand marks (see
+     --nmpa-font-heading) -- applied below to card/table/topbar titles and
+     the big score numbers so the dashboard's typographic hierarchy matches
+     the rest of the app instead of leaning on Inter's bold weight alone. */
+  --nmdd-font-heading: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
 }
 
 [data-theme='dark'] {
-  --nmdd-bg: #0f1420;
-  --nmdd-surface: #161d2c;
-  --nmdd-surface-muted: #1d2536;
-  --nmdd-border: #2a3245;
-  --nmdd-ink: #e8ecf4;
-  --nmdd-ink-muted: #9aa5b8;
-  --nmdd-accent: #6f9ceb;
-  --nmdd-accent-ink: #0f1420;
+  --nmdd-bg: #0c0b18;
+  --nmdd-surface: #121120;
+  --nmdd-surface-muted: #15141f;
+  --nmdd-border: #232132;
+  --nmdd-ink: #f5f4fa;
+  --nmdd-ink-muted: #9b96b3;
+  --nmdd-accent: #7c6cff;
+  --nmdd-accent-ink: #ffffff;
 
-  --nmdd-excellent: #3fbf8a;
-  --nmdd-normal: #6f9ceb;
-  --nmdd-mild: #e0aa4d;
-  --nmdd-reduced: #e2716f;
-  --nmdd-neutral: #7a869c;
+  --nmdd-excellent: #3ed598;
+  --nmdd-normal: #7c6cff;
+  --nmdd-mild: #f5c563;
+  --nmdd-reduced: #f17e85;
+  --nmdd-neutral: #9b96b3;
 
-  --nmdd-danger-bg: #2c1a1a;
-  --nmdd-danger-border: #5a2e2e;
-  --nmdd-warn-bg: #2c2716;
-  --nmdd-warn-border: #5a4d2e;
-  --nmdd-info-bg: #182233;
-  --nmdd-info-border: #2e3f5a;
+  --nmdd-danger-bg: rgba(241, 126, 133, 0.1);
+  --nmdd-danger-border: rgba(241, 126, 133, 0.28);
+  --nmdd-warn-bg: rgba(245, 197, 99, 0.1);
+  --nmdd-warn-border: rgba(245, 197, 99, 0.26);
+  --nmdd-info-bg: #1b1834;
+  --nmdd-info-border: #302e45;
+  --nmdd-shadow: 0 10px 26px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 /* 2026-08-23: scoped under .nmdd-root instead of html/body/# root --
@@ -90,7 +106,7 @@
   color: var(--nmdd-accent-ink); display: flex; align-items: center; justify-content: center;
   font-weight: 700;
 }
-.nmdd-topbar__title { font-weight: 700; font-size: 15px; }
+.nmdd-topbar__title { font-family: var(--nmdd-font-heading); font-weight: 700; font-size: 16px; letter-spacing: -0.01em; }
 .nmdd-topbar__subtitle { font-size: 12px; color: var(--nmdd-ink-muted); }
 .nmdd-topbar__nav { display: flex; gap: 4px; margin-left: 16px; }
 .nmdd-topbar__navitem {
@@ -117,7 +133,7 @@
   padding: 20px; margin-bottom: 20px;
 }
 .nmdd-card__header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
-.nmdd-card__title { font-size: 16px; font-weight: 700; margin: 0; }
+.nmdd-card__title { font-family: var(--nmdd-font-heading); font-size: 17px; font-weight: 700; letter-spacing: -0.01em; margin: 0; }
 .nmdd-card__subtitle { font-size: 13px; color: var(--nmdd-ink-muted); margin: 2px 0 0; }
 .nmdd-card__footnote { font-size: 13px; color: var(--nmdd-ink-muted); margin-top: 12px; }
 
@@ -159,7 +175,7 @@
 
 /* ---------- Summary card ---------- */
 .nmdd-summary-card__main { display: flex; align-items: center; gap: 20px; }
-.nmdd-summary-card__score { font-size: 48px; font-weight: 800; line-height: 1; }
+.nmdd-summary-card__score { font-family: var(--nmdd-font-heading); font-size: 48px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; }
 .nmdd-summary-card__meta { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
 .nmdd-summary-card__interpretation { margin-top: 14px; color: var(--nmdd-ink-muted); }
 
@@ -176,15 +192,15 @@
 .nmdd-domain-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 .nmdd-domaincard { border: 1px solid var(--nmdd-border); border-radius: 8px; padding: 14px; background: var(--nmdd-surface-muted); }
 .nmdd-domaincard__header { display: flex; justify-content: space-between; align-items: center; }
-.nmdd-domaincard__label { font-weight: 700; font-size: 13.5px; }
-.nmdd-domaincard__score { font-size: 26px; font-weight: 800; margin: 6px 0; }
+.nmdd-domaincard__label { font-family: var(--nmdd-font-heading); font-weight: 700; font-size: 13.5px; letter-spacing: -0.005em; }
+.nmdd-domaincard__score { font-family: var(--nmdd-font-heading); font-size: 26px; font-weight: 800; letter-spacing: -0.015em; margin: 6px 0; }
 .nmdd-domaincard__interpretation { font-size: 12.5px; color: var(--nmdd-ink-muted); margin: 0; }
 
 .nmdd-lobe-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
 .nmdd-lobecard { border: 1px solid var(--nmdd-border); border-radius: 8px; padding: 16px; background: var(--nmdd-surface-muted); }
 .nmdd-lobecard__header { display: flex; justify-content: space-between; align-items: center; }
-.nmdd-lobecard__title { margin: 0; font-size: 15px; }
-.nmdd-lobecard__score { font-size: 28px; font-weight: 800; margin: 6px 0 10px; }
+.nmdd-lobecard__title { font-family: var(--nmdd-font-heading); margin: 0; font-size: 15.5px; font-weight: 700; letter-spacing: -0.01em; }
+.nmdd-lobecard__score { font-family: var(--nmdd-font-heading); font-size: 28px; font-weight: 800; letter-spacing: -0.015em; margin: 6px 0 10px; }
 .nmdd-lobecard__section { margin-bottom: 10px; }
 .nmdd-lobecard__explanation { font-size: 13px; color: var(--nmdd-ink-muted); margin: 8px 0 0; }
 
@@ -290,14 +306,15 @@
 
 /* ---------- Table ---------- */
 .nmdd-table { width: 100%; border-collapse: collapse; }
-.nmdd-table th { text-align: left; font-size: 12px; text-transform: uppercase; color: var(--nmdd-ink-muted); border-bottom: 1px solid var(--nmdd-border); padding: 8px 10px; }
-.nmdd-table td { padding: 10px; border-bottom: 1px solid var(--nmdd-border); vertical-align: top; font-size: 13.5px; }
+.nmdd-table th { text-align: left; font-size: 11.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--nmdd-ink-muted); border-bottom: 1px solid var(--nmdd-border); padding: 8px 10px; }
+.nmdd-table td { padding: 11px 10px; border-bottom: 1px solid var(--nmdd-border); vertical-align: top; font-size: 13.5px; }
+.nmdd-table td strong, .nmdd-table td b { font-family: var(--nmdd-font-heading); letter-spacing: -0.005em; }
 .nmdd-row--flagged { background: color-mix(in srgb, var(--nmdd-reduced) 6%, transparent); }
 .nmdd-row__sub { font-size: 11.5px; color: var(--nmdd-ink-muted); margin-top: 2px; }
 
 /* ---------- Empty state ---------- */
 .nmdd-empty { text-align: center; padding: 60px 20px; color: var(--nmdd-ink-muted); }
-.nmdd-empty__title { font-weight: 700; color: var(--nmdd-ink); }
+.nmdd-empty__title { font-family: var(--nmdd-font-heading); font-weight: 700; letter-spacing: -0.01em; color: var(--nmdd-ink); }
 
 .nmdd-muted { color: var(--nmdd-ink-muted); font-size: 13px; }
 
@@ -336,7 +353,7 @@
   color: var(--nmdd-accent-ink); display: flex; align-items: center; justify-content: center;
   font-weight: 800; font-size: 18px; margin: 0 auto 12px;
 }
-.nmdd-auth__title { font-size: 18px; font-weight: 700; margin: 0; }
+.nmdd-auth__title { font-family: var(--nmdd-font-heading); font-size: 19px; font-weight: 700; letter-spacing: -0.01em; margin: 0; }
 .nmdd-auth__subtitle { font-size: 13px; color: var(--nmdd-ink-muted); margin: 6px 0 0; }
 .nmdd-auth__form { display: flex; flex-direction: column; gap: 14px; }
 .nmdd-auth__field { display: flex; flex-direction: column; gap: 5px; }
@@ -379,4 +396,4 @@
   min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 6px; background: var(--nmdd-bg); color: var(--nmdd-ink-muted); font-size: 13px;
 }
-.nmdd-session-loading__brand { font-weight: 800; font-size: 16px; color: var(--nmdd-ink); letter-spacing: 0.02em; }
+.nmdd-session-loading__brand { font-family: var(--nmdd-font-heading); font-weight: 800; font-size: 16px; color: var(--nmdd-ink); letter-spacing: 0.02em; }

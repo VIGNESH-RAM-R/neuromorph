@@ -42,7 +42,15 @@ const SPECIALITY_KEYS = ['specialityExplainableAI', 'specialityContinuousMonitor
 // tagline/trust-list/specialities text is hidden underneath it (the image
 // already carries that information visually) -- only the role badge, top
 // bar, and the actual login/signup form on the other panel stay.
-export default function AuthBrandPanel({ language, onChangeLanguage, subledeKey = 'subledeLogin', subledeOverride, roleBadge, coverImage = false }) {
+// `instructionsTitle`/`trustItems` (2026-08-26, VR: "change the content for
+// each dashboard accordingly, like for the doctor, caregiver, patient
+// separately"): let a caller override the "How it works" heading and the
+// checklist itself with role-specific copy, same opt-in pattern as
+// subledeOverride/roleBadge above -- patient screens omit both and keep the
+// existing fully-translated default (trustTitle + trust1..trust6 via
+// authString), doctor/caregiver screens pass their own (English, matching
+// those screens' existing English-only scope).
+export default function AuthBrandPanel({ language, onChangeLanguage, subledeKey = 'subledeLogin', subledeOverride, roleBadge, coverImage = false, instructionsTitle, trustItems }) {
   const dir = languageInfo(language).dir;
   const [imageFailed, setImageFailed] = useState(false);
   const showCover = coverImage && !imageFailed;
@@ -115,16 +123,19 @@ export default function AuthBrandPanel({ language, onChangeLanguage, subledeKey 
           {subledeOverride || authString(language, subledeKey)}
         </p>
 
+        <p className="nmpa-auth__trust-title nmpa-anim-fade-up" style={{ '--nmpa-anim-delay': '120ms' }}>
+          {instructionsTitle || authString(language, 'trustTitle')}
+        </p>
         <ul className="nmpa-auth__trust-list">
-          {TRUST_KEYS.map((key, i) => (
-            <li key={key} className="nmpa-anim-fade-up" style={{ '--nmpa-anim-delay': `${160 + i * 70}ms` }}>
+          {(trustItems || TRUST_KEYS.map((key) => authString(language, key))).map((text, i) => (
+            <li key={text} className="nmpa-anim-fade-up" style={{ '--nmpa-anim-delay': `${160 + i * 70}ms` }}>
               <CheckCircleIcon />
-              <span>{authString(language, key)}</span>
+              <span>{text}</span>
             </li>
           ))}
         </ul>
 
-        <div className="nmpa-auth__specialities nmpa-anim-fade-up" style={{ '--nmpa-anim-delay': `${160 + TRUST_KEYS.length * 70 + 60}ms` }}>
+        <div className="nmpa-auth__specialities nmpa-anim-fade-up" style={{ '--nmpa-anim-delay': `${160 + (trustItems || TRUST_KEYS).length * 70 + 60}ms` }}>
           <p className="nmpa-auth__specialities-label">{authString(language, 'specialitiesLabel')}</p>
           <div className="nmpa-auth__speciality-chips">
             {SPECIALITY_KEYS.map((key) => (

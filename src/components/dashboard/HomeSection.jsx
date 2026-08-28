@@ -151,6 +151,23 @@ export default function HomeSection({ self, onGoToAssessment, onGoToGames, careg
               ) : (
                 <p className="nmpa-muted nmpa-muted--sm">{t(language, 'noActiveCode')}</p>
               )}
+              {/* 2026-08-27 ADDITION (VR: "antha caregiver patient username
+                  potu request kudukanum") -- the caregiver-initiated
+                  counterpart to the invite code above: a caregiver who
+                  already knows this username can search for and request
+                  this patient directly (CaregiverLinkPatientScreen.jsx's
+                  "search by username" tab), no code needed. Shown only
+                  once the username has actually loaded onto currentUser
+                  (self-heals on login for older accounts -- see
+                  useAuth.js -- so this is briefly absent for a handful of
+                  very first page loads on a pre-existing account, never
+                  wrong/fabricated).
+              */}
+              {currentUser?.username && (
+                <p className="nmpa-muted nmpa-muted--sm" style={{ marginTop: 6 }}>
+                  {format(t(language, 'yourUsernameLabel'), { username: currentUser.username })}
+                </p>
+              )}
             </div>
             <button type="button" className="nmpa-button nmpa-button--secondary" onClick={onGenerateInviteCode}>
               {caregiverInviteCode ? t(language, 'generateNewCode') : t(language, 'generateCode')}
@@ -158,7 +175,7 @@ export default function HomeSection({ self, onGoToAssessment, onGoToGames, careg
           </section>
         )}
 
-        {currentUser?.uid && <CaregiverRequestsPanel patientId={currentUser.uid} />}
+        {currentUser?.uid && <CaregiverRequestsPanel patientId={currentUser.uid} language={language} />}
       </div>
     </div>
   );

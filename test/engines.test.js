@@ -54,6 +54,7 @@ import { LOBAR_TASKS } from '../src/config/lobarTaskRegistryConfig.js';
 import { TASK_TIME_ESTIMATES_SEC, estimateAssessmentMinutes } from '../src/config/assessmentTimeEstimateConfig.js';
 import { ALL_COGNITIVE_DOMAIN_KEYS } from '../src/config/domainScoringConfig.js';
 import { AssessmentSessionModel } from '../src/engines/AssessmentSessionModel.js';
+import { MorphyCompanionEngine } from '../src/engines/MorphyCompanionEngine.js';
 
 let passed = 0;
 function check(name, fn) {
@@ -1291,6 +1292,75 @@ check('AssessmentSessionModel.build: domainCoverage reports measured-vs-total do
   // 2 of 8 active tasks done is not the same claim as 2 of 6 domains measured.
   assert.equal(session.completedCount, 2);
   assert.equal(session.totalCount, LOBAR_TASKS.length);
+});
+
+
+// ---------- MorphyCompanionEngine (2026-08-28, Goal 2 companion) ----------
+check('MorphyCompanionEngine.isMomentumImprovement: true only when today beats the most recent prior day by >= threshold', () => {
+  assert.equal(MorphyCompanionEngine.isMomentumImprovement(80, [70]), true);
+  assert.equal(MorphyCompanionEngine.isMomentumImprovement(75, [70]), false); // only +5, under the default 8 threshold
+  assert.equal(MorphyCompanionEngine.isMomentumImprovement(90, []), false); // nothing to compare against
+  assert.equal(MorphyCompanionEngine.isMomentumImprovement(undefined, [70]), false);
+  assert.equal(MorphyCompanionEngine.isMomentumImprovement(80, [50, 60, 70]), true); // compares against the LAST prior day, not the best one
+  assert.equal(MorphyCompanionEngine.isMomentumImprovement(80, [50, 60, 75]), false); // 80-75=5, under threshold even though 80-50=30
+});
+
+check('MorphyCompanionEngine.buildSnapshot: reads milestone/dailySet/weeklyDue straight off a SelfModel-shaped object', () => {
+  const self = {
+    milestone: { current: { days: 7, label: 'One Week Strong' } },
+    today: { fullyComplete: true },
+    weeklyAssessment: { status: 'due-today' },
+  };
+  const snap = MorphyCompanionEngine.buildSnapshot(self, true);
+  assert.deepEqual(snap, {
+    milestoneDays: 7,
+    milestoneLabel: 'One Week Strong',
+    dailySetFullyComplete: true,
+    momentumImprovedToday: true,
+    weeklyDue: true,
+  });
+});
+
+check('MorphyCompanionEngine.buildSnapshot: no milestone yet reads as null, not undefined/throw', () => {
+  const self = { milestone: {}, today: {}, weeklyAssessment: { status: 'not-due-yet' } };
+  const snap = MorphyCompanionEngine.buildSnapshot(self, false);
+  assert.equal(snap.milestoneDays, null);
+  assert.equal(snap.weeklyDue, false);
+});
+
+check('MorphyCompanionEngine.decideEvent: fires "milestone" only on the render where the streak actually crosses into a new one', () => {
+  const prev = { milestoneDays: null, dailySetFullyComplete: false, momentumImprovedToday: false, weeklyDue: false };
+  const next = { milestoneDays: 3, milestoneLabel: 'Spark', dailySetFullyComplete: false, momentumImprovedToday: false, weeklyDue: false };
+  const event = MorphyCompanionEngine.decideEvent(prev, next);
+  assert.equal(event.id, 'milestone');
+  assert.equal(event.milestoneLabel, 'Spark');
+  // Same next state as its own prev (streak unchanged since) -> no re-fire.
+  assert.equal(MorphyCompanionEngine.decideEvent(next, next), null);
+});
+
+check('MorphyCompanionEngine.decideEvent: dailySetComplete only fires on the false -> true transition, not every render while true', () => {
+  const notDone = { milestoneDays: null, dailySetFullyComplete: false, momentumImprovedToday: false, weeklyDue: false };
+  const justDone = { ...notDone, dailySetFullyComplete: true };
+  assert.equal(MorphyCompanionEngine.decideEvent(notDone, justDone).id, 'dailySetComplete');
+  assert.equal(MorphyCompanionEngine.decideEvent(justDone, justDone), null);
+});
+
+check('MorphyCompanionEngine.decideEvent: priority order -- milestone wins over a simultaneous Daily Set completion', () => {
+  const prev = { milestoneDays: null, dailySetFullyComplete: false, momentumImprovedToday: false, weeklyDue: false };
+  const next = { milestoneDays: 3, milestoneLabel: 'Spark', dailySetFullyComplete: true, momentumImprovedToday: false, weeklyDue: false };
+  assert.equal(MorphyCompanionEngine.decideEvent(prev, next).id, 'milestone');
+});
+
+check('MorphyCompanionEngine.decideEvent: weeklyDue fires once when it newly becomes due/overdue, not on unknown/not-due-yet', () => {
+  const notDue = { milestoneDays: null, dailySetFullyComplete: false, momentumImprovedToday: false, weeklyDue: false };
+  const nowDue = { ...notDue, weeklyDue: true };
+  assert.equal(MorphyCompanionEngine.decideEvent(notDue, nowDue).id, 'weeklyDue');
+  assert.equal(MorphyCompanionEngine.decideEvent(nowDue, nowDue), null);
+});
+
+check('MorphyCompanionEngine.decideEvent: null/undefined snapshots never throw, just return null', () => {
+  assert.equal(MorphyCompanionEngine.decideEvent(null, { milestoneDays: 3 }), null);
+  assert.equal(MorphyCompanionEngine.decideEvent({ milestoneDays: null }, null), null);
 });
 
 console.log(`\n${passed} assertions passed.`);

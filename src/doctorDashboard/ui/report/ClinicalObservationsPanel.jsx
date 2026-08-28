@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import SectionCard from '../shared/SectionCard.jsx';
+import { DEFAULT_LANGUAGE } from '../../config/i18nConfig.js';
+import { t } from '../../i18n/strings/report.js';
 
 // 2026-08-20: notes now persist for real patients (see
 // usePatientReport.js/FirestorePatientService.js) -- this panel surfaces
@@ -7,7 +9,13 @@ import SectionCard from '../shared/SectionCard.jsx';
 // `notesLoadError` (the existing notes list couldn't be fetched, e.g. the
 // doctorNotes security rule isn't deployed yet) and `saveError` (a new note
 // failed to write). Neither ever shows a fake success.
-export default function ClinicalObservationsPanel({ notes, onAddNote, notesLoadError, isSaving, saveError }) {
+//
+// notesLoadError/saveError themselves are raw error messages (from
+// Firestore/the service layer, not a fixed template pool) -- same as
+// elsewhere in this codebase, an error string is shown as-is rather than
+// guessed at a translation for, since misrepresenting the actual failure
+// reason to a clinician would be worse than leaving it in English.
+export default function ClinicalObservationsPanel({ notes, onAddNote, notesLoadError, isSaving, saveError, language = DEFAULT_LANGUAGE }) {
   const [draft, setDraft] = useState('');
 
   const submit = (e) => {
@@ -19,12 +27,12 @@ export default function ClinicalObservationsPanel({ notes, onAddNote, notesLoadE
   };
 
   return (
-    <SectionCard title="Clinical Observations" subtitle="Editable, stored notes for continuity of care">
+    <SectionCard title={t(language, 'clinicalObservationsTitle')} subtitle={t(language, 'clinicalObservationsSubtitle')}>
       {notesLoadError && (
         <p className="nmdd-alert nmdd-alert--warn" role="alert">{notesLoadError}</p>
       )}
       <ul className="nmdd-notes-list">
-        {notes.length === 0 && !notesLoadError && <li className="nmdd-muted">No clinical notes recorded yet.</li>}
+        {notes.length === 0 && !notesLoadError && <li className="nmdd-muted">{t(language, 'noClinicalNotesYet')}</li>}
         {notes.map((n) => (
           <li key={n.id} className="nmdd-note">
             <div className="nmdd-note__meta">
@@ -42,14 +50,14 @@ export default function ClinicalObservationsPanel({ notes, onAddNote, notesLoadE
         <textarea
           className="nmdd-textarea"
           rows={3}
-          placeholder="e.g. Observed mild word-finding difficulty. Recommend repeat assessment in 3 months."
+          placeholder={t(language, 'addNotePlaceholder')}
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          aria-label="Add a clinical observation"
+          aria-label={t(language, 'addNoteAriaLabel')}
           disabled={isSaving}
         />
         <button type="submit" className="nmdd-button nmdd-button--secondary" disabled={isSaving}>
-          {isSaving ? 'Saving…' : 'Add note'}
+          {t(language, isSaving ? 'savingEllipsis' : 'addNoteButton')}
         </button>
       </form>
     </SectionCard>

@@ -101,6 +101,30 @@ export const FirestorePatientService = {
         : (err?.message || 'Could not load clinical notes.');
     }
 
+    // 2026-08-27 ADDITION (VR: "athuku apram thaan main vishyamey ...
+    // antha specific patient ah click panna - caregiver pathi yum
+    // varanum" -- opening a patient's chart should show who their
+    // caregiver is, so a doctor knows "this person is this patient's
+    // caregiver" without a separate request/accept step). Reuses the same
+    // /careRelationships this patient's doctor-request already lives in
+    // (see app_page's FirestoreCareRelationshipService.js) -- the
+    // firestore.rules read for this collection was widened on 2026-08-27
+    // to let an accepted doctor read their patient's CAREGIVER relationship
+    // doc too, not just their own. Own try/catch, same reasoning as notes
+    // above: a rules-deploy lag or a patient with no caregiver at all
+    // should never block the rest of the report from loading.
+    let caregiverName;
+    try {
+      const relationships = await FirestoreCareRelationshipService.listRelationshipsForPatient(patientId);
+      const caregiverRel = relationships.find((r) => r.memberRole === 'caregiver' && r.status === 'accepted');
+      caregiverName = caregiverRel?.memberName || undefined;
+    } catch (err) {
+      // Non-fatal, deliberately silent (not surfaced like notesError) --
+      // this is a "nice to know" identity field, not something a doctor
+      // is blocked on the way notes/sessions data is.
+      console.error('Could not load caregiver info for patient:', err);
+    }
+
     return {
       patientId,
       name: profile.name || 'Unnamed patient',
@@ -110,6 +134,7 @@ export const FirestorePatientService = {
       age: profile.age ?? undefined,
       gender: profile.gender ?? undefined,
       riskFactors: profile.riskFactors || [],
+      caregiverName,
       notes,
       notesError,
       sessions,

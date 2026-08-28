@@ -9,9 +9,40 @@ service cloud.firestore {
     }
 
     // A doctor's own account record (professional profile, access-approval
-    // flag) -- only that exact signed-in person.
+    // flag) -- only that exact signed-in person may WRITE it.
+    //
+    // 2026-08-27 BUGFIX: read used to be owner-only too, which silently
+    // broke patient/caregiver-facing doctor search
+    // (FirestoreDoctorService.searchDoctors) -- that runs a `where
+    // accessApproved == true` query as the SEARCHING patient/caregiver's
+    // own account, and Firestore evaluates this rule per matched document
+    // using THEIR auth.uid, not the doctor's, so every result was silently
+    // rejected with a permission error no matter how many doctors existed
+    // (VR: "naa antha search bar la poitu - type panna ethum varla"). Now
+    // any authenticated user may read a doctor record ONLY once
+    // accessApproved is true -- the same fields FirestoreDoctorService
+    // already treats as intentionally discoverable (name, doctorId,
+    // specialty, licenseRegion). A non-approved doctor's record (still
+    // mid-signup, or never given a valid access key) stays owner-only,
+    // same as before.
     match /doctors/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+      allow read: if request.auth != null && (request.auth.uid == uid || resource.data.accessApproved == true);
+      allow write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // 2026-08-27 ADDITION -- the caregiver-facing counterpart to doctor
+    // search (see FirestorePatientDirectoryService.js's own header for the
+    // full reasoning): a deliberately narrow, separate collection holding
+    // ONLY { username, usernameLower, name } for every patient, so a
+    // caregiver can find a patient by username WITHOUT ever being able to
+    // query /users/{uid} (the patient's actual private record, which stays
+    // fully owner-only, unchanged, above). Self-write only -- a patient's
+    // own client is the only writer (useAuth.js, at signup and as a login
+    // self-heal); broadly readable/listable for search, same scope as the
+    // doctor search above.
+    match /patientDirectory/{uid} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == uid;
     }
 
     // Real, approved doctor check -- used below rather than just checking
@@ -68,8 +99,20 @@ service cloud.firestore {
       // needs to see their own sent requests/connections (CareTeamSection.jsx),
       // a doctor/caregiver needs to see relationships addressed to them
       // (ConnectionRequestsScreen.jsx / usePatientDirectory.js).
+      //
+      // 2026-08-27 WIDENED (VR: "antha caregiver doctor kum request
+      // kudukanum ... so that doctor comes to know 'Oh ivuru thaan intha
+      // patient oda caregiver ah'"): a doctor with an ACCEPTED relationship
+      // to a patient may also read that SAME patient's CAREGIVER
+      // relationship doc -- so opening a patient's chart can show "this
+      // patient's caregiver is X" without a new, separate caregiver-doctor
+      // request/accept flow. Deliberately scoped tight: only this exact
+      // patientId's caregiver doc, and only once the doctor's own
+      // relationship to that patient is 'accepted' -- a doctor can't browse
+      // caregiver relationships for a patient they aren't treating.
       allow read: if request.auth != null &&
-        (request.auth.uid == resource.data.patientId || request.auth.uid == resource.data.memberId);
+        (request.auth.uid == resource.data.patientId || request.auth.uid == resource.data.memberId ||
+          (resource.data.memberRole == 'caregiver' && isAcceptedDoctorFor(resource.data.patientId)));
 
       // Three distinct create paths:
       //   1. A patient sends a DOCTOR request themselves -- written from

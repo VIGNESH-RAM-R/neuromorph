@@ -86,7 +86,14 @@ check('LOBAR_TASKS: the retired-for-now tasks are inactive but still in the full
 check('LOBAR_TASK_ORDER: delayedRecognitionMemory runs last regardless of declaration order', () => {
   assert.equal(LOBAR_TASK_ORDER[LOBAR_TASK_ORDER.length - 1], 'delayedRecognitionMemory');
   assert.equal(LOBAR_TASK_ORDER.length, 8);
-  assert.equal(LOBAR_TASK_ORDER[0], 'stroop');
+  // 2026-08-27 FIX: this asserted 'stroop' here, which was true before the
+  // 2026-08-22 re-sequence (lobarTaskRegistryConfig.js -- VR feedback:
+  // Stroop/Go-No-Go "so boring at the very beginning") intentionally moved
+  // visualMemory to position 1 and pushed stroop back to position 6. The
+  // test was simply never updated after that deliberate, documented
+  // change -- this was stale test debt, not a real ordering bug (found
+  // during the 2026-08-27 full Detection Assessment audit).
+  assert.equal(LOBAR_TASK_ORDER[0], 'visualMemory');
 });
 
 check('LOBAR_TASK_ORDER: faceRecognition runs before delayedRecognitionMemory (so its registered study items are available)', () => {

@@ -3,6 +3,7 @@ import AuthTopBar from '../auth/AuthTopBar.jsx';
 import BrandLogo from '../common/BrandLogo.jsx';
 import CaregiverDailyCheckIn from './CaregiverDailyCheckIn.jsx';
 import CareTeamSection from '../dashboard/CareTeamSection.jsx';
+import CaregiverLinkPatientCard from './CaregiverLinkPatientCard.jsx';
 import { useCountUp } from '../../hooks/useCountUp.js';
 
 function initials(name) {
@@ -40,7 +41,13 @@ function greeting(now = new Date()) {
 // and a 15-question weekly deep check-in (self.deep) that's locked until
 // the linked patient finishes an assessment, then stays available until
 // answered or superseded by the next assessment.
-export default function CaregiverHomeSection({ self, microAnswers, deepAnswers, onMicroAnswer, onDeepAnswer, onOpenChat, onLogout, theme, onToggleTheme, language, onChangeLanguage }) {
+export default function CaregiverHomeSection({
+  self, microAnswers, deepAnswers, onMicroAnswer, onDeepAnswer, onOpenChat, onLogout, theme, onToggleTheme, language, onChangeLanguage,
+  // 2026-08-28 ADDITION -- see CaregiverLinkPatientCard.jsx's header comment. Passed straight
+  // through from App.jsx so an unlinked caregiver can send/retry a link request without ever
+  // leaving the dashboard.
+  onLink, onLinkByUsername, linkErrors, isLinkSubmitting, linkRequestStatus, pendingPatientName, onRefreshStatus,
+}) {
   if (!self) return null;
   const firstName = self.name?.split(' ')[0] || 'there';
   const animatedStreak = useCountUp(self.streak ?? 0);
@@ -88,6 +95,25 @@ export default function CaregiverHomeSection({ self, microAnswers, deepAnswers, 
             </section>
           </div>
 
+          {/* 2026-08-28 ADDITION (VR: "dashboard kula vacha better ah
+             irukum ... guest id maari irukatum") -- an unlinked caregiver
+             used to be hard-blocked on a separate full-page screen before
+             ever seeing this dashboard. Now they land here right after
+             login/onboarding and get this card instead; Ask Morphy stays
+             open for general guidance, only the two check-ins below stay
+             locked until linking actually finishes. */}
+          {!self.isLinked && (
+            <CaregiverLinkPatientCard
+              onLink={onLink}
+              onLinkByUsername={onLinkByUsername}
+              errors={linkErrors}
+              isSubmitting={isLinkSubmitting}
+              linkRequestStatus={linkRequestStatus}
+              pendingPatientName={pendingPatientName}
+              onRefreshStatus={onRefreshStatus}
+            />
+          )}
+
           <section className="nmpa-card nmpa-anim-fade-up" style={{ '--nmpa-anim-delay': '120ms' }}>
             <h2 className="nmpa-card__title">Ask Morphy for Caregivers</h2>
             <p className="nmpa-muted">
@@ -107,11 +133,17 @@ export default function CaregiverHomeSection({ self, microAnswers, deepAnswers, 
               <h2 className="nmpa-card__title">Quick Daily Check-In</h2>
               {self.micro.fullyComplete && <span className="nmpa-tag nmpa-tag--info">Done for today</span>}
             </div>
-            <p className="nmpa-muted">
-              Two quick questions about how {self.linkedPatientName || 'the patient'} seemed today -- takes a few
-              seconds, every day, and helps build a day-to-day picture alongside the weekly check-in below.
-            </p>
-            <CaregiverDailyCheckIn checklist={self.micro.checklist} answers={microAnswers} onAnswer={onMicroAnswer} />
+            {self.isLinked ? (
+              <>
+                <p className="nmpa-muted">
+                  Two quick questions about how {self.linkedPatientName || 'the patient'} seemed today -- takes a few
+                  seconds, every day, and helps build a day-to-day picture alongside the weekly check-in below.
+                </p>
+                <CaregiverDailyCheckIn checklist={self.micro.checklist} answers={microAnswers} onAnswer={onMicroAnswer} />
+              </>
+            ) : (
+              <p className="nmpa-muted">Link to a patient above to start your daily check-ins.</p>
+            )}
           </section>
 
           {/* 2026-08-24 ADDITION -- the weekly deep set, now triggered by
@@ -125,14 +157,17 @@ export default function CaregiverHomeSection({ self, microAnswers, deepAnswers, 
               {self.deep.status === 'completed' && <span className="nmpa-tag nmpa-tag--info">Completed this week</span>}
               {self.deep.status === 'locked' && <span className="nmpa-tag">Locked</span>}
             </div>
-            {self.deep.status === 'locked' && (
+            {!self.isLinked && (
+              <p className="nmpa-muted">Link to a patient above -- this unlocks after they complete a Detection Assessment.</p>
+            )}
+            {self.isLinked && self.deep.status === 'locked' && (
               <p className="nmpa-muted">
                 This unlocks automatically right after {self.linkedPatientName || 'the patient'} completes their next
                 Detection Assessment -- you'll be asked to observe and answer 15 questions covering memory, mood,
                 daily activities, and safety.
               </p>
             )}
-            {self.deep.status !== 'locked' && (
+            {self.isLinked && self.deep.status !== 'locked' && (
               <>
                 <p className="nmpa-muted">
                   {self.linkedPatientName || 'The patient'} completed a Detection Assessment on {self.deep.unlockedForDate} --

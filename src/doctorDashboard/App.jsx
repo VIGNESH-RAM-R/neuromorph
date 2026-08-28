@@ -105,6 +105,7 @@ export default function App() {
             refreshPendingCount();
             directory.reload();
           }}
+          language={language}
         />
       )}
       {view === 'report' && (
@@ -113,6 +114,7 @@ export default function App() {
           onBack={() => setView('list')}
           patients={directory.patients}
           currentUser={doctorAuth.currentUser}
+          language={language}
         />
       )}
     </DashboardShell>

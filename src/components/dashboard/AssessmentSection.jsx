@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { LOBES, QUESTION_BANK_INFO } from '../../config/lobarConfig.js';
 import { LOBAR_TASKS, taskDefinition } from '../../config/lobarTaskRegistryConfig.js';
 import { CognitiveScoreEngine } from '../../engines/CognitiveScoreEngine.js';
@@ -6,6 +6,7 @@ import { DEFAULT_LANGUAGE } from '../../config/i18nConfig.js';
 import { t, format } from '../../i18n/strings/assessment.js';
 import { t as tc } from '../../i18n/strings/common.js';
 import { estimateAssessmentMinutes } from '../../config/assessmentTimeEstimateConfig.js';
+import { FullscreenEngine } from '../../engines/FullscreenEngine.js';
 
 import AssessmentIntro from '../assessment/AssessmentIntro.jsx';
 import AssessmentComplete from '../assessment/AssessmentComplete.jsx';
@@ -80,6 +81,22 @@ export default function AssessmentSection({ self, assessment, onGoToProgress, la
   // guidance interstitial, not a block, so a patient who genuinely wants to
   // retake it still can.
   const [showAlreadyDoneGuard, setShowAlreadyDoneGuard] = useState(false);
+
+  // 2026-08-27 ADDITION -- the exit side of full-screen mode (the enter
+  // side is AssessmentIntro.jsx's "Begin" button, which has to be the one
+  // requesting it -- see FullscreenEngine.js). Leaves full-screen the
+  // moment the assessment is no longer actively running: on reaching
+  // 'complete' (so AssessmentComplete's summary isn't trapped full-screen),
+  // and also if this component unmounts entirely (patient navigates away
+  // to a different tab mid-assessment) -- exit() is a safe no-op either
+  // way if the browser was never in full-screen to begin with.
+  useEffect(() => {
+    if (assessment.phase === 'complete') {
+      FullscreenEngine.exit();
+    }
+  }, [assessment.phase]);
+  useEffect(() => () => FullscreenEngine.exit(), []);
+
   if (!self) return null;
   const { weeklyAssessment, weekendReminder } = self;
   const STATUS_TEXT = statusText(language);
@@ -106,7 +123,7 @@ export default function AssessmentSection({ self, assessment, onGoToProgress, la
     const TaskComponent = TASK_COMPONENTS[assessment.currentTaskId];
     if (!TaskComponent) return null;
     return (
-      <div className="nmpa-section">
+      <div className="nmpa-section nmpa-assessment-running">
         <section className="nmpa-card">
           <p className="nmpa-eyebrow">
             {format(t(language, 'taskProgress'), { number: assessment.currentTaskNumber, total: assessment.totalTasks })}

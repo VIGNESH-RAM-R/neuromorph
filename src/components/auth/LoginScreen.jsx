@@ -9,7 +9,7 @@ import ThemeToggle from '../common/ThemeToggle.jsx';
 import { MailIcon } from '../icons/FormIcons.jsx';
 import { authString } from '../../i18n/authStrings.js';
 
-export default function LoginScreen({ onLogin, onSwitchToSignup, onSocialAuth, errors, isSubmitting, theme, onToggleTheme, language, onChangeLanguage }) {
+export default function LoginScreen({ onLogin, onSwitchToSignup, onSocialAuth, onBackToRoleGate, errors, isSubmitting, theme, onToggleTheme, language, onChangeLanguage }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [touched, setTouched] = useState({});
@@ -40,6 +40,9 @@ export default function LoginScreen({ onLogin, onSwitchToSignup, onSocialAuth, e
 
       <div className="nmpa-auth__panel nmpa-auth__panel--form">
         <div className="nmpa-auth__card">
+          {onBackToRoleGate && (
+            <button type="button" className="nmpa-link nmpa-auth__back-link" onClick={onBackToRoleGate}>&larr; {t('backLink')}</button>
+          )}
           <h1 className="nmpa-auth__heading">{t('welcomeBack')}</h1>
           <p className="nmpa-auth__lede">{t('loginLede')}</p>
 

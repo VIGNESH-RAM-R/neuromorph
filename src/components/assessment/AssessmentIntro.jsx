@@ -1,6 +1,7 @@
 import { DEFAULT_LANGUAGE } from '../../config/i18nConfig.js';
 import { t, format } from '../../i18n/strings/assessment.js';
 import { estimateAssessmentMinutes } from '../../config/assessmentTimeEstimateConfig.js';
+import { FullscreenEngine } from '../../engines/FullscreenEngine.js';
 
 // Mode 1 (Cognitive Assessment Mode) framing, per the NEUROMORPH master
 // prompt: calm, professional, no hints/retries/rewards language anywhere
@@ -16,6 +17,17 @@ import { estimateAssessmentMinutes } from '../../config/assessmentTimeEstimateCo
 // reflects the current active task set if one is ever re-enabled/retired.
 export default function AssessmentIntro({ onBegin, taskCount, language = DEFAULT_LANGUAGE }) {
   const { minMinutes, maxMinutes } = estimateAssessmentMinutes();
+  // 2026-08-27 ADDITION (VR: "full page ah cover panra maari test venum -
+  // like full screen mode preferrable ah irukanum - like skillrack test").
+  // The Fullscreen API only grants a request made synchronously inside a
+  // real click handler -- this is that handler, not a useEffect reacting
+  // to phase changing to 'running' a render later (which browsers reject).
+  // See FullscreenEngine.js for why this never throws even if the browser
+  // refuses/lacks the API.
+  const handleBegin = () => {
+    FullscreenEngine.request();
+    onBegin();
+  };
   return (
     <div className="nmpa-section">
       <section className="nmpa-card nmpa-assessment-intro">
@@ -35,7 +47,7 @@ export default function AssessmentIntro({ onBegin, taskCount, language = DEFAULT
         <p className="nmpa-muted">
           {t(language, 'introMuted')}
         </p>
-        <button type="button" className="nmpa-button nmpa-button--primary" onClick={onBegin}>{t(language, 'beginAssessmentBtn')}</button>
+        <button type="button" className="nmpa-button nmpa-button--primary" onClick={handleBegin}>{t(language, 'beginAssessmentBtn')}</button>
       </section>
     </div>
   );

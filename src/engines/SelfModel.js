@@ -9,7 +9,27 @@ import { MilestoneEngine } from './MilestoneEngine.js';
 import { WeekendAssessmentReminderEngine } from './WeekendAssessmentReminderEngine.js';
 import { STREAK_CONFIG } from '../config/momentumConfig.js';
 
-const toIsoDate = (date) => date.toISOString().slice(0, 10);
+// 2026-08-27 BUGFIX (found during the Detection Assessment date/time
+// audit, VR: "correct date, time, month, year - all time tracking la
+// irukanum, illana anga present panna mudiyathu"). This used to be
+// `date.toISOString().slice(0, 10)`, which converts to UTC before reading
+// the date -- WRONG for any patient not in the UTC timezone, which is
+// almost every real user of an India-focused app (IST is UTC+5:30). A
+// patient completing their weekly check-in between 12:00am-5:29am IST
+// would have it silently recorded under the PREVIOUS calendar day (still
+// "yesterday" in UTC at that hour), throwing off "last completed", the
+// +7-day due date calculation, weekend detection, and streaks by a day --
+// exactly around midnight, the one time a date bug is easiest to miss in
+// testing and hardest for a patient to explain to their doctor. This now
+// reads the LOCAL calendar date (the device's own timezone, i.e. the
+// patient's actual "today"), which is what every caller here actually
+// means by "today's date".
+const toIsoDate = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
 // The single assembler every screen reads from -- same philosophy as the
 // Doctor Dashboard's ReportModel. Components never compute a streak,

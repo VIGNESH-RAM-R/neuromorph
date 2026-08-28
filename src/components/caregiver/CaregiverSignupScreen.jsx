@@ -63,6 +63,15 @@ export default function CaregiverSignupScreen({ onSignup, onSwitchToLogin, onSoc
         onChangeLanguage={onChangeLanguage}
         roleBadge="Caregiver"
         subledeOverride="Create your caregiver account -- a short daily check-in and the caregiver assistant come next."
+        instructionsTitle="How it works"
+        trustItems={[
+          'A 15-question deep check-in the same day your patient completes their assessment',
+          "A quick 2-question daily check-in the rest of the week -- takes under a minute",
+          "See your linked patient's progress and trends",
+          "Send doctor connection requests on their behalf",
+          'Morphy for Caregivers answers caregiving questions any time',
+          "Private by design -- only what you and their care team need",
+        ]}
       />
 
       <div className="nmpa-auth__panel nmpa-auth__panel--form">

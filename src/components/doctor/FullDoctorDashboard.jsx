@@ -1,4 +1,6 @@
 import DoctorDashboardApp from '../../doctorDashboard/App.jsx';
+import { DEFAULT_LANGUAGE } from '../../config/i18nConfig.js';
+import { t } from '../../i18n/strings/doctorHome.js';
 import '../../doctorDashboard/styles/theme.css';
 import '../../doctorDashboard/styles/print.css';
 
@@ -18,11 +20,19 @@ import '../../doctorDashboard/styles/print.css';
 // the patient/caregiver chrome the rest of app_page uses. onExit renders a
 // small fixed "back" bar above the dashboard's own top bar -- the
 // dashboard itself has no concept of a parent app to return to.
-export default function FullDoctorDashboard({ onExit }) {
+//
+// 2026-08-26 (VR): label changed from "Back to NEUROMORPH" -- onExit
+// actually returns to doctorView 'home' (DoctorHomeSection, this doctor's
+// own home screen -- see App.jsx), not out to the NEUROMORPH landing page.
+// Since the doctor dashboard is fully integrated into app_page now (not a
+// separate site), naming the actual destination instead of the app's own
+// brand name reads as one connected product rather than two apps stitched
+// together.
+export default function FullDoctorDashboard({ onExit, language = DEFAULT_LANGUAGE }) {
   return (
     <div className="nmdd-root">
       <div className="nmpa-embedded-exit-bar nmpa-screen-only">
-        <button type="button" className="nmpa-link" onClick={onExit}>&larr; Back to NEUROMORPH</button>
+        <button type="button" className="nmpa-link" onClick={onExit}>&larr; {t(language, 'backToDoctorHome')}</button>
       </div>
       <DoctorDashboardApp />
     </div>

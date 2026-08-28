@@ -2,6 +2,8 @@ import { useEffect, useState, useCallback } from 'react';
 import { FirestoreDoctorService } from '../../services/FirestoreDoctorService.js';
 import { FirestoreCareRelationshipService } from '../../services/FirestoreCareRelationshipService.js';
 import { isFirebaseConfigured } from '../../config/firebaseConfig.js';
+import { DEFAULT_LANGUAGE } from '../../config/i18nConfig.js';
+import { t, format } from '../../i18n/strings/dashboard.js';
 
 // 2026-08-23 ADDITION -- the doctor-connection half of the connection
 // system (see CARE_CONNECTION_PROMPT.md): search for a doctor by name OR
@@ -18,12 +20,22 @@ import { isFirebaseConfigured } from '../../config/firebaseConfig.js';
 // `patientName` identify WHOSE care team this is (the signed-in patient's
 // own uid/name, or the caregiver's `linkedPatientUid`/`linkedPatientName`)
 // -- separate from whoever is actually signed in and clicking the button.
-function statusLabel(status) {
-  if (status === 'pending') return 'Request sent -- waiting for the doctor to respond';
-  if (status === 'accepted') return 'Connected';
-  if (status === 'declined') return 'Declined';
-  if (status === 'revoked') return 'Removed';
-  return status;
+//
+// 2026-08-26: full i18n pass (see src/i18n/strings/dashboard.js). The
+// English `status` values from FirestoreCareRelationshipService
+// (pending/accepted/declined/revoked) stay untouched -- they're what
+// statusTagClass keys off. Only the on-screen label is translated, via
+// STATUS_LABEL_KEY, same precedent as StatusBadge.jsx's BAND_LABEL_KEY on
+// the doctor dashboard.
+const STATUS_LABEL_KEY = {
+  pending: 'statusPending',
+  accepted: 'statusAccepted',
+  declined: 'statusDeclined',
+  revoked: 'statusRevoked',
+};
+
+function statusLabel(status, language) {
+  return STATUS_LABEL_KEY[status] ? t(language, STATUS_LABEL_KEY[status]) : status;
 }
 
 function statusTagClass(status) {
@@ -33,7 +45,7 @@ function statusTagClass(status) {
   return '';
 }
 
-export default function CareTeamSection({ patientId, patientName }) {
+export default function CareTeamSection({ patientId, patientName, language = DEFAULT_LANGUAGE }) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -41,6 +53,14 @@ export default function CareTeamSection({ patientId, patientName }) {
   const [relationships, setRelationships] = useState([]);
   const [sendingId, setSendingId] = useState(null);
   const [feedback, setFeedback] = useState(null);
+  // 2026-08-27 ADDITION (VR: "if not exist na - give me no search found,
+  // illa some typo mistakes iruntha - give similar profiles"). `lastQuery`
+  // is what the user actually searched (captured at submit time, not the
+  // live `query` state, so the empty-state message doesn't change out from
+  // under them if they start typing the next search before this one's
+  // results render).
+  const [hasSearched, setHasSearched] = useState(false);
+  const [lastQuery, setLastQuery] = useState('');
 
   const loadRelationships = useCallback(async () => {
     if (!isFirebaseConfigured || !patientId) return;
@@ -61,17 +81,20 @@ export default function CareTeamSection({ patientId, patientName }) {
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!isFirebaseConfigured) {
-      setSearchError('Doctor search needs a connected Firebase project.');
+      setSearchError(t(language, 'doctorSearchNeedsFirebase'));
       return;
     }
+    const trimmed = query.trim();
     setIsSearching(true);
     setSearchError(null);
     setFeedback(null);
+    setLastQuery(trimmed);
     try {
-      const found = await FirestoreDoctorService.searchDoctors(query);
+      const found = await FirestoreDoctorService.searchDoctors(trimmed);
       setResults(found);
+      setHasSearched(true);
     } catch (err) {
-      setSearchError(err?.message || 'Could not search for doctors right now.');
+      setSearchError(err?.message || t(language, 'couldNotSearchDoctors'));
     } finally {
       setIsSearching(false);
     }
@@ -87,12 +110,12 @@ export default function CareTeamSection({ patientId, patientName }) {
       );
       setFeedback(
         result.alreadyExists
-          ? { type: 'info', text: `You already have a ${result.relationship.status} connection with ${doctor.name}.` }
-          : { type: 'success', text: `Request sent to ${doctor.name}.` },
+          ? { type: 'info', text: format(t(language, 'alreadyConnectedFeedback'), { doctorName: doctor.name, statusLabel: statusLabel(result.relationship.status, language) }) }
+          : { type: 'success', text: format(t(language, 'requestSentFeedback'), { doctorName: doctor.name }) },
       );
       await loadRelationships();
     } catch (err) {
-      setFeedback({ type: 'error', text: err?.message || 'Could not send the request. Please try again.' });
+      setFeedback({ type: 'error', text: err?.message || t(language, 'couldNotSendRequest') });
     } finally {
       setSendingId(null);
     }
@@ -104,23 +127,22 @@ export default function CareTeamSection({ patientId, patientName }) {
 
   return (
     <section className="nmpa-card nmpa-anim-fade-up" style={{ '--nmpa-anim-delay': '90ms' }}>
-      <h2 className="nmpa-card__title">Your Care Team</h2>
+      <h2 className="nmpa-card__title">{t(language, 'careTeamTitle')}</h2>
       <p className="nmpa-muted">
-        Find a doctor by name or their ID (e.g. NMD-A1B2C3) and send them a request. Once they accept, they can
-        review {patientName || 'this patient'}'s assessment scores and progress from their dashboard.
+        {format(t(language, 'careTeamDescription'), { patientName: patientName || t(language, 'thisPatientFallback') })}
       </p>
 
       <form onSubmit={handleSearch} className="nmpa-inline-form" style={{ display: 'flex', gap: 8, marginTop: 12 }}>
         <input
           type="text"
           className="nmpa-input"
-          placeholder="Search by doctor name or ID"
+          placeholder={t(language, 'searchPlaceholder')}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           style={{ flex: 1 }}
         />
         <button type="submit" className="nmpa-button nmpa-button--secondary" disabled={isSearching || !query.trim()}>
-          {isSearching ? 'Searching...' : 'Search'}
+          {isSearching ? t(language, 'searchingButton') : t(language, 'searchButton')}
         </button>
       </form>
 
@@ -131,6 +153,18 @@ export default function CareTeamSection({ patientId, patientName }) {
         </p>
       )}
 
+      {!isSearching && !searchError && hasSearched && results.length === 0 && (
+        <p className="nmpa-alert nmpa-alert--info" style={{ marginTop: 10 }}>
+          {format(t(language, 'noDoctorsFoundLabel'), { query: lastQuery })}
+        </p>
+      )}
+
+      {results.length > 0 && results[0].fuzzy && (
+        <p className="nmpa-muted nmpa-muted--sm" style={{ marginTop: 10 }}>
+          {format(t(language, 'similarProfilesLabel'), { query: lastQuery })}
+        </p>
+      )}
+
       {results.length > 0 && (
         <ul className="nmpa-list" style={{ marginTop: 12 }}>
           {results.map((doctor) => (
@@ -138,6 +172,7 @@ export default function CareTeamSection({ patientId, patientName }) {
               <div>
                 <strong>{doctor.name}</strong>
                 {doctor.specialty && <span className="nmpa-muted nmpa-muted--sm"> -- {doctor.specialty}</span>}
+                {doctor.doctorId && <div className="nmpa-muted nmpa-muted--sm">{doctor.doctorId}</div>}
                 {doctor.licenseRegion && <div className="nmpa-muted nmpa-muted--sm">{doctor.licenseRegion}</div>}
               </div>
               <button
@@ -146,7 +181,7 @@ export default function CareTeamSection({ patientId, patientName }) {
                 disabled={sendingId === doctor.uid || alreadyRequestedIds.has(doctor.uid)}
                 onClick={() => handleSendRequest(doctor)}
               >
-                {alreadyRequestedIds.has(doctor.uid) ? 'Requested' : sendingId === doctor.uid ? 'Sending...' : 'Send Request'}
+                {alreadyRequestedIds.has(doctor.uid) ? t(language, 'requestedButton') : sendingId === doctor.uid ? t(language, 'sendingButton') : t(language, 'sendRequestButton')}
               </button>
             </li>
           ))}
@@ -155,15 +190,15 @@ export default function CareTeamSection({ patientId, patientName }) {
 
       {relationships.length > 0 && (
         <div style={{ marginTop: 20 }}>
-          <h3 className="nmpa-card__subtitle">Your connections</h3>
+          <h3 className="nmpa-card__subtitle">{t(language, 'yourConnectionsTitle')}</h3>
           <ul className="nmpa-list">
             {relationships.map((rel) => (
               <li key={rel.id} className="nmpa-list__item" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                  <strong>{rel.memberName || 'Unnamed'}</strong>
-                  <span className="nmpa-muted nmpa-muted--sm"> -- {rel.memberRole === 'doctor' ? 'Doctor' : 'Caregiver'}</span>
+                  <strong>{rel.memberName || t(language, 'unnamedConnection')}</strong>
+                  <span className="nmpa-muted nmpa-muted--sm"> -- {rel.memberRole === 'doctor' ? t(language, 'roleDoctor') : t(language, 'roleCaregiver')}</span>
                 </div>
-                <span className={`nmpa-tag ${statusTagClass(rel.status)}`}>{statusLabel(rel.status)}</span>
+                <span className={`nmpa-tag ${statusTagClass(rel.status)}`}>{statusLabel(rel.status, language)}</span>
               </li>
             ))}
           </ul>

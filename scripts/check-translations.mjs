@@ -20,6 +20,16 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const STRINGS_DIRS = [
   path.join(__dirname, '..', 'src', 'i18n'),
   path.join(__dirname, '..', 'src', 'i18n', 'strings'),
+  // 2026-08-26 ADDITION: after the doctorDashboard merge (2026-08-23) this
+  // script kept scanning only app_page's own src/i18n/** and silently never
+  // covered the Doctor Dashboard's separate src/doctorDashboard/i18n/**
+  // string tables (auth.js, common.js, patients.js, and now report.js) --
+  // meaning every doctor-side translation shipped with zero automated
+  // parity checking since the merge. Added here so "run this after adding
+  // or editing any UI copy" (this file's own header comment) is actually
+  // true for both dashboards, not just the patient one.
+  path.join(__dirname, '..', 'src', 'doctorDashboard', 'i18n'),
+  path.join(__dirname, '..', 'src', 'doctorDashboard', 'i18n', 'strings'),
 ];
 const EXPECTED_LANGUAGES = ['en', 'hi', 'ta', 'fr', 'te', 'ur', 'es'];
 

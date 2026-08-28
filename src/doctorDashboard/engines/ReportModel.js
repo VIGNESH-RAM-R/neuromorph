@@ -92,7 +92,7 @@ export const ReportModel = {
 
     if (!latestSession) {
       return {
-        patient: { patientId: patient?.patientId, name: patient?.name, age: patient?.age, gender: patient?.gender, riskFactors: patient?.riskFactors || [] },
+        patient: { patientId: patient?.patientId, name: patient?.name, age: patient?.age, gender: patient?.gender, riskFactors: patient?.riskFactors || [], caregiverName: patient?.caregiverName },
         hasData: false,
         // A patient can have real daily engagement (Daily Set/Momentum
         // Score) before ever completing their first weekly Detection
@@ -138,6 +138,11 @@ export const ReportModel = {
         age: patient.age,
         gender: patient.gender,
         riskFactors: patient.riskFactors || [],
+        // 2026-08-27 ADDITION -- see FirestorePatientService.getPatientRecord's
+        // header comment on this same field. undefined (not null/'') when
+        // this patient has no accepted caregiver -- PatientOverviewCard
+        // only renders the row when it's actually present.
+        caregiverName: patient.caregiverName,
       },
       session: {
         date: latestSession.date,

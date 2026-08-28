@@ -69,6 +69,14 @@ export const DomainInsightEngine = {
   // callouts -- a notable decline, a notable improvement, or a domain
   // sitting in the Reduced/Mildly Reduced band regardless of trend. Sorted
   // so the most clinically-relevant (declines, then low bands) come first.
+  // 2026-08-26: each item keeps its original composed English `text` (for
+  // any consumer that hasn't been updated -- see RiskAlertEngine.js's
+  // `reasons`/`reasonEntries` precedent on the Doctor Dashboard for the
+  // same pattern) AND a structured `textKey` + the raw values a UI needs
+  // to translate the sentence at render time (see ClinicalInsights.jsx and
+  // PrintableSelfReport.jsx, src/i18n/strings/dashboard.js). `band` is kept
+  // on band-driven items so the UI can look up both the band's translated
+  // label and its translated interpretation sentence.
   insights(breakdownResults) {
     const items = [];
     for (const d of breakdownResults) {
@@ -78,18 +86,28 @@ export const DomainInsightEngine = {
           domain: d.domain,
           level: 'warn',
           text: `${d.label} is down ${Math.abs(d.percentChange)}% from the previous assessment. ${BAND_INTERPRETATION_TEMPLATES[d.band]}`,
+          textKey: 'insightDeclineText',
+          label: d.label,
+          pct: Math.abs(d.percentChange),
+          band: d.band,
         });
       } else if (typeof d.percentChange === 'number' && d.percentChange >= NOTABLE_DECLINE_THRESHOLD_PCT) {
         items.push({
           domain: d.domain,
           level: 'info',
           text: `${d.label} is up ${d.percentChange}% from the previous assessment -- a positive trend worth keeping up.`,
+          textKey: 'insightImproveText',
+          label: d.label,
+          pct: d.percentChange,
         });
       } else if (d.band === 'Reduced' || d.band === 'Mildly Reduced') {
         items.push({
           domain: d.domain,
           level: d.band === 'Reduced' ? 'warn' : 'info',
           text: `${d.label} is currently in the "${d.band}" range. ${BAND_INTERPRETATION_TEMPLATES[d.band]}`,
+          textKey: 'insightBandText',
+          label: d.label,
+          band: d.band,
         });
       }
     }
