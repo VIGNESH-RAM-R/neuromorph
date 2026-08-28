@@ -193,9 +193,23 @@ export function useAuth() {
     if (!result.valid) return false;
 
     if (!isFirebaseConfigured) {
+      // 2026-08-28 BUGFIX (VR: "oruthan play vey panla 5days streak nu
+      // kaamikuthu, athelam maathi, actual data kondu vaa" -- someone who
+      // never played is seeing a 5-day streak, fix that, bring real data).
+      // This used to be `{ ...MOCK_SELF, name, onboardingComplete: false }`
+      // -- which kept MOCK_SELF's whole pre-baked ~12-week demo activity
+      // log (dailyHistory, today, weeklyCognitiveScoreHistory) and only
+      // swapped the name. So a brand-new signup, even in this offline
+      // fallback mode, showed a streak/history it never earned. A genuinely
+      // new account should start exactly like the real Firestore signup
+      // path does (see below: UserProfileEngine.buildNewProfileDoc) --
+      // empty history, zero streak, honest.
       setIsSubmitting(true);
       await wait(500);
-      setCurrentUser({ ...MOCK_SELF, name, onboardingComplete: false });
+      setCurrentUser({
+        ...UserProfileEngine.buildNewProfileDoc({ name, email, authProvider: 'password', privacyConsentAcceptedAt: consentGiven ? new Date().toISOString() : null }),
+        uid: 'demo-user',
+      });
       setIsAuthenticated(true);
       setIsSubmitting(false);
       return true;
