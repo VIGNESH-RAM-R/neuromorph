@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { DEFAULT_LANGUAGE } from '../../config/i18nConfig.js';
 import { ABOUT_WEBSITE_URL } from '../../config/externalLinksConfig.js';
 import { t } from '../../i18n/strings/roleGate.js';
+import { tl } from '../../i18n/strings/landing.js';
 import BrandLogo from '../common/BrandLogo.jsx';
 import { LANGUAGES, languageInfo } from '../../config/i18nConfig.js';
 import { GlobeIcon, ChevronDownIcon } from '../icons/FormIcons.jsx';
@@ -34,10 +35,23 @@ function useCountUp(target, duration = 1200, delay = 0) {
 
 const PARTICLES = Array.from({ length: 28 }, (_, index) => index);
 
+// 2026-08-28 (VR: "change the apt logos for each of the dashboard") -- the
+// three access cards used to render a plain "+", "♡", "⌁" character as
+// their icon. Real, role-appropriate line icons instead: a person outline
+// for the patient card, two joined hearts for the caregiver card, a
+// stethoscope for the doctor/clinician card -- same stroke-based style as
+// FeatureIcon/DomainIcon above.
+function RoleIcon({ type }) {
+  if (type === 'patient') return <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="16" r="8" fill="none" stroke="currentColor" strokeWidth="2.6"/><path d="M9 40c1.8-9.5 7.6-14 15-14s13.2 4.5 15 14" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/></svg>;
+  if (type === 'caregiver') return <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 39s-13-7.8-13-17.4C11 15.9 15.2 12 20 12c1.9 0 3.6.7 4.9 1.9L24 15l-.9-1.1A6.9 6.9 0 0 1 28 12c4.8 0 9 3.9 9 9.6C37 31.2 24 39 24 39Z" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinejoin="round"/><path d="M18 22c1-2 2.6-3 4.4-3M30 22c-1-2-2.6-3-4.4-3" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>;
+  if (type === 'doctor') return <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M16 8v13a8 8 0 0 0 16 0V8" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"/><path d="M16 8h-4M32 8h4" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"/><path d="M32 21v4a10 10 0 0 1-20 0v-3" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"/><circle cx="36" cy="27" r="4" fill="none" stroke="currentColor" strokeWidth="2.6"/></svg>;
+  return null;
+}
+
 function RoleCard({ className, icon, title, description, onClick }) {
   return (
     <button type="button" className={`nmpa-landing__role ${className}`} onClick={onClick}>
-      <span className="nmpa-landing__role-icon" aria-hidden="true">{icon}</span>
+      <span className="nmpa-landing__role-icon" aria-hidden="true"><RoleIcon type={icon} /></span>
       <span className="nmpa-landing__role-copy"><span className="nmpa-landing__role-title">{title}</span><span className="nmpa-landing__role-description">{description}</span></span>
       <span className="nmpa-landing__role-arrow" aria-hidden="true">→</span>
     </button>
@@ -193,8 +207,25 @@ function MorphyFooter() {
   );
 }
 
-function CognitiveScoreDashboard({ variant = 'section' }) {
-  const [memory, language, attention, speech, facial, executive] = SCORE_DOMAINS;
+// 2026-08-28 (VR: "kindly translate the landing page too in all the 7
+// languages") -- domain titles/subs used to be hardcoded English on the
+// SCORE_DOMAINS objects themselves. Translated copy is now looked up here,
+// per language, and merged onto each domain right before it's handed to
+// DomainScoreCard -- SCORE_DOMAINS keeps only the language-independent
+// bits (key/icon/score). Note: the destructured domain used to be named
+// `language` (SCORE_DOMAINS[1], the Language domain) -- renamed to
+// `languageDomain` here since this component now also takes a real
+// `language` prop (the i18n code) and the two would otherwise collide.
+function CognitiveScoreDashboard({ variant = 'section', language }) {
+  const [memory, languageDomain, attention, speech, facial, executive] = SCORE_DOMAINS;
+  const domainCopy = {
+    memory: { title: tl(language, 'domainMemoryTitle'), sub: tl(language, 'domainMemorySub') },
+    language: { title: tl(language, 'domainLanguageTitle'), sub: tl(language, 'domainLanguageSub') },
+    attention: { title: tl(language, 'domainAttentionTitle'), sub: tl(language, 'domainAttentionSub') },
+    speech: { title: tl(language, 'domainSpeechTitle'), sub: tl(language, 'domainSpeechSub') },
+    facial: { title: tl(language, 'domainFacialTitle'), sub: tl(language, 'domainFacialSub') },
+    executive: { title: tl(language, 'domainExecutiveTitle'), sub: tl(language, 'domainExecutiveSub') },
+  };
   const wrapRef = useRef(null);
   const rafRef = useRef(null);
   const score = useCountUp(82, 1200, 300);
@@ -240,29 +271,29 @@ function CognitiveScoreDashboard({ variant = 'section' }) {
       <div className="nmpa-cscore__brain" aria-hidden="true" />
       <div className="nmpa-cscore__sweep" aria-hidden="true" />
       <div className="nmpa-cscore__grid">
-        <DomainScoreCard domain={memory} index={0} showSpark={isHero} />
-        <DomainScoreCard domain={language} index={1} showSpark={isHero} />
+        <DomainScoreCard domain={{ ...memory, ...domainCopy.memory }} index={0} showSpark={isHero} />
+        <DomainScoreCard domain={{ ...languageDomain, ...domainCopy.language }} index={1} showSpark={isHero} />
         <div className="nmpa-cscore__circle">
           <span className="nmpa-cscore__circle-ring nmpa-cscore__circle-ring--a" aria-hidden="true" />
           <span className="nmpa-cscore__circle-ring nmpa-cscore__circle-ring--b" aria-hidden="true" />
           <span className="nmpa-cscore__circle-sheen" aria-hidden="true" />
-          <span>COGNITIVE<br />HEALTH SCORE</span>
+          <span>{tl(language, 'dashScoreLabel')}</span>
           <strong>{Math.round(score)}</strong>
-          <small>momentum score</small>
-          <b>Good</b>
+          <small>{tl(language, 'dashMomentumLabel')}</small>
+          <b>{tl(language, 'dashGood')}</b>
         </div>
-        <DomainScoreCard domain={attention} index={2} showSpark={isHero} />
-        <DomainScoreCard domain={speech} index={3} showSpark={isHero} />
+        <DomainScoreCard domain={{ ...attention, ...domainCopy.attention }} index={2} showSpark={isHero} />
+        <DomainScoreCard domain={{ ...speech, ...domainCopy.speech }} index={3} showSpark={isHero} />
       </div>
       <div className="nmpa-cscore__row-lower">
-        <DomainScoreCard domain={facial} index={4} showSpark={isHero} />
-        <DomainScoreCard domain={executive} index={5} showSpark={isHero} />
+        <DomainScoreCard domain={{ ...facial, ...domainCopy.facial }} index={4} showSpark={isHero} />
+        <DomainScoreCard domain={{ ...executive, ...domainCopy.executive }} index={5} showSpark={isHero} />
       </div>
       {isHero ? <CognitiveTrajectory /> : (
       <div className="nmpa-cscore__trend">
         <div className="nmpa-cscore__trend-head">
-          <div><h4>WEEKLY TREND</h4><p>Your cognitive health is improving.</p></div>
-          <div className="nmpa-cscore__trend-delta"><strong>{delta >= 0 ? '+' : ''}{delta.toFixed(1)}</strong><span>vs last week</span></div>
+          <div><h4>{tl(language, 'dashWeeklyTrend')}</h4><p>{tl(language, 'dashTrendImproving')}</p></div>
+          <div className="nmpa-cscore__trend-delta"><strong>{delta >= 0 ? '+' : ''}{delta.toFixed(1)}</strong><span>{tl(language, 'dashVsLastWeek')}</span></div>
         </div>
         <div className="nmpa-cscore__trend-chart">
           <svg viewBox="0 0 600 160" preserveAspectRatio="none" aria-hidden="true">
@@ -292,7 +323,7 @@ function CognitiveScoreDashboard({ variant = 'section' }) {
       {isHero ? <MorphyFooter /> : (
       <div className="nmpa-cscore__banner">
         <span className="nmpa-cscore__banner-icon" aria-hidden="true"><DomainIcon type="shield" /></span>
-        <div><strong>Early insights. Better outcomes.</strong><span>Consistent monitoring leads to proactive care.</span></div>
+        <div><strong>{tl(language, 'dashBannerTitle')}</strong><span>{tl(language, 'dashBannerDesc')}</span></div>
       </div>
       )}
     </div>
@@ -416,21 +447,21 @@ export default function RoleGateScreen({ onSelectRole, language = DEFAULT_LANGUA
       <div className="nmpa-landing__particles" aria-hidden="true">{PARTICLES.map((particle) => <i key={particle} style={{ '--particle': particle, '--x': `${(particle * 37) % 100}%`, '--y': `${(particle * 19) % 100}%`, '--dx': `${((particle % 5) - 2) * 20}px` }} />)}</div>
       <header className="nmpa-landing__nav">
         <a className="nmpa-landing__wordmark" href="#top" aria-label="NEUROMORPH home"><BrandLogo size="sm" /></a>
-        <nav className="nmpa-landing__links" aria-label="Landing page"><a href="#signals">WHAT WE TRACK</a><a href="#for-you">FOR YOU</a><a href="#access">SIGN IN</a><a href={ABOUT_WEBSITE_URL} target="_blank" rel="noopener noreferrer">ABOUT</a></nav>
+        <nav className="nmpa-landing__links" aria-label="Landing page"><a href="#signals">{tl(language, 'navTrack')}</a><a href="#for-you">{tl(language, 'navForYou')}</a><a href="#access">{tl(language, 'navSignIn')}</a><a href={ABOUT_WEBSITE_URL} target="_blank" rel="noopener noreferrer">{tl(language, 'navAbout')}</a></nav>
         <div className="nmpa-landing__nav-actions">
           {onChangeLanguage && <LandingLanguageSwitcher language={language} onChangeLanguage={onChangeLanguage} />}
-          <a className="nmpa-landing__nav-cta" href="#access">Get started</a>
+          <a className="nmpa-landing__nav-cta" href="#access">{tl(language, 'navGetStarted')}</a>
         </div>
       </header>
 
       <section className="nmpa-landing__hero" id="top">
         <div className="nmpa-landing__orb nmpa-landing__orb--one" aria-hidden="true" /><div className="nmpa-landing__orb nmpa-landing__orb--two" aria-hidden="true" />
         <div className="nmpa-landing__hero-copy">
-          <p className="nmpa-landing__kicker"><span aria-hidden="true" /> Cognitive care, made clearer</p>
-          <h1>Understand your cognitive health, <em>one step at a time, back to you.</em></h1>
-          <p className="nmpa-landing__hero-lede">NEUROMORPH brings weekly check-ins, daily cognitive activities, and clear progress tracking into one considered experience for patients, caregivers, and clinicians.</p>
-          <div className="nmpa-landing__hero-actions"><a className="nmpa-landing__primary-cta" href="#access">Choose your access <span aria-hidden="true">→</span></a><a className="nmpa-landing__text-cta" href="#how-it-works">See how it works <span aria-hidden="true">↓</span></a></div>
-          <p className="nmpa-landing__hero-note">Designed to support awareness and conversations with your care team — not to provide a diagnosis.</p>
+          <p className="nmpa-landing__kicker"><span aria-hidden="true" /> {tl(language, 'heroKicker')}</p>
+          <h1>{tl(language, 'heroTitleLead')} <em>{tl(language, 'heroTitleEm')}</em></h1>
+          <p className="nmpa-landing__hero-lede">{tl(language, 'heroLede')}</p>
+          <div className="nmpa-landing__hero-actions"><a className="nmpa-landing__primary-cta" href="#access">{tl(language, 'heroCtaPrimary')} <span aria-hidden="true">→</span></a><a className="nmpa-landing__text-cta" href="#how-it-works">{tl(language, 'heroCtaSecondary')} <span aria-hidden="true">↓</span></a></div>
+          <p className="nmpa-landing__hero-note">{tl(language, 'heroNote')}</p>
         </div>
         {/* 2026-08-28 (VR: "nee itha remove pannidu, need not include
            anything, apdiye vitru" -- remove the hero image, don't replace
@@ -443,52 +474,52 @@ export default function RoleGateScreen({ onSelectRole, language = DEFAULT_LANGUA
            re-adding anything here rather than guessing. */}
       </section>
 
-      <section className="nmpa-landing__access" id="access"><div className="nmpa-landing__access-heading"><p className="nmpa-landing__eyebrow">Secure access</p><h2>{t(language, 'lede')}</h2><p>Choose the space built for the role you have in care.</p></div><div className="nmpa-landing__roles" role="group" aria-label="Choose your access type">
-        <RoleCard className="nmpa-landing__role--patient" icon="+" title={t(language, 'patientTitle')} description={t(language, 'patientSub')} onClick={() => onSelectRole('patient')} />
-        <RoleCard className="nmpa-landing__role--caregiver" icon="♡" title={t(language, 'caregiverTitle')} description={t(language, 'caregiverSub')} onClick={() => onSelectRole('caregiver')} />
-        <RoleCard className="nmpa-landing__role--doctor" icon="⌁" title={t(language, 'doctorTitle')} description={t(language, 'doctorSub')} onClick={() => onSelectRole('doctor')} />
+      <section className="nmpa-landing__access" id="access"><div className="nmpa-landing__access-heading"><p className="nmpa-landing__eyebrow">{tl(language, 'accessEyebrow')}</p><h2>{t(language, 'lede')}</h2><p>{tl(language, 'accessSub')}</p></div><div className="nmpa-landing__roles" role="group" aria-label="Choose your access type">
+        <RoleCard className="nmpa-landing__role--patient" icon="patient" title={t(language, 'patientTitle')} description={t(language, 'patientSub')} onClick={() => onSelectRole('patient')} />
+        <RoleCard className="nmpa-landing__role--caregiver" icon="caregiver" title={t(language, 'caregiverTitle')} description={t(language, 'caregiverSub')} onClick={() => onSelectRole('caregiver')} />
+        <RoleCard className="nmpa-landing__role--doctor" icon="doctor" title={t(language, 'doctorTitle')} description={t(language, 'doctorSub')} onClick={() => onSelectRole('doctor')} />
       </div></section>
 
       <section className="nmpa-landing__section nmpa-landing__signals" id="signals">
-        <div className="nmpa-landing__section-heading"><p className="nmpa-landing__eyebrow">See the whole picture</p><h2>Signals become easier to notice.</h2><p>NEUROMORPH brings everyday observations into one calm, understandable view so you can follow what is changing and what is staying steady.</p></div>
+        <div className="nmpa-landing__section-heading"><p className="nmpa-landing__eyebrow">{tl(language, 'signalsEyebrow')}</p><h2>{tl(language, 'signalsTitle')}</h2><p>{tl(language, 'signalsIntro')}</p></div>
         <div className="nmpa-landing__signal-row">
-          <article><span className="nmpa-landing__signal-index">01</span><h3>Memory &amp; language</h3><p>Recall, recognition, expression, and comprehension tracked together.</p></article>
-          <article><span className="nmpa-landing__signal-index">02</span><h3>Attention &amp; pace</h3><p>Short activities reveal patterns in focus, processing, and consistency.</p></article>
-          <article><span className="nmpa-landing__signal-index">03</span><h3>Progress over time</h3><p>Weekly context makes a single difficult day easier to place in perspective.</p></article>
+          <article><span className="nmpa-landing__signal-index">01</span><h3>{tl(language, 'signal1Title')}</h3><p>{tl(language, 'signal1Desc')}</p></article>
+          <article><span className="nmpa-landing__signal-index">02</span><h3>{tl(language, 'signal2Title')}</h3><p>{tl(language, 'signal2Desc')}</p></article>
+          <article><span className="nmpa-landing__signal-index">03</span><h3>{tl(language, 'signal3Title')}</h3><p>{tl(language, 'signal3Desc')}</p></article>
         </div>
       </section>
 
       <section className="nmpa-landing__section nmpa-landing__people" id="for-you">
-        <div className="nmpa-landing__people-intro"><p className="nmpa-landing__eyebrow">Designed around care</p><h2>One shared rhythm. The right view for every person.</h2></div>
+        <div className="nmpa-landing__people-intro"><p className="nmpa-landing__eyebrow">{tl(language, 'peopleEyebrow')}</p><h2>{tl(language, 'peopleTitle')}</h2></div>
         <div className="nmpa-landing__people-list">
-          <article><span className="nmpa-landing__people-mark">P</span><div><h3>For patients</h3><p>A clear, low-pressure way to check in, stay engaged, and understand your own progress.</p></div></article>
-          <article><span className="nmpa-landing__people-mark">C</span><div><h3>For caregivers</h3><p>Useful context for supportive conversations, without turning care into another burden.</p></div></article>
-          <article><span className="nmpa-landing__people-mark">T</span><div><h3>For care teams</h3><p>Longitudinal signals that help make appointments and next steps more informed.</p></div></article>
+          <article><span className="nmpa-landing__people-mark">P</span><div><h3>{tl(language, 'peoplePatientTitle')}</h3><p>{tl(language, 'peoplePatientDesc')}</p></div></article>
+          <article><span className="nmpa-landing__people-mark">C</span><div><h3>{tl(language, 'peopleCaregiverTitle')}</h3><p>{tl(language, 'peopleCaregiverDesc')}</p></div></article>
+          <article><span className="nmpa-landing__people-mark">T</span><div><h3>{tl(language, 'peopleTeamTitle')}</h3><p>{tl(language, 'peopleTeamDesc')}</p></div></article>
         </div>
       </section>
 
       <section className="nmpa-landing__section nmpa-landing__approach" id="approach">
-        <div className="nmpa-landing__section-heading"><p className="nmpa-landing__eyebrow">A connected approach</p><h2>Information that helps you notice the bigger picture.</h2><p>Each part of NEUROMORPH is designed to make ongoing cognitive tracking feel approachable, structured, and useful to the people involved in care.</p></div>
+        <div className="nmpa-landing__section-heading"><p className="nmpa-landing__eyebrow">{tl(language, 'approachEyebrow')}</p><h2>{tl(language, 'approachTitle')}</h2><p>{tl(language, 'approachIntro')}</p></div>
         <div className="nmpa-landing__feature-grid">
-          <article className="nmpa-landing__feature-card"><span className="nmpa-landing__feature-number">01</span><span className="nmpa-landing__feature-icon"><FeatureIcon type="assessment" /></span><h3>Weekly assessment</h3><p>A structured check-in across memory, attention, language, processing speed, and related cognitive domains.</p></article>
-          <article className="nmpa-landing__feature-card"><span className="nmpa-landing__feature-number">02</span><span className="nmpa-landing__feature-icon"><FeatureIcon type="activity" /></span><h3>Daily activities</h3><p>Short, guided activities create a clearer picture of day-to-day engagement and progress over time.</p></article>
-          <article className="nmpa-landing__feature-card"><span className="nmpa-landing__feature-number">03</span><span className="nmpa-landing__feature-icon"><FeatureIcon type="context" /></span><h3>Shared context</h3><p>Caregivers and clinicians can use the right view for their role, keeping support more coordinated.</p></article>
-          <article className="nmpa-landing__feature-card"><span className="nmpa-landing__feature-number">04</span><span className="nmpa-landing__feature-icon"><FeatureIcon type="multimodal" /></span><h3>Multimodal analysis</h3><p>Combines speech, facial, behavioral, and cognitive signals to build a richer picture of cognitive health.</p></article>
-          <article className="nmpa-landing__feature-card"><span className="nmpa-landing__feature-number">05</span><span className="nmpa-landing__feature-icon"><FeatureIcon type="longitudinal" /></span><h3>Longitudinal monitoring</h3><p>Tracks subtle cognitive changes over weeks and months, helping identify meaningful trends earlier.</p></article>
-          <article className="nmpa-landing__feature-card"><span className="nmpa-landing__feature-number">06</span><span className="nmpa-landing__feature-icon"><FeatureIcon type="score" /></span><h3>Personalized cognitive score</h3><p>Transforms complex assessment data into a clear, easy-to-understand cognitive health indicator.</p></article>
+          <article className="nmpa-landing__feature-card"><span className="nmpa-landing__feature-number">01</span><span className="nmpa-landing__feature-icon"><FeatureIcon type="assessment" /></span><h3>{tl(language, 'feature1Title')}</h3><p>{tl(language, 'feature1Desc')}</p></article>
+          <article className="nmpa-landing__feature-card"><span className="nmpa-landing__feature-number">02</span><span className="nmpa-landing__feature-icon"><FeatureIcon type="activity" /></span><h3>{tl(language, 'feature2Title')}</h3><p>{tl(language, 'feature2Desc')}</p></article>
+          <article className="nmpa-landing__feature-card"><span className="nmpa-landing__feature-number">03</span><span className="nmpa-landing__feature-icon"><FeatureIcon type="context" /></span><h3>{tl(language, 'feature3Title')}</h3><p>{tl(language, 'feature3Desc')}</p></article>
+          <article className="nmpa-landing__feature-card"><span className="nmpa-landing__feature-number">04</span><span className="nmpa-landing__feature-icon"><FeatureIcon type="multimodal" /></span><h3>{tl(language, 'feature4Title')}</h3><p>{tl(language, 'feature4Desc')}</p></article>
+          <article className="nmpa-landing__feature-card"><span className="nmpa-landing__feature-number">05</span><span className="nmpa-landing__feature-icon"><FeatureIcon type="longitudinal" /></span><h3>{tl(language, 'feature5Title')}</h3><p>{tl(language, 'feature5Desc')}</p></article>
+          <article className="nmpa-landing__feature-card"><span className="nmpa-landing__feature-number">06</span><span className="nmpa-landing__feature-icon"><FeatureIcon type="score" /></span><h3>{tl(language, 'feature6Title')}</h3><p>{tl(language, 'feature6Desc')}</p></article>
         </div>
       </section>
 
       <section className="nmpa-landing__section nmpa-landing__workflow nmpa-landing__workflow--dashboard" id="how-it-works">
-        <CognitiveScoreDashboard />
-        <div className="nmpa-landing__workflow-copy"><p className="nmpa-landing__eyebrow">Built around your routine</p><h2>A calmer way to stay engaged with cognitive care.</h2><p className="nmpa-landing__workflow-intro">NEUROMORPH turns small, regular moments into a clearer picture of how you are doing. Each step is designed to be understandable, useful, and easy to bring into an everyday care routine.</p><ol>
-          <li><span>1</span><div><strong>Check in regularly</strong><p>Complete a structured weekly assessment across key cognitive areas, then use short daily activities to keep your routine active without making it feel overwhelming.</p></div></li>
-          <li><span>2</span><div><strong>Follow meaningful patterns</strong><p>Review your activity, responses, and momentum over time. Looking across multiple check-ins helps separate a one-off difficult day from a pattern worth noticing.</p></div></li>
-          <li><span>3</span><div><strong>Bring the right people in</strong><p>Share useful context with a caregiver or clinician when you choose. The goal is to support better conversations and informed next steps, not provide a diagnosis.</p></div></li>
+        <CognitiveScoreDashboard language={language} />
+        <div className="nmpa-landing__workflow-copy"><p className="nmpa-landing__eyebrow">{tl(language, 'workflowEyebrow')}</p><h2>{tl(language, 'workflowTitle')}</h2><p className="nmpa-landing__workflow-intro">{tl(language, 'workflowIntro')}</p><ol>
+          <li><span>1</span><div><strong>{tl(language, 'step1Title')}</strong><p>{tl(language, 'step1Desc')}</p></div></li>
+          <li><span>2</span><div><strong>{tl(language, 'step2Title')}</strong><p>{tl(language, 'step2Desc')}</p></div></li>
+          <li><span>3</span><div><strong>{tl(language, 'step3Title')}</strong><p>{tl(language, 'step3Desc')}</p></div></li>
         </ol></div>
       </section>
 
-      <footer className="nmpa-landing__footer"><BrandLogo size="sm" /><p>Supportive cognitive tracking for patients, caregivers, and clinicians.</p><a href="#top">Back to top ↑</a></footer>
+      <footer className="nmpa-landing__footer"><BrandLogo size="sm" /><p>{tl(language, 'footerTagline')}</p><a href="#top">{tl(language, 'footerBackToTop')} ↑</a></footer>
     </main>
   );
 }

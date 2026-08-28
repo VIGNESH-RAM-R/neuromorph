@@ -864,7 +864,14 @@ h1, h2, h3, h4,
 .nmpa-landing__feature-number { font-size: 13px; }
 .nmpa-landing__feature-card h3 { font-size: 20px; }
 .nmpa-landing__feature-card p { font-size: 16px; }
-.nmpa-landing__role-title { font-size: 18px; }
+.nmpa-landing__role-title { font-size: 18px; text-transform: uppercase; letter-spacing: 0.02em; }
+/* 2026-08-28 (VR: "change the apt logos for each of the dashboard") --
+   .nmpa-landing__role-icon used to hold a single plain character ("+",
+   "♡", "⌁") sized via its own font-size:22px. Now holds a small RoleIcon
+   SVG instead (see RoleGateScreen.jsx) -- SVGs don't inherit font-size
+   for their own dimensions, so this constrains it explicitly to sit
+   comfortably inside the existing 39x39px icon box. */
+.nmpa-landing__role-icon svg { width: 22px; height: 22px; }
 .nmpa-landing__role-description { font-size: 15px; }
 .nmpa-auth__lede { font-size: 16px; }
 .nmpa-muted { font-size: 15px; }
