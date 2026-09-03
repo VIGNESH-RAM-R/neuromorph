@@ -1,0 +1,223 @@
+{
+  "objects": [
+    {
+      "id": "apple",
+      "name": "Apple",
+      "pairGroup": "fruit",
+      "notes": "Universally recognized fruit silhouette."
+    },
+    {
+      "id": "pear",
+      "name": "Pear",
+      "pairGroup": "fruit",
+      "notes": "Slightly lower cross-cultural familiarity than apple; kept as the apple/pear hard-tier distractor pair per spec, low ambiguity risk."
+    },
+    {
+      "id": "cup",
+      "name": "Cup",
+      "pairGroup": "drinkware",
+      "notes": "Tapered drinking glass silhouette, distinct from mug's handle."
+    },
+    {
+      "id": "mug",
+      "name": "Mug",
+      "pairGroup": "drinkware",
+      "notes": "Straight-walled vessel with handle; intentional near-match to cup for hard-tier discrimination."
+    },
+    {
+      "id": "pen",
+      "name": "Pen",
+      "pairGroup": "writing",
+      "notes": "Smooth barrel with cap ring, distinguishes from pencil's tip hatching."
+    },
+    {
+      "id": "pencil",
+      "name": "Pencil",
+      "pairGroup": "writing",
+      "notes": "Faceted barrel with sharpened-tip hatch marks; intentional near-match to pen."
+    },
+    {
+      "id": "fork",
+      "name": "Fork",
+      "pairGroup": "cutlery",
+      "notes": "Moderate cultural-neutrality caveat: fork is not the primary eating utensil in all cultures (chopstick- and hand-eating traditions), but is broadly visually recognized worldwide via global product exposure. Kept per original spec's explicit fork/spoon example; flagged for awareness, not replaced."
+    },
+    {
+      "id": "spoon",
+      "name": "Spoon",
+      "pairGroup": "cutlery",
+      "notes": "Near-universal utensil across virtually all cultures; intentional near-match to fork."
+    },
+    {
+      "id": "book",
+      "name": "Book",
+      "pairGroup": null,
+      "notes": "Universal, culturally neutral."
+    },
+    {
+      "id": "key",
+      "name": "Key",
+      "pairGroup": null,
+      "notes": "Universal, culturally neutral."
+    },
+    {
+      "id": "umbrella",
+      "name": "Umbrella",
+      "pairGroup": null,
+      "notes": "Universal, culturally neutral."
+    },
+    {
+      "id": "chair",
+      "name": "Chair",
+      "pairGroup": null,
+      "notes": "Uses a generic frame silhouette to avoid style-specific ambiguity across furniture traditions."
+    },
+    {
+      "id": "clock",
+      "name": "Clock",
+      "pairGroup": null,
+      "notes": "Analog face used deliberately -- higher cross-generation familiarity than digital displays for older adults."
+    },
+    {
+      "id": "bottle",
+      "name": "Bottle",
+      "pairGroup": null,
+      "notes": "Narrow-neck silhouette kept visually distinct from cup/mug."
+    },
+    {
+      "id": "scissors",
+      "name": "Scissors",
+      "pairGroup": null,
+      "notes": "Universal household object, high recognizability."
+    },
+    {
+      "id": "wallet",
+      "name": "Wallet",
+      "pairGroup": null,
+      "notes": "Generic bifold silhouette with stitch-line detail for shape clarity."
+    },
+    {
+      "id": "lamp",
+      "name": "Lamp",
+      "pairGroup": null,
+      "notes": "Base+stem+shade silhouette, deliberately distinct from a bare lightbulb to avoid concept ambiguity."
+    },
+    {
+      "id": "phone",
+      "name": "Phone",
+      "pairGroup": null,
+      "notes": "Neutral rounded-rectangle device silhouette, broadly recognizable independent of handset era."
+    },
+    {
+      "id": "glasses",
+      "name": "Glasses",
+      "pairGroup": "eyewear",
+      "notes": "Universal, and specifically high-familiarity for the older-adult target population. Paired with sunglasses below for hard-tier discrimination."
+    },
+    {
+      "id": "backpack",
+      "name": "Backpack",
+      "pairGroup": null,
+      "notes": "Mildly youth-associated in connotation but silhouette recognition is unaffected; low risk."
+    },
+    {
+      "id": "shoe",
+      "name": "Shoe",
+      "pairGroup": null,
+      "notes": "Universal, culturally neutral. Second batch — added to grow the pool beyond the original 20."
+    },
+    {
+      "id": "sock",
+      "name": "Sock",
+      "pairGroup": null,
+      "notes": "Universal, culturally neutral. Second batch."
+    },
+    {
+      "id": "hat",
+      "name": "Hat",
+      "pairGroup": null,
+      "notes": "Universal, culturally neutral. Second batch."
+    },
+    {
+      "id": "scarf",
+      "name": "Scarf",
+      "pairGroup": null,
+      "notes": "Universal, culturally neutral. Second batch."
+    },
+    {
+      "id": "bowl",
+      "name": "Bowl",
+      "pairGroup": "dishware",
+      "notes": "Round dishware, intentional near-match to plate for hard-tier discrimination. Second batch."
+    },
+    {
+      "id": "plate",
+      "name": "Plate",
+      "pairGroup": "dishware",
+      "notes": "Round dishware, intentional near-match to bowl. Second batch."
+    },
+    {
+      "id": "comb",
+      "name": "Comb",
+      "pairGroup": "grooming",
+      "notes": "Elongated grooming tool, intentional near-match to hairbrush/toothbrush for hard-tier discrimination. Second batch."
+    },
+    {
+      "id": "hairbrush",
+      "name": "Hairbrush",
+      "pairGroup": "grooming",
+      "notes": "Elongated grooming tool, intentional near-match to comb/toothbrush. Second batch."
+    },
+    {
+      "id": "toothbrush",
+      "name": "Toothbrush",
+      "pairGroup": "grooming",
+      "notes": "Elongated grooming tool, intentional near-match to comb/hairbrush. Second batch."
+    },
+    {
+      "id": "candle",
+      "name": "Candle",
+      "pairGroup": null,
+      "notes": "Universal, culturally neutral. Second batch."
+    },
+    {
+      "id": "matchbox",
+      "name": "Matchbox",
+      "pairGroup": null,
+      "notes": "Universal, culturally neutral. Second batch."
+    },
+    {
+      "id": "sunglasses",
+      "name": "Sunglasses",
+      "pairGroup": "eyewear",
+      "notes": "Intentional near-match to glasses for hard-tier discrimination. Second batch."
+    },
+    {
+      "id": "watch",
+      "name": "Watch",
+      "pairGroup": null,
+      "notes": "Universal, culturally neutral. Second batch."
+    },
+    {
+      "id": "ring",
+      "name": "Ring",
+      "pairGroup": null,
+      "notes": "Universal, culturally neutral. Second batch."
+    },
+    {
+      "id": "hammer",
+      "name": "Hammer",
+      "pairGroup": null,
+      "notes": "Universal, culturally neutral. Second batch."
+    }
+  ],
+  "hardTierPairs": [
+    "fruit",
+    "drinkware",
+    "writing",
+    "cutlery",
+    "dishware",
+    "grooming",
+    "eyewear"
+  ]
+}

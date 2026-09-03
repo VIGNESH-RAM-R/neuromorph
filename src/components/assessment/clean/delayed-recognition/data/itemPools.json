@@ -1,0 +1,9 @@
+{
+  "object": ["apple", "pear", "cup", "mug", "pen", "pencil", "fork", "spoon", "book", "key",
+             "umbrella", "chair", "clock", "bottle", "scissors", "wallet", "lamp", "phone", "glasses", "backpack",
+             "shoe", "sock", "hat", "scarf", "bowl", "plate", "comb", "hairbrush", "toothbrush",
+             "candle", "matchbox", "sunglasses", "watch", "ring", "hammer"],
+  "figure": ["circle", "square", "triangle", "pentagon", "diamond", "hexagon", "star", "plus", "oval", "trapezoid"],
+  "symbol": ["arrow", "check", "wave", "burst", "spiral", "xmark"],
+  "face": ["face_d1", "face_d2", "face_d3", "face_d4", "face_d5", "face_d6", "face_d7", "face_d8"]
+}

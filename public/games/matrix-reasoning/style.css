@@ -1,0 +1,75 @@
+:root{
+  --bg:#f8fafc;
+  --card:#ffffff;
+  --text:#0f172a;
+  --muted:#475569;
+  --primary:#2563eb;
+  --primary-dark:#1d4ed8;
+  --correct:#0d9488;
+  --incorrect:#dc2626;
+  --border:#cbd5e1;
+}
+/* Token bridge (features/04 §A.3) — this runs in its own iframe document,
+   so the host app's CSS custom properties can't cascade in; theme.js
+   (inline in index.html) sets this attribute from the `theme` query param
+   the adapter passes when it sets the iframe's src. */
+:root[data-theme="dark"]{
+  --bg:#0b1220;
+  --card:#111a2c;
+  --text:#e7ecf5;
+  --muted:#9aa7bd;
+  --primary:#5b8def;
+  --primary-dark:#7ea3f2;
+  --correct:#34c793;
+  --incorrect:#f0665f;
+  --border:#233047;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background:var(--bg); color:var(--text); font-size:18px; line-height:1.5;
+}
+#app{ max-width:640px; margin:0 auto; padding:24px 20px 60px; }
+header{ text-align:center; margin-bottom:16px; }
+header h1{ margin:0 0 4px; font-size:28px; }
+.subtitle{ color:var(--muted); margin:0; font-size:15px; }
+.screen{ background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; margin-top:16px; }
+.hidden{ display:none !important; }
+label{ display:block; margin-top:12px; font-size:14px; color:var(--muted); }
+input[type="text"]{
+  width:100%; padding:10px 12px; font-size:16px; border:1px solid var(--border);
+  border-radius:10px; margin-top:6px;
+}
+.primary-btn{
+  margin-top:20px; width:100%; padding:14px; font-size:18px; font-weight:600;
+  background:var(--primary); color:#fff; border:none; border-radius:12px; cursor:pointer;
+}
+.primary-btn:hover{ background:var(--primary-dark); }
+.hud{ display:flex; justify-content:space-between; font-weight:600; margin-bottom:8px; }
+#timerBar{ height:8px; background:#e2e8f0; border-radius:4px; overflow:hidden; margin-bottom:20px; }
+#timerFill{ height:100%; background:var(--primary); width:100%; transition:width .1s linear; }
+.matrix-grid{
+  display:grid; grid-template-columns:repeat(3,1fr); gap:8px; max-width:340px; margin:0 auto 20px;
+}
+.matrix-grid .cell{
+  aspect-ratio:1; background:#f1f5f9; border:1px solid var(--border); border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+}
+.matrix-grid .cell.missing{ font-size:32px; font-weight:700; color:var(--muted); background:#e2e8f0; }
+.options-label{ text-align:center; font-weight:600; margin:0 0 12px; }
+.options-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+.option-btn{
+  aspect-ratio:1; background:#f8fafc; border:2px solid var(--border); border-radius:12px;
+  cursor:pointer; display:flex; align-items:center; justify-content:center; padding:6px;
+}
+.option-btn:hover{ border-color:var(--primary); }
+.option-btn:disabled{ cursor:default; opacity:0.85; }
+.option-btn.correct{ border-color:var(--correct); background:#f0fdfa; }
+.option-btn.incorrect{ border-color:var(--incorrect); background:#fef2f2; }
+#feedbackText{ text-align:center; font-size:22px; font-weight:700; padding:20px 0; }
+#resultsSummary{ font-size:16px; }
+#resultsSummary .row{ display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border); }
+pre{ background:#0f172a; color:#e2e8f0; padding:14px; border-radius:10px; overflow:auto; font-size:12px; }
+@media (max-width:420px){
+  .options-grid{ grid-template-columns:repeat(2,1fr); }
+}

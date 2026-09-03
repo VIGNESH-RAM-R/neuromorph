@@ -1,0 +1,179 @@
+:root {
+  --gsc-bg: #f7f7fb;
+  --gsc-surface: #ffffff;
+  --gsc-ink: #22222e;
+  --gsc-muted: #8a8aa3;
+  --gsc-grid: #e3e3ee;
+  --gsc-primary: #4c6ef5;
+  --gsc-stroke: #4c6ef5;
+  --gsc-border: #e1e1ec;
+  --gsc-radius: 14px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--gsc-bg);
+  color: var(--gsc-ink);
+}
+
+.gsc-app {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+}
+
+.gsc-screen {
+  width: 100%;
+  max-width: 900px;
+  background: var(--gsc-surface);
+  border-radius: var(--gsc-radius);
+  border: 1px solid var(--gsc-border);
+  box-shadow: 0 12px 32px rgba(30, 30, 60, 0.06);
+  padding: 32px;
+  animation: gsc-fade-in 0.25s ease;
+}
+
+@keyframes gsc-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+h1 { margin: 0 0 4px; font-size: 24px; }
+h2 { font-size: 15px; margin: 0 0 8px; color: var(--gsc-muted); }
+.gsc-sub { color: var(--gsc-muted); margin: 0 0 20px; }
+.gsc-caption { color: var(--gsc-muted); font-size: 12px; }
+
+.gsc-instruction-body {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+.gsc-instruction-example { text-align: center; flex-shrink: 0; }
+.gsc-instruction-list { line-height: 1.8; padding-left: 20px; }
+
+.gsc-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 12px 22px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.15s ease;
+}
+.gsc-btn:active { transform: scale(0.97); }
+.gsc-btn--primary { background: var(--gsc-primary); color: white; }
+.gsc-btn--primary:hover { box-shadow: 0 6px 16px rgba(76, 110, 245, 0.35); }
+.gsc-btn--ghost { background: transparent; border: 1px solid var(--gsc-border); color: var(--gsc-ink); }
+.gsc-btn--ghost:hover { background: var(--gsc-bg); }
+
+.gsc-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.gsc-pill {
+  background: var(--gsc-bg);
+  border: 1px solid var(--gsc-border);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 13px;
+  color: var(--gsc-muted);
+}
+.gsc-timer {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: 18px;
+}
+.gsc-badge {
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: white;
+}
+.gsc-badge--easy { background: #3ecf8e; }
+.gsc-badge--medium { background: #f5a524; }
+.gsc-badge--hard { background: #f5484c; }
+
+.gsc-workspace {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.gsc-reference {
+  border: 1px dashed var(--gsc-border);
+  border-radius: 10px;
+  padding: 16px;
+  background: var(--gsc-bg);
+}
+.gsc-drawing-area { border-radius: 10px; overflow: hidden; }
+.gsc-canvas {
+  background: #fff;
+  border: 2px solid var(--gsc-border);
+  border-radius: 10px;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.gsc-controls {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.gsc-screen--countdown {
+  text-align: center;
+  padding: 80px 32px;
+}
+.gsc-countdown-number {
+  font-size: 96px;
+  font-weight: 800;
+  color: var(--gsc-primary);
+  animation: gsc-pop 0.4s ease;
+}
+@keyframes gsc-pop {
+  from { transform: scale(0.6); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.gsc-severity-banner {
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin: 16px 0 24px;
+  background: var(--gsc-bg);
+  border: 1px solid var(--gsc-border);
+}
+.gsc-severity-label { font-weight: 800; letter-spacing: 0.04em; }
+.gsc-severity--typical { border-color: #3ecf8e; }
+.gsc-severity--mild { border-color: #f5cf3f; }
+.gsc-severity--moderate { border-color: #f5a524; }
+.gsc-severity--significant { border-color: #f5484c; }
+
+.gsc-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.gsc-card {
+  background: var(--gsc-bg);
+  border: 1px solid var(--gsc-border);
+  border-radius: 10px;
+  padding: 14px;
+  text-align: center;
+}
+.gsc-card-value { font-size: 20px; font-weight: 800; }
+.gsc-card-label { font-size: 12px; color: var(--gsc-muted); margin-top: 4px; }
+
+.gsc-chart-block { margin-bottom: 24px; }

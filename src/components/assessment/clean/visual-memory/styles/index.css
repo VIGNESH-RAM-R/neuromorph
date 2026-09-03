@@ -1,0 +1,164 @@
+/* NEUROMORPH Visual Memory Test -- minimal, high-contrast, no decorative
+   animation. Target users include older adults, so touch targets and type
+   are sized generously and every state change is instant rather than
+   eased/animated. */
+
+:root {
+  --vmt-bg: #ffffff;
+  --vmt-surface: #f4f6fa;
+  --vmt-ink: #12182b;
+  --vmt-text-secondary: #3c4356;
+  --vmt-border: #c7cbd6;
+  --vmt-border-strong: #8b90a3;
+  --vmt-accent: #1d4ed8;
+  --vmt-accent-ink: #0b2a80;
+  --vmt-success: #0f7a3d;
+  --vmt-danger: #b3261e;
+  --vmt-warning: #8a5a00;
+  --vmt-radius: 12px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--vmt-surface);
+  color: var(--vmt-ink);
+  font-size: 17px;
+}
+
+.vmt-app {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+}
+
+.vmt-screen {
+  width: 100%;
+  max-width: 900px;
+  background: var(--vmt-bg);
+  border-radius: var(--vmt-radius);
+  border: 1px solid var(--vmt-border);
+  padding: 32px;
+}
+
+.vmt-screen--center { text-align: center; padding: 96px 32px; }
+
+h1 { margin: 0 0 4px; font-size: 26px; }
+h2 { font-size: 18px; margin: 1.75rem 0 8px; }
+.vmt-eyebrow { color: var(--vmt-text-secondary); margin: 0 0 1.25rem; font-size: 15px; }
+.vmt-body { line-height: 1.7; font-size: 17px; margin: 0 0 1rem; }
+.vmt-instruction-line { font-size: 15px; color: var(--vmt-text-secondary); margin: 0 0 10px; }
+.vmt-fine-print { font-size: 13px; color: var(--vmt-text-secondary); margin: 1.5rem 0 0; }
+
+.vmt-protocol-picker {
+  border: 1px solid var(--vmt-border);
+  border-radius: var(--vmt-radius);
+  padding: 16px 20px;
+  margin: 0 0 1.5rem;
+}
+.vmt-protocol-picker legend { font-weight: 600; padding: 0 6px; }
+.vmt-radio { display: flex; align-items: center; gap: 10px; font-size: 16px; padding: 8px 0; cursor: pointer; }
+.vmt-radio input { width: 20px; height: 20px; }
+
+.vmt-btn {
+  border-radius: var(--vmt-radius);
+  padding: 16px 28px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 2px solid transparent;
+  min-height: 56px;
+}
+.vmt-btn--primary { background: var(--vmt-accent); color: #ffffff; }
+.vmt-btn--secondary { background: transparent; border-color: var(--vmt-border-strong); color: var(--vmt-ink); }
+
+.vmt-topbar { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+.vmt-pill {
+  background: var(--vmt-surface);
+  border: 1px solid var(--vmt-border);
+  border-radius: 999px;
+  padding: 6px 16px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.vmt-timer { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 700; font-size: 22px; }
+
+.vmt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 12px;
+  margin: 1rem 0;
+}
+
+.vmt-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--vmt-surface);
+  border: 2px solid var(--vmt-border-strong);
+  border-radius: var(--vmt-radius);
+  /* Was 22px 8px — with the illustration itself only ever 56px, that much
+     padding left a lot of visible tile around a small centered image on
+     top of the object photos' own since-fixed white margin. Trimmed so the
+     (now bigger, see ObjectIllustration.jsx's default size) photo actually
+     reads as filling the tile. */
+  padding: 10px 8px;
+  min-height: 108px;
+  font-family: inherit;
+}
+.vmt-tile--readonly { cursor: default; }
+.vmt-tile--selectable { cursor: pointer; color: inherit; appearance: none; }
+.vmt-tile--selected {
+  background: #dbe7ff;
+  border-color: var(--vmt-accent);
+  border-width: 3px;
+}
+.vmt-illustration { color: var(--vmt-ink); }
+
+.vmt-tag { font-size: 13px; font-weight: 700; }
+.vmt-tag--correct { color: var(--vmt-success); }
+.vmt-tag--incorrect { color: var(--vmt-danger); }
+.vmt-tag--neutral { color: var(--vmt-text-secondary); }
+
+.vmt-countdown { font-size: 88px; font-weight: 700; color: var(--vmt-accent-ink); }
+.vmt-delay-timer { font-size: 40px; font-weight: 700; margin: 8px 0 0; }
+
+.vmt-hero {
+  background: var(--vmt-surface);
+  border: 1px solid var(--vmt-border);
+  border-radius: var(--vmt-radius);
+  padding: 20px 24px;
+  margin: 1rem 0 1.5rem;
+}
+.vmt-hero-score { font-size: 40px; font-weight: 800; }
+.vmt-hero-scale { font-size: 18px; color: var(--vmt-text-secondary); font-weight: 500; }
+.vmt-hero-caption { color: var(--vmt-text-secondary); margin: 2px 0 10px; font-size: 15px; }
+.vmt-severity-tag { display: inline-block; font-weight: 700; font-size: 16px; margin-bottom: 8px; }
+.vmt-severity--excellent { color: var(--vmt-success); }
+.vmt-severity--normal { color: var(--vmt-accent-ink); }
+.vmt-severity--mildly-reduced { color: var(--vmt-warning); }
+.vmt-severity--reduced { color: var(--vmt-danger); }
+
+.vmt-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+.vmt-card {
+  background: var(--vmt-surface);
+  border: 1px solid var(--vmt-border);
+  border-radius: var(--vmt-radius);
+  padding: 16px;
+  text-align: center;
+}
+.vmt-card-value { font-size: 24px; font-weight: 700; }
+.vmt-card-label { font-size: 13px; color: var(--vmt-text-secondary); margin-top: 4px; }
+
+.vmt-actions { display: flex; gap: 12px; margin-top: 1.5rem; flex-wrap: wrap; }
