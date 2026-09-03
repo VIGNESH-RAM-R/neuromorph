@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Matrix Reasoning Task — Parietal Lobe Assessment</title>
+<link rel="stylesheet" href="style.css" />
+<script>
+  // Token bridge bootstrap (features/04 §A.3 point 3: gate on the same
+  // theme signal the host app uses, don't invent a second mechanism) — the
+  // adapter (src/features/games/weekly/matrix-reasoning/adapter.js) sets
+  // these query params on the iframe src it points at this page.
+  (function () {
+    var params = new URLSearchParams(location.search);
+    if (params.get('theme') === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  })();
+</script>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>Matrix Reasoning</h1>
+    <p class="subtitle">Parietal lobe screen — visuospatial reasoning</p>
+  </header>
+
+  <section id="instructions" class="screen">
+    <h2>Before you start</h2>
+    <p>You'll see a 3&times;3 grid of patterns with the bottom-right piece missing. Figure out how the pattern changes across the grid, then pick the option that completes it.</p>
+    <p>Each scored item gives you up to 25 seconds. We'll start with one practice round first.</p>
+    <!-- Patient ID field removed for the integrated build: the host app
+         already knows who's signed in server-side (see adapter.js) — this
+         page no longer needs to ask. -->
+    <input id="patientIdInput" type="hidden" value="" />
+    <button id="startBtn" class="primary-btn">Start Practice</button>
+  </section>
+
+  <section id="gameScreen" class="screen hidden">
+    <div class="hud">
+      <span id="progressLabel">Practice</span>
+      <span id="timerText">25s</span>
+    </div>
+    <div id="timerBar"><div id="timerFill"></div></div>
+    <div id="matrixGrid" class="matrix-grid"></div>
+    <p class="options-label">Choose the missing piece:</p>
+    <div id="optionsGrid" class="options-grid"></div>
+  </section>
+
+  <section id="feedbackScreen" class="screen hidden">
+    <div id="feedbackText"></div>
+  </section>
+
+  <section id="resultsScreen" class="screen hidden">
+    <h2>Assessment complete</h2>
+    <div id="resultsSummary"></div>
+    <details>
+      <summary>Raw JSON output (for orchestrator)</summary>
+      <pre id="jsonOutput"></pre>
+    </details>
+    <button id="restartBtn" class="primary-btn">Run again</button>
+  </section>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

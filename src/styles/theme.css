@@ -1209,6 +1209,14 @@ h1, h2, h3, h4,
 
 .nmpa-task__countdown { display: flex; align-items: center; justify-content: center; min-height: 220px; }
 .nmpa-task__countdown-num { font-size: 60px; font-weight: 700; color: var(--nmpa-accent); }
+
+/* Host div for a GameModule mounted via adaptGameModule.jsx (Phase 1, see
+   docs/PHASE_0_CONTRACTS.md) -- unlike .nmpa-task, these games bring their
+   own complete self-contained UI/CSS (see e.g. StroopGame.jsx's header
+   comment), so this stays unstyled beyond a floor height that keeps the
+   card from collapsing to 0 for the instant before mount() has painted
+   anything into it. */
+.nmpa-task-host { min-height: 420px; }
 .nmpa-task__countdown-num.is-go { color: var(--nmpa-excellent); font-size: 42px; letter-spacing: 0.02em; }
 
 .nmpa-task__stimulus { font-size: 46px; font-weight: 700; letter-spacing: 0.01em; margin: 6px 0; }

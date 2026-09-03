@@ -1,0 +1,140 @@
+/* NEUROMORPH Delayed Recognition Test -- same design language as Visual
+   Memory Test: minimal, high-contrast, no decorative animation. */
+
+:root {
+  --drt-bg: #ffffff;
+  --drt-surface: #f4f6fa;
+  --drt-ink: #12182b;
+  --drt-text-secondary: #3c4356;
+  --drt-border: #c7cbd6;
+  --drt-border-strong: #8b90a3;
+  --drt-accent: #1d4ed8;
+  --drt-accent-ink: #0b2a80;
+  --drt-success: #0f7a3d;
+  --drt-danger: #b3261e;
+  --drt-warning: #8a5a00;
+  --drt-radius: 12px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--drt-surface);
+  color: var(--drt-ink);
+  font-size: 17px;
+}
+
+.drt-app {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+}
+
+.drt-screen {
+  width: 100%;
+  max-width: 900px;
+  background: var(--drt-bg);
+  border-radius: var(--drt-radius);
+  border: 1px solid var(--drt-border);
+  padding: 32px;
+}
+
+.drt-screen--center { text-align: center; padding: 96px 32px; }
+
+h1 { margin: 0 0 4px; font-size: 26px; }
+h2 { font-size: 18px; margin: 1.75rem 0 8px; }
+.drt-eyebrow { color: var(--drt-text-secondary); margin: 0 0 1.25rem; font-size: 15px; }
+.drt-body { line-height: 1.7; font-size: 17px; margin: 0 0 1rem; }
+.drt-instruction-line { font-size: 15px; color: var(--drt-text-secondary); margin: 0 0 10px; }
+.drt-fine-print { font-size: 13px; color: var(--drt-text-secondary); margin: 1.5rem 0 0; }
+
+.drt-btn {
+  border-radius: var(--drt-radius);
+  padding: 16px 28px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 2px solid transparent;
+  min-height: 56px;
+}
+.drt-btn--primary { background: var(--drt-accent); color: #ffffff; }
+.drt-btn--secondary { background: transparent; border-color: var(--drt-border-strong); color: var(--drt-ink); }
+
+.drt-topbar { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+.drt-pill {
+  background: var(--drt-surface);
+  border: 1px solid var(--drt-border);
+  border-radius: 999px;
+  padding: 6px 16px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.drt-timer { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 700; font-size: 22px; }
+
+.drt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 12px;
+  margin: 1rem 0;
+}
+
+.drt-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--drt-surface);
+  border: 2px solid var(--drt-border-strong);
+  border-radius: var(--drt-radius);
+  padding: 22px 8px;
+  min-height: 108px;
+  font-family: inherit;
+}
+.drt-tile--selectable { cursor: pointer; color: inherit; appearance: none; }
+.drt-tile--selected {
+  background: #dbe7ff;
+  border-color: var(--drt-accent);
+  border-width: 3px;
+}
+.drt-illustration { color: var(--drt-ink); }
+
+.drt-countdown { font-size: 88px; font-weight: 700; color: var(--drt-accent-ink); }
+
+.drt-hero {
+  background: var(--drt-surface);
+  border: 1px solid var(--drt-border);
+  border-radius: var(--drt-radius);
+  padding: 20px 24px;
+  margin: 1rem 0 1.5rem;
+}
+.drt-hero-score { font-size: 40px; font-weight: 800; }
+.drt-hero-scale { font-size: 18px; color: var(--drt-text-secondary); font-weight: 500; }
+.drt-hero-caption { color: var(--drt-text-secondary); margin: 2px 0 10px; font-size: 15px; }
+.drt-severity-tag { display: inline-block; font-weight: 700; font-size: 16px; margin-bottom: 8px; }
+.drt-severity--excellent { color: var(--drt-success); }
+.drt-severity--normal { color: var(--drt-accent-ink); }
+.drt-severity--mildly-reduced { color: var(--drt-warning); }
+.drt-severity--reduced { color: var(--drt-danger); }
+
+.drt-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+.drt-card {
+  background: var(--drt-surface);
+  border: 1px solid var(--drt-border);
+  border-radius: var(--drt-radius);
+  padding: 16px;
+  text-align: center;
+}
+.drt-card-value { font-size: 24px; font-weight: 700; }
+.drt-card-label { font-size: 13px; color: var(--drt-text-secondary); margin-top: 4px; }
+
+.drt-actions { display: flex; gap: 12px; margin-top: 1.5rem; flex-wrap: wrap; }
